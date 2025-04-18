@@ -1,4 +1,7 @@
 node_modules/
 dist/
+<<<<<<< HEAD
 .vscode/
+=======
+>>>>>>> origin/dev
 pnpm-lock.yaml
