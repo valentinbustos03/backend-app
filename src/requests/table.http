@@ -1,0 +1,27 @@
+### Obtain all tables
+GET http://localhost:3000/api/tables
+
+### Obtain one table by cod
+GET http://localhost:3000/api/tables/M02
+
+### Create one table
+POST http://localhost:3000/api/tables
+Content-Type: application/json
+
+{
+  "cod": "M02",
+  "capacity": 6,
+  "description": "View to the glass panels",
+  "occupied": false
+}
+
+### Modify one table (PUT modify all properties while PATCH just a part of all properties)
+PUT http://localhost:3000/api/tables/M01
+Content-Type: application/json
+
+{
+  "cod": "M01",
+  "capacity": 4,
+  "description": "Partial view to the Fontana Di Trevi",
+  "occupied": true
+}
