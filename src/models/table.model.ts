@@ -1,10 +1,9 @@
-class TableFactory {
-  createTable(cod: string, capacity: number, description?: string, occupied: boolean = false): Table {
-    return {
-      cod,
-      capacity,
-      description,
-      occupied,
-    };
-  }
+// table.model.ts
+export class Table {
+  constructor(
+    public cod: string,
+    public capacity: number,
+    public description?: string,
+    public occupied: boolean = false
+  ) {}
 }
