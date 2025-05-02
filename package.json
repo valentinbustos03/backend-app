@@ -14,6 +14,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.7.1",
   "devDependencies": {
+    "@mikro-orm/sql-highlighter": "1.0.1",
     "@types/express": "5.0.1",
     "@types/node": "22.14.1",
     "tsc-watch": "6.0.4",
@@ -22,9 +23,10 @@
   "dependencies": {
     "@mikro-orm/core": "6.4.13",
     "@mikro-orm/mysql": "6.4.13",
-    "@mikro-orm/sql-highlighter": "1.0.1",
     "eslint": "^9.25.0",
     "express": "^5.1.0",
-    "mysql2": "3.14.0"
+    "mikro-orm": "^6.4.13",
+    "mysql2": "3.14.0",
+    "reflect-metadata": "0.2.2"
   }
 }

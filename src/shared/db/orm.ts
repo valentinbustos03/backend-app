@@ -5,11 +5,16 @@ import { MySqlDriver } from '@mikro-orm/mysql';
 export const orm = await MikroORM.init({
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
-  dbName: '', //completar
+  dbName: 'sgidb',
   driver: MySqlDriver,
-  clientUrl: '', //completar
+  host: 'localhost',
+  port: 3306,
+  user: 'root',
+  password: 'root',
+  clientUrl: 'mysql://root:root@localhost:3306/sgidb',
   highlighter: new SqlHighlighter(),
   debug: true,
+
   schemaGenerator: {
     //never in production
     disableForeignKeys: true,
