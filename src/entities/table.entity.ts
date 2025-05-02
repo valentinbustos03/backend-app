@@ -9,7 +9,7 @@ export class Table {
   @Property({ nullable: false }) //Declara las columnas dentro de la base de datos.
   capacity!: number;
 
-  @Property({ nullable: false })
+  @Property()
   description?: string;
 
   @Property({ nullable: false })

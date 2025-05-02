@@ -27,6 +27,6 @@
     "express": "^5.1.0",
     "mikro-orm": "^6.4.13",
     "mysql2": "3.14.0",
-    "reflect-metadata": "0.2.2"
+    "reflect-metadata": "0.2.2",
+    "uuid": "11.1.0"
   }}
-  
