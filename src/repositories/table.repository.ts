@@ -2,7 +2,7 @@ import { Table } from '../models/table.model.js';
 import { Repository } from '../shared/repository.js';
 
 
-//Table Array
+//Table Array Example
 const tables: Table[] = [
   new Table(
     'M01',
@@ -12,6 +12,7 @@ const tables: Table[] = [
   ),
 ]
 
+//CRUD
 export class TableRepository implements Repository<Table> {
   public findAll(): Table[] | undefined {
     return tables
