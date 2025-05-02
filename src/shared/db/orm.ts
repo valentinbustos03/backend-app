@@ -13,7 +13,7 @@ export const orm = await MikroORM.init({
   password: 'admin',
   clientUrl: 'mysql://root:root@localhost:3306/sgidb',
   highlighter: new SqlHighlighter(),
-  debug: true,
+  debug: ['query', 'schema'],
 
   schemaGenerator: {
     //never in production
