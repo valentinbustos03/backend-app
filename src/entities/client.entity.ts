@@ -1,15 +1,14 @@
-//creation of table entity
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
-//import{Order} from './order.entity.js';
+import { Cascade, Collection, Entity, OneToMany, PrimaryKey, Property } from '@mikro-orm/core';
+import{Order} from './order.entity.js';
 
-@Entity() //Le dice al MIKRO ORM que "CLIENTE" es una tabla en la base de datos.
+@Entity() 
 export class Client {
-  @PrimaryKey({ nullable: false, unique: true }) //indica que codigo es una llave primaria
-  dni!: number; //MODIFICAR EN EL GRAFICO
+  @PrimaryKey({ nullable: false, unique: true })
+  dni!: number; 
 
-  @Property({ nullable: false }) //Declara las columnas dentro de la base de datos.
-  orderHistory?: string;
+  @OneToMany(()=> Order, (order) => order.client, {cascade: [Cascade.ALL]}) 
+  orderHistory = new Collection<Order>(this);
 
   @Property({ nullable: false })
-  penalization: number=0;
+  penalty: number=0;
 }
