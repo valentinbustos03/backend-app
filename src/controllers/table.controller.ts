@@ -21,13 +21,6 @@ function sanitizeTableInput(req: Request, res: Response, next: NextFunction) {
 
   next();
 }
-/*
-  CONTROLADOR: Contiene la lógica de negocio para manejar las peticiones 
-  a las rutas de las mesas. Interactúa con la base de datos 
-  a través del ORM MikroORM y envía las respuestas HTTP al cliente.
-
-  hace el laburo de depaul
-*/
 
 //CRUD
 async function add(req: Request, res: Response) {
@@ -35,7 +28,7 @@ async function add(req: Request, res: Response) {
     const input = req.body.sanitizedInput;
     const tableInput = await tableService.createTable(input);
     res.status(201).json({ message: 'Table created', data: tableInput });
-  } catch (erro: any) {
+  } catch (error: any) {
     res.status(500).json({ message: 'Table can not be created' });
   }
 }
