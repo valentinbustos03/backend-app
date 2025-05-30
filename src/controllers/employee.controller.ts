@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { EmployeeService } from '../services/employee.service.js';
-import { orm } from '../shared/db/orm.js';
+import { orm } from '../shared/orm.js';
 
 const employeeService = new EmployeeService(orm.em);
 

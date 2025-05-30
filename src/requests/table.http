@@ -1,5 +1,5 @@
 ### Obtain all tables
-GET http://localhost:3000/api/tables
+GET http://localhost:3306/api/tables
 
 ### Obtain one table by cod
 GET http://localhost:3000/api/tables/M02
