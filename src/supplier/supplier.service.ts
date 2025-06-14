@@ -1,5 +1,5 @@
-import { Supplier } from '../entities/supplier.entity.js';
 import { EntityManager } from '@mikro-orm/core';
+import { Supplier } from '../supplier/supplier.entity.js';
 
 export class SupplierService {
   private readonly em: EntityManager;

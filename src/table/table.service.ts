@@ -1,5 +1,5 @@
-import { Table } from '../entities/table.entity.js';
 import { EntityManager } from '@mikro-orm/core';
+import { Table } from '../table/table.entity.js';
 
 export class TableService {
   private readonly em: EntityManager;

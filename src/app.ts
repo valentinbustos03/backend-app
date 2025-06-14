@@ -1,11 +1,13 @@
 import 'reflect-metadata';
 import express from 'express';
-import { tableRouter } from './routes/table.route.js';
 import { orm, syncSchema } from './shared/db/orm.js'
 import { RequestContext } from '@mikro-orm/core'
-import { supplierRouter } from './routes/supplier.route.js';
-import { employeeRouter } from './routes/employee.route.js';
-import { clientRouter } from './routes/client.route.js';
+
+// Routers
+import { clientRouter } from './client/client.route.js';
+import { employeeRouter } from './employee/employee.route.js';
+import { supplierRouter } from './supplier/supplier.route.js';
+import { tableRouter } from './table/table.route.js';
 
 
 

@@ -1,4 +1,4 @@
-import { Employee } from '../entities/employee.entity.js';
+import { Employee } from '../employee/employee.entity.js';
 import { EntityManager} from '@mikro-orm/core';
 
 export class EmployeeService {

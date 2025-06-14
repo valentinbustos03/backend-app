@@ -1,6 +1,6 @@
 import { Entity, ManyToOne, PrimaryKey, Property, Rel } from "@mikro-orm/core";
 import {v4} from 'uuid'
-import { Client } from "./client.entity.js";
+import { Client } from "../client/client.entity.js";
 
 @Entity()
 export class Order{

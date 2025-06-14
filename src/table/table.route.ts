@@ -6,7 +6,7 @@ import {
   add,
   update,
   remove,
-} from '../controllers/table.controller.js';
+} from '../table/table.controller.js';
 
 export const tableRouter = Router();
 

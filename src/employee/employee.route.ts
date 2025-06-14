@@ -6,7 +6,7 @@ import {
   add,
   update,
   remove,
-} from '../controllers/employee.controller.js';
+} from '../employee/employee.controller.js';
 
 export const employeeRouter = Router();
 

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { TableService } from '../services/table.service.js';
+import { TableService } from '../table/table.service.js';
 import { orm } from '../shared/db/orm.js';
 
 const tableService = new TableService(orm.em);

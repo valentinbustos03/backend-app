@@ -1,4 +1,4 @@
-import { Client } from '../entities/client.entity.js';
+import { Client } from '../client/client.entity.js';
 import { EntityManager } from '@mikro-orm/core';
 
 export class ClientService {

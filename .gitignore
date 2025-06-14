@@ -1,7 +1,8 @@
-node_modules/*
 dist/*
+node_modules/*
+src/shared/db/*
+.gitignore
+.node-version
+package.json
 pnpm-lock.yaml
-package-lock.json
-shared/db/*
-
-shared/db/*
+# Ignore environment files  
