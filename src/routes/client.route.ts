@@ -10,9 +10,8 @@ import {
 
 export const clientRouter = Router();
 
-clientRouter.get('/', findAll);
-clientRouter.get('/:cod', findOne);
-clientRouter.post('/', sanitizeClientInput, add);
-clientRouter.put('/:cod', sanitizeClientInput, update);
-clientRouter.patch('/:cod', sanitizeClientInput, update);
-clientRouter.delete('/:cod', remove);
+clientRouter.post('/add', sanitizeClientInput, add);
+clientRouter.get('/findAll', findAll);
+clientRouter.get('/findOne/:dni', findOne);
+clientRouter.put('/update/:dni', sanitizeClientInput, update);
+clientRouter.delete('/remove/:dni', remove);

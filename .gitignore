@@ -1,5 +1,7 @@
-node_modules/
-dist/
+node_modules/*
+dist/*
 pnpm-lock.yaml
 package-lock.json
+shared/db/*
+
 shared/db/*

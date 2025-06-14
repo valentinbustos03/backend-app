@@ -10,9 +10,8 @@ import {
 
 export const tableRouter = Router();
 
-tableRouter.get('/', findAll);
-tableRouter.get('/:cod', findOne);
-tableRouter.post('/', sanitizeTableInput, add);
-tableRouter.put('/:cod', sanitizeTableInput, update);
-tableRouter.patch('/:cod', sanitizeTableInput, update);
-tableRouter.delete('/:cod', remove);
+tableRouter.post('/add', sanitizeTableInput, add);
+tableRouter.get('/findAll', findAll);
+tableRouter.get('/findOne/:cod', findOne);
+tableRouter.put('/update/:cod', sanitizeTableInput, update);
+tableRouter.delete('/remove/:cod', remove);

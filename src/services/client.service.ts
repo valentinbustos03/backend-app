@@ -1,8 +1,5 @@
-//comportameientos de la entity client (CRUD+)
-//import { Client } from '../entities/client.entity.js';
 import { Client } from '../entities/client.entity.js';
 import { EntityManager } from '@mikro-orm/core';
-//import { Order } from '../entities/order.entity.js';
 
 export class ClientService {
   private readonly em: EntityManager;
@@ -27,7 +24,7 @@ export class ClientService {
   }
 
   async findClientByDni(dni: number): Promise<Client | null> {
-    const client = this.em.findOne(Client, { dni });
+    const client = this.em.findOne(Client,{dni});
     return client;
   }
 
@@ -55,5 +52,5 @@ export class ClientService {
     }
   }
 
-  // addOrderToClient - crear metodo para cargar una orden a un nuevo cliente. Considerar hacer dentro de order.service
+  // addOrderToClient - crear metodo para cargar una orden a un nuevo cliente. Considerar hacer dentro de order.service -> createOrder()
 }

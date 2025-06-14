@@ -7,9 +7,9 @@ const clientService = new ClientService(orm.em);
 //API Sanitize
 function sanitizeClientInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizedInput = {
-    dni: req.body.dni,
+    dni: parseInt(req.body.dni),
     orderHistory: req.body.orderHistory,
-    penalization: req.body.penalization,
+    penalty: req.body.penalty,
   
   };
   Object.keys(req.body.sanitizedInput).forEach((key) => {
@@ -20,13 +20,6 @@ function sanitizeClientInput(req: Request, res: Response, next: NextFunction) {
 
   next();
 }
-/*
-  CONTROLADOR: Contiene la lógica de negocio para manejar las peticiones 
-  a las rutas de las mesas. Interactúa con la base de datos 
-  a través del ORM MikroORM y envía las respuestas HTTP al cliente.
-
-  hace el laburo de depaul
-*/
 
 //CRUD
 async function add(req: Request, res: Response) {
@@ -53,8 +46,8 @@ async function findAll(req: Request, res: Response) {
 
 async function findOne(req: Request, res: Response) {
   try {
-    const dni = req.params.dni;
-    const client = await clientService.findClientByDni(parseInt(dni)); //el parse pq el dni viene como number y necesita un string 
+    const dni = parseInt(req.params.dni);
+    const client = await clientService.findClientByDni(dni);  
     if (!client) {
       res.status(404).json({ message: 'Client not found' });
     }
@@ -66,8 +59,8 @@ async function findOne(req: Request, res: Response) {
 
 async function update(req: Request, res: Response) {
   try {
-    const dni = req.params.dni;
-    const client = await clientService.updateClient(parseInt(dni), req.body.sanitizedInput);
+    const dni = parseInt(req.params.dni);
+    const client = await clientService.updateClient(dni, req.body.sanitizedInput);
     if (!client) {
       res.status(404).send({ message: 'Client not found' });
     }
@@ -81,8 +74,8 @@ async function update(req: Request, res: Response) {
 
 async function remove(req: Request, res: Response) {
   try {
-    const dni = req.params.dni;
-    const client = await clientService.deleteClient(parseInt(dni));
+    const dni = parseInt(req.params.dni);
+    const client = await clientService.deleteClient(dni);
     if (!client) {
       res.status(404).send({ message: 'Client not found' });
     }

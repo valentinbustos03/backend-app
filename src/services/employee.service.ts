@@ -1,6 +1,5 @@
-//comportameientos de la entity table (CRUD+)
 import { Employee } from '../entities/employee.entity.js';
-import { EntityManager } from '@mikro-orm/core';
+import { EntityManager} from '@mikro-orm/core';
 
 export class EmployeeService {
   private readonly em: EntityManager;
@@ -15,9 +14,9 @@ export class EmployeeService {
     shift: string;
     workedHours: number;
     priceHour: number;
-    salary: number;
   }): Promise<Employee> {
     const newEmployee = this.em.create(Employee, data);
+    newEmployee.salary = this.computeSalary(data.workedHours,data.priceHour)
     await this.em.persistAndFlush(newEmployee);
     return newEmployee;
   }
@@ -39,12 +38,12 @@ export class EmployeeService {
       shift: string;
       workedHours: number;
       priceHour: number;
-      salary: number;
     }
   ): Promise<Employee | null> {
     const updatedEmployee = await this.em.findOne(Employee, { taxId });
     if (updatedEmployee) {
       this.em.assign(updatedEmployee, data);
+      updatedEmployee.salary = this.computeSalary(data.workedHours,data.priceHour)
       this.em.flush();
       return updatedEmployee;
     } else {
@@ -60,5 +59,9 @@ export class EmployeeService {
     } else {
       return null;
     }
+  }
+
+  computeSalary(wH: number, pH: number){
+    return wH*pH;
   }
 }

@@ -1,12 +1,11 @@
-//creation of table entity
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
-@Entity() //Le dice al MIKRO ORM que "Supplier" es una tabla en la base de datos.
+@Entity() 
 export class Supplier {
-  @PrimaryKey({ nullable: false, unique: true}) //indica que codigo es una llave primaria
+  @PrimaryKey({ nullable: false, unique: true}) 
   id!: number;
 
-  @Property({ nullable: false }) //Declara las columnas dentro de la base de datos.
+  @Property({ nullable: false }) 
   companyName!: string;
 
   @Property({ nullable: false })
@@ -15,14 +14,14 @@ export class Supplier {
   @Property({ nullable: false })
   mail!: string;
   
-  @Property({ nullable: false}) //indica que codigo es una llave primaria
+  @Property({ nullable: false})
   phoneNumber!: string;
 
-  @Property({ nullable: false }) //Declara las columnas dentro de la base de datos.
+  @Property({ nullable: false }) 
   typeIngredient!: string;
 
   @Property({ nullable: false })
-  name!: string;
+  fullName!: string;
 
   @Property({ nullable: false })
   bussinessName!: string;

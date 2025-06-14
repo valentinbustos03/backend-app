@@ -13,7 +13,7 @@ function sanitizeSupplierInput(req: Request, res: Response, next: NextFunction) 
     mail: req.body.mail,
     phoneNumber: req.body.phoneNumber,
     typeIngredient: req.body.typeIngredient,
-    name: req.body.name,
+    fullName: req.body.fullName,
     bussinessName: req.body.bussinessName,
   };
 
@@ -25,13 +25,6 @@ function sanitizeSupplierInput(req: Request, res: Response, next: NextFunction) 
 
   next();
 }
-/*
-  CONTROLADOR: Contiene la lógica de negocio para manejar las peticiones 
-  a las rutas de las mesas. Interactúa con la base de datos 
-  a través del ORM MikroORM y envía las respuestas HTTP al cliente.
-
-  hace el laburo de depaul
-*/
 
 //CRUD
 async function add(req: Request, res: Response) {
@@ -59,7 +52,7 @@ async function findAll(req: Request, res: Response) {
 async function findOne(req: Request, res: Response) {
   try {
     const id = req.params.id;
-    const supplier = await supplierService.findSupplierById(parseInt(id)); //OJO id viene como string de req.params.id
+    const supplier = await supplierService.findSupplierById(parseInt(id));
     if (!supplier) {
       res.status(404).json({ message: 'Supplier not found' });
     }

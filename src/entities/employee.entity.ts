@@ -1,5 +1,4 @@
-//creation of employee entity
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, FloatType, Formula, PrimaryKey, Property } from '@mikro-orm/core';
 
 @Entity()
 export class Employee {
@@ -12,12 +11,13 @@ export class Employee {
   @Property({ nullable: false })
   shift?: string;
 
-  @Property({ nullable: false })
-  workedHours: number = 0;
+  @Property({ nullable: false, type:'decimal', precision: 10, scale: 2 })
+  workedHours!: number;
 
-  @Property({ nullable: false })
-  priceHour: number = 0;
+  @Property({ nullable: false, type:'decimal', precision: 10, scale: 2})
+  priceHour!: number;
 
-  @Property({ nullable: false })
-  salary: number = 0;
+  @Property({type:'decimal', precision: 10, scale: 2})
+  salary?: number;
+  
 }

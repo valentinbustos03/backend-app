@@ -1,4 +1,3 @@
-//comportameientos de la entity table (CRUD+)
 import { Table } from '../entities/table.entity.js';
 import { EntityManager } from '@mikro-orm/core';
 
@@ -15,11 +14,10 @@ export class TableService {
     description: string;
     occupied: boolean;
   }): Promise<Table> {
-    //crearMesa - data = atributos
     const newTable = this.em.create(Table, data);
     await this.em.persistAndFlush(newTable);
     return newTable;
-  } //newTable = nuevaMesanode -v
+  } 
 
   async findAllTable(): Promise<Table[] | null> {
     const tableList = this.em.findAll(Table);

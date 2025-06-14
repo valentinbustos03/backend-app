@@ -1,4 +1,3 @@
-//comportameientos de la entity supplier (CRUD+)
 import { Supplier } from '../entities/supplier.entity.js';
 import { EntityManager } from '@mikro-orm/core';
 
@@ -16,14 +15,13 @@ export class SupplierService {
     mail: string;
     phoneNumber: string;
     typeIngredient: string;
-    name: string;
+    fullName: string;
     bussinessName: string;
   }): Promise<Supplier> {
-    //crearProveedor - data = atributos
     const newSupplier = this.em.create(Supplier, data);
     await this.em.persistAndFlush(newSupplier);
     return newSupplier;
-  } //newSupplier = nuevoProveedornode -v
+  } 
 
   async findAllSupplier(): Promise<Supplier[] | null> {
     const supplierList = this.em.findAll(Supplier);
@@ -37,7 +35,7 @@ export class SupplierService {
 
   async updateSupplier(
     id: number, 
-    data: { companyName?: string; taxId?: string; mail?: string; phoneNumber?: string; typeIngredient?: string; name?: string; bussinessName?: string; }
+    data: { companyName?: string; taxId?: string; mail?: string; phoneNumber?: string; typeIngredient?: string; fullName?: string; bussinessName?: string; }
   ): Promise<Supplier | null> {
     const updatedSupplier = await this.em.findOne(Supplier, { id });
     if (updatedSupplier) {

@@ -5,6 +5,7 @@ import { orm, syncSchema } from './shared/db/orm.js'
 import { RequestContext } from '@mikro-orm/core'
 import { supplierRouter } from './routes/supplier.route.js';
 import { employeeRouter } from './routes/employee.route.js';
+import { clientRouter } from './routes/client.route.js';
 
 
 
@@ -15,9 +16,10 @@ app.use((req, res, next) => {
   RequestContext.create(orm.em, next);
 });
 
-app.use('/api/tables', tableRouter);
-app.use('/api/suppliers', supplierRouter);
-app.use('/api/employees', employeeRouter);
+app.use('/api/table', tableRouter);
+app.use('/api/supplier', supplierRouter);
+app.use('/api/employee', employeeRouter);
+app.use('/api/client',clientRouter);
 
 app.use((_, res) => {
   res.status(404).send({ message: 'Resource not found' });

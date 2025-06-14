@@ -10,9 +10,8 @@ import {
 
 export const supplierRouter = Router();
 
-supplierRouter.get('/', findAll);
-supplierRouter.get('/:id', findOne);
-supplierRouter.post('/', sanitizeSupplierInput, add);
-supplierRouter.put('/:id', sanitizeSupplierInput, update);
-supplierRouter.patch('/:id', sanitizeSupplierInput, update);
-supplierRouter.delete('/:id', remove);
+supplierRouter.post('/add', sanitizeSupplierInput, add);
+supplierRouter.get('/findAll', findAll);
+supplierRouter.get('/findOne/:id', findOne);
+supplierRouter.put('/update/:id', sanitizeSupplierInput, update);
+supplierRouter.delete('/remove/:id', remove);
