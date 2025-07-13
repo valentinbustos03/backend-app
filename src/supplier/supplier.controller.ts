@@ -43,7 +43,9 @@ async function findAll(req: Request, res: Response) {
     if (!supplierList) {
       res.status(404).json({ message: 'Supplier not found' });
     }
-    res.status(200).json({ message: 'Found all suppliers', data: supplierList });
+    else{
+      res.status(200).json({ message: 'Found all suppliers', data: supplierList });
+    }
   } catch (error: any) {
     res.status(500).json({ message: 'not found' });
   }
@@ -52,7 +54,7 @@ async function findAll(req: Request, res: Response) {
 async function findOne(req: Request, res: Response) {
   try {
     const id = req.params.id;
-    const supplier = await supplierService.findSupplierById(parseInt(id));
+    const supplier = await supplierService.findSupplierById(id);
     if (!supplier) {
       res.status(404).json({ message: 'Supplier not found' });
     }
@@ -65,7 +67,7 @@ async function findOne(req: Request, res: Response) {
 async function update(req: Request, res: Response) {
   try {
     const id = req.params.id;
-    const supplier = await supplierService.updateSupplier(parseInt(id), req.body.sanitizedInput);
+    const supplier = await supplierService.updateSupplier(id, req.body.sanitizedInput);
     if (!supplier) {
       res.status(404).send({ message: 'Supplier not found' });
     }
@@ -80,7 +82,7 @@ async function update(req: Request, res: Response) {
 async function remove(req: Request, res: Response) {
   try {
     const id = req.params.id;
-    const supplier = await supplierService.deleteSupplier(parseInt(id));
+    const supplier = await supplierService.deleteSupplier(id);
     if (!supplier) {
       res.status(404).send({ message: 'Supplier not found' });
     }

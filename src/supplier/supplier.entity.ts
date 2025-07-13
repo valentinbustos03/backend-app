@@ -1,11 +1,20 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import {
+  Cascade,
+  Collection,
+  Entity,
+  ManyToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import snowflake from 'snowflake-id';
+import { Ingredient } from '../ingredient/ingredient.entity.js';
 
-@Entity() 
+@Entity()
 export class Supplier {
-  @PrimaryKey({ nullable: false, unique: true}) 
-  id!: number;
+  @PrimaryKey({ nullable: false, unique: true })
+  id: string = snowflake();
 
-  @Property({ nullable: false }) 
+  @Property({ nullable: false })
   companyName!: string;
 
   @Property({ nullable: false })
@@ -13,12 +22,12 @@ export class Supplier {
 
   @Property({ nullable: false })
   mail!: string;
-  
-  @Property({ nullable: false})
+
+  @Property({ nullable: false })
   phoneNumber!: string;
 
-  @Property({ nullable: false }) 
-  typeIngredient!: string;
+  @Property({ nullable: false })
+  typeIngredient!: string; 
 
   @Property({ nullable: false })
   fullName!: string;
@@ -26,4 +35,8 @@ export class Supplier {
   @Property({ nullable: false })
   bussinessName!: string;
 
+  @ManyToMany(() => Ingredient, (ingredient) => ingredient.suppliers, {
+    cascade: [Cascade.ALL],
+  })
+  ingredients = new Collection<Ingredient>(this);
 }

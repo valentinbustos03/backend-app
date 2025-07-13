@@ -1,14 +1,21 @@
-import { Cascade, Collection, Entity, OneToMany, PrimaryKey, Property } from '@mikro-orm/core';
-import{Order} from '../order/order.entity.js';
+import {
+  Cascade,
+  Collection,
+  Entity,
+  OneToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { Order } from '../order/order.entity.js';
 
-@Entity() 
+@Entity()
 export class Client {
   @PrimaryKey({ nullable: false, unique: true })
-  dni!: number; 
+  dni!: number;
 
-  @OneToMany(()=> Order, (order) => order.client, {cascade: [Cascade.ALL]}) 
+  @OneToMany(() => Order, (order) => order.client, { cascade: [Cascade.ALL] })
   orderHistory = new Collection<Order>(this);
 
   @Property({ nullable: false })
-  penalty: number=0;
+  penalty: number = 0;
 }

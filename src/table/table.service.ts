@@ -20,12 +20,12 @@ export class TableService {
   } 
 
   async findAllTable(): Promise<Table[] | null> {
-    const tableList = this.em.findAll(Table);
+    const tableList = await this.em.find(Table, {});
     return tableList;
   }
 
   async findTableByCod(cod: string): Promise<Table | null> {
-    const table = this.em.findOne(Table, { cod });
+    const table = await this.em.findOne(Table, { cod });
     return table;
   }
 
@@ -36,7 +36,7 @@ export class TableService {
     const updatedTable = await this.em.findOne(Table, { cod });
     if (updatedTable) {
       this.em.assign(updatedTable, data);
-      this.em.flush();
+      await this.em.flush();
       return updatedTable;
     } else {
       return null;
@@ -46,7 +46,7 @@ export class TableService {
   async deleteTable(cod: string): Promise<Table | null> {
     const deletedTable = await this.em.findOne(Table, { cod });
     if (deletedTable) {
-      this.em.removeAndFlush(deletedTable);
+      await this.em.removeAndFlush(deletedTable);
       return deletedTable;
     } else {
       return null;

@@ -61,7 +61,10 @@ export class EmployeeService {
     }
   }
 
-  computeSalary(wH: number, pH: number){
-    return wH*pH;
+    private computeSalary(workedHours: number, priceHour: number): number {
+      if (workedHours < 0 || priceHour < 0) {
+          throw new Error('Invalid input for salary computation');
+      }
+      return Math.round((workedHours * priceHour) * 100) / 100; // Redondear a 2 decimales
   }
 }

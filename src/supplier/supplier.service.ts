@@ -9,7 +9,7 @@ export class SupplierService {
   }
 
   async createSupplier(data: {
-    id: number;
+    id: string;
     companyName: string;
     taxId: string;
     mail: string;
@@ -28,13 +28,13 @@ export class SupplierService {
     return supplierList;
   }
 
-  async findSupplierById(id: number): Promise<Supplier | null> {
+  async findSupplierById(id: string): Promise<Supplier | null> {
     const supplier = this.em.findOne(Supplier, { id });
     return supplier;
   }
 
   async updateSupplier(
-    id: number, 
+    id: string, 
     data: { companyName?: string; taxId?: string; mail?: string; phoneNumber?: string; typeIngredient?: string; fullName?: string; bussinessName?: string; }
   ): Promise<Supplier | null> {
     const updatedSupplier = await this.em.findOne(Supplier, { id });
@@ -47,7 +47,7 @@ export class SupplierService {
     }
   }
 
-  async deleteSupplier(id: number): Promise<Supplier | null> {
+  async deleteSupplier(id: string): Promise<Supplier | null> {
     const deletedSupplier = await this.em.findOne(Supplier, { id });
     if (deletedSupplier) {
       this.em.removeAndFlush(deletedSupplier);
