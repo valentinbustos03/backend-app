@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import { IngredientSchema, IngredientIdSchema } from './ingredient.schema.js';
 import { IngredientService } from './ingredient.service.js';
 import { orm } from '../shared/db/orm.js';
-import { id } from 'zod/locales';
 
 const ingredientService = new IngredientService(orm.em);
 

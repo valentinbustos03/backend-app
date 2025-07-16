@@ -1,10 +1,10 @@
 import {
-  Cascade,
   Collection,
   Entity,
-  ManyToMany,
   PrimaryKey,
   Property,
+  ReferenceKind,
+  ManyToMany,
 } from '@mikro-orm/core';
 import snowflake from 'snowflake-id';
 import { Ingredient } from '../ingredient/ingredient.entity.js';
@@ -27,7 +27,7 @@ export class Supplier {
   phoneNumber!: string;
 
   @Property({ nullable: false })
-  typeIngredient!: string; 
+  typeIngredient!: string;
 
   @Property({ nullable: false })
   fullName!: string;
@@ -35,8 +35,19 @@ export class Supplier {
   @Property({ nullable: false })
   bussinessName!: string;
 
-  @ManyToMany(() => Ingredient, (ingredient) => ingredient.suppliers, {
-    cascade: [Cascade.ALL],
+  //try 1
+  // @ManyToMany(() => Ingredient, (ingredient) => ingredient.suppliers, {
+  //   mappedBy: 'suppliers',
+  // })
+  // ingredients = new Collection<Ingredient>(this);
+
+  //try 2
+  // @Property({ type: ReferenceKind.MANY_TO_MANY })
+  // ingredients = new Collection<Ingredient>(this);
+  
+  //try 3 (working)
+  @ManyToMany(() => Ingredient, undefined, {
+    mappedBy: 'suppliers',
   })
   ingredients = new Collection<Ingredient>(this);
 }

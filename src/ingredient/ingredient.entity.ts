@@ -15,7 +15,7 @@ export class Ingredient {
   @PrimaryKey({ nullable: false, unique: true })
   id: string = snowflake();
 
-  @Property({nullable: false, unique: true})
+  @Property({ nullable: false, unique: true })
   cod!: string;
 
   @Property({ nullable: false })
@@ -26,19 +26,18 @@ export class Ingredient {
 
   @Property({ nullable: false })
   stock!: number;
-  
+
   @Property({ nullable: false })
   uniteOfMeasure!: string;
-  
+
   @Property({ nullable: false })
   origin!: string;
-  
+
   @Property({ nullable: false })
   stockLimit!: number;
-  
-  @ManyToMany(() =>Supplier, (supplier) => supplier.ingredients, {
-    cascade: [Cascade.ALL],
+
+  @ManyToMany(() => Supplier, (supplier) => supplier.ingredients, {
+    cascade: [Cascade.PERSIST],
   })
   suppliers = new Collection<Supplier>(this);
 }
-    
