@@ -1,8 +1,12 @@
-import { Entity, FloatType, Formula, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import snowflake from 'snowflake-id';
 
 @Entity()
 export class Employee {
   @PrimaryKey({ nullable: false, unique: true })
+  id: string = snowflake();
+
+  @Property({ nullable: false, unique: true })
   taxId!: string;
 
   @Property({ nullable: false })
@@ -11,13 +15,12 @@ export class Employee {
   @Property({ nullable: false })
   shift?: string;
 
-  @Property({ nullable: false, type:'decimal', precision: 10, scale: 2 })
+  @Property({ nullable: false, type: 'decimal', precision: 10, scale: 2 })
   workedHours!: number;
 
-  @Property({ nullable: false, type:'decimal', precision: 10, scale: 2})
+  @Property({ nullable: false, type: 'decimal', precision: 10, scale: 2 })
   priceHour!: number;
 
-  @Property({type:'decimal', precision: 10, scale: 2})
+  @Property({ type: 'decimal', precision: 10, scale: 2 })
   salary?: number;
-  
 }

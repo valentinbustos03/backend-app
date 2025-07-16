@@ -7,10 +7,14 @@ import {
   Property,
 } from '@mikro-orm/core';
 import { Order } from '../order/order.entity.js';
+import snowflake from 'snowflake-id';
 
 @Entity()
 export class Client {
   @PrimaryKey({ nullable: false, unique: true })
+  id: string = snowflake();
+
+  @Property({ nullable: false, unique: true })
   dni!: number;
 
   @OneToMany(() => Order, (order) => order.client, { cascade: [Cascade.ALL] })

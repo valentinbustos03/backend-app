@@ -8,7 +8,8 @@ export const IngredientSchema = z.object({
   uniteOfMeasure: z.string().min(1).trim(),
   origin: z.string().min(1).trim(),
   stockLimit: z.number().int().min(0),
-  suppliers: z.array(z.string().regex(/^\d+$/)),
+  suppliers: z.array(z.string().min(1).regex(/^\d+$/)),
+  dishes: z.array(z.string().min(1).regex(/^\d+$/)),
 });
 
 export const IngredientIdSchema = z.object({

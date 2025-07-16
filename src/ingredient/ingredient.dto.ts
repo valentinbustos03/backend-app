@@ -7,6 +7,7 @@ export interface CreateIngredientDto {
   origin: string;
   stockLimit: number;
   suppliers: string[];
+  dishes: string[];
 }
 
 export interface IngredientIdDto {

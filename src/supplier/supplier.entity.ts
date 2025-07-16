@@ -3,7 +3,6 @@ import {
   Entity,
   PrimaryKey,
   Property,
-  ReferenceKind,
   ManyToMany,
 } from '@mikro-orm/core';
 import snowflake from 'snowflake-id';
@@ -17,7 +16,7 @@ export class Supplier {
   @Property({ nullable: false })
   companyName!: string;
 
-  @Property({ nullable: false })
+  @Property({ nullable: false, unique: true})
   taxId!: string; //cuil/cuit
 
   @Property({ nullable: false })
@@ -44,7 +43,7 @@ export class Supplier {
   //try 2
   // @Property({ type: ReferenceKind.MANY_TO_MANY })
   // ingredients = new Collection<Ingredient>(this);
-  
+
   //try 3 (working)
   @ManyToMany(() => Ingredient, undefined, {
     mappedBy: 'suppliers',

@@ -9,6 +9,7 @@ import {
 
 import snowflake from 'snowflake-id';
 import { Supplier } from '../supplier/supplier.entity.js';
+import { Dish } from '../dish/dish.entity.js';
 
 @Entity()
 export class Ingredient {
@@ -40,4 +41,9 @@ export class Ingredient {
     cascade: [Cascade.PERSIST],
   })
   suppliers = new Collection<Supplier>(this);
+
+  @ManyToMany(() => Dish, undefined,{
+    mappedBy: 'ingredients',
+  })
+  dishes = new Collection<Dish>(this);
 }

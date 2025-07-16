@@ -1,32 +1,33 @@
-import { Entity, ManyToOne, PrimaryKey, Property, Rel } from "@mikro-orm/core";
-import { Client } from "../client/client.entity.js";
+import { Entity, ManyToOne, PrimaryKey, Property, Rel } from '@mikro-orm/core';
+import { Client } from '../client/client.entity.js';
+import snowflake from 'snowflake-id';
 
 @Entity()
-export class Order{
-  @PrimaryKey({nullable: false, unique: true})
-  orderId!: string
+export class Order {
+  @PrimaryKey({ nullable: false, unique: true })
+  orderId: string = snowflake();
 
   @Property()
   description?: string;
 
-  @Property({nullable: false})
+  @Property({ nullable: false })
   status!: string;
 
-  @Property({type:'datetime'})
+  @Property({ type: 'datetime' })
   startTime: Date = new Date();
 
-  @Property({type: 'datetime'})
+  @Property({ type: 'datetime' })
   estimatedEndTime!: Date; //calculado con respecto a los productos pedidos
 
-  @Property({type: 'datetime'})
+  @Property({ type: 'datetime' })
   endTime?: Date;
 
-  @Property({nullable: false})
+  @Property({ nullable: false })
   subtotal!: number; //calcular con el precio de los productos + iva + otros impuestos
 
-  @Property({nullable: false})
+  @Property({ nullable: false })
   orderItems!: string;
 
-  @ManyToOne(()=> Client, {nullable: false})
+  @ManyToOne(() => Client, { nullable: false })
   client!: Rel<Client>;
 }

@@ -1,15 +1,16 @@
-import { Request, Response } from 'express';
-import { IngredientSchema, IngredientIdSchema } from './ingredient.schema.js';
-import { IngredientService } from './ingredient.service.js';
-import { orm } from '../shared/db/orm.js';
+import { Request, Response } from "express";
+import { DishSchema, DishIdSchema } from "./dish.schema.js";
+import { DishService } from "./dish.service.js";
+import { orm } from "../shared/db/orm.js";
+import { IngredientIdSchema } from "../ingredient/ingredient.schema.js";
 
-const ingredientService = new IngredientService(orm.em);
+const dishService = new DishService(orm.em);
 
 async function add(req: Request, res: Response) {
-  const ingredientInput = await IngredientSchema.safeParseAsync(req.body);
+  const ingredientInput = await DishSchema.safeParseAsync(req.body);
   if (ingredientInput.success) {
     try {
-      const ingredient = await ingredientService.createIngredient(
+      const ingredient = await dishService.createDish(
         ingredientInput.data
       );
       res.status(201).json({ message: 'Ingredient created', data: ingredient });
@@ -26,7 +27,7 @@ async function add(req: Request, res: Response) {
 }
 
 async function findAll(req: Request, res: Response) {
-  const ingredientList = await ingredientService.findAllIngredients();
+  const ingredientList = await dishService.findAllDishes();
   try {
     if (ingredientList) {
       res
@@ -45,7 +46,7 @@ async function findOne(req: Request, res: Response) {
   if (idInput.success) {
     //validacion de que el id ES UN SNOWFLAKE ID
     try {
-      const ingredient = await ingredientService.findIngredientById(
+      const ingredient = await dishService.findDishById(
         idInput.data
       );
       if (ingredient) {
@@ -66,10 +67,10 @@ async function findOne(req: Request, res: Response) {
 
 async function update(req: Request, res: Response) {
   const idInput = await IngredientIdSchema.safeParseAsync(req.body.id);
-  const ingredientInput = await IngredientSchema.safeParseAsync(req.body);
+  const ingredientInput = await DishSchema.safeParseAsync(req.body);
   if (idInput.success && ingredientInput.success) {
     try {
-      const ingredient = await ingredientService.updateIngredient(
+      const ingredient = await dishService.updateDish(
         idInput.data,
         ingredientInput.data
       );
@@ -99,7 +100,7 @@ async function remove(req: Request, res: Response) {
   const idInput = await IngredientIdSchema.safeParseAsync(req.body.id);
   if (idInput.success) {
     try {
-      const ingredient = await ingredientService.deleteIngredient(idInput.data);
+      const ingredient = await dishService.deleteDish(idInput.data);
       res.status(200).json({
         message: 'Ingredient deleted successfully',
       });
