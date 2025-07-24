@@ -21,7 +21,7 @@ export class SupplierService {
     const newSupplier = this.em.create(Supplier, data);
     await this.em.persistAndFlush(newSupplier);
     return newSupplier;
-  } 
+  }
 
   async findAllSupplier(): Promise<Supplier[] | null> {
     const supplierList = this.em.findAll(Supplier);
@@ -34,8 +34,16 @@ export class SupplierService {
   }
 
   async updateSupplier(
-    id: string, 
-    data: { companyName?: string; taxId?: string; mail?: string; phoneNumber?: string; typeIngredient?: string; fullName?: string; bussinessName?: string; }
+    id: string,
+    data: {
+      companyName?: string;
+      taxId?: string;
+      mail?: string;
+      phoneNumber?: string;
+      typeIngredient?: string;
+      fullName?: string;
+      bussinessName?: string;
+    }
   ): Promise<Supplier | null> {
     const updatedSupplier = await this.em.findOne(Supplier, { id });
     if (updatedSupplier) {

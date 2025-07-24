@@ -1,5 +1,7 @@
 import { Client } from '../client/client.entity.js';
-import { EntityManager } from '@mikro-orm/core';
+import { Collection, EntityManager, Reference, wrap } from '@mikro-orm/core';
+import { ClientIdDto, CreateClientDto, UpdateClientDto } from './client.dto.js';
+import { Order } from '../order/order.entity.js';
 
 export class ClientService {
   private readonly em: EntityManager;
@@ -8,15 +10,11 @@ export class ClientService {
     this.em = em;
   }
 
-  async createClient(data: {
-    dni: number;
-    orderHistory: [];
-    penalty: number;
-  }): Promise<Client> {
+  async createClient(data: CreateClientDto): Promise<Client> {
     const newClient = this.em.create(Client, data);
     await this.em.persistAndFlush(newClient);
     return newClient;
-  } 
+  }
 
   async findAllClient(): Promise<Client[] | null> {
     const ClientList = this.em.findAll(Client);
@@ -24,17 +22,34 @@ export class ClientService {
   }
 
   async findClientByDni(dni: number): Promise<Client | null> {
-    const client = this.em.findOne(Client,{dni});
+    const client = this.em.findOne(Client,  {dni} );
+    return client;
+  }
+
+  async findClientById(id: ClientIdDto): Promise<Client | null> {
+    const client = this.em.findOne(Client, id);
     return client;
   }
 
   async updateClient(
-    dni: number,
-    data: {orderHistory: []; penalty: number; }
+    id: ClientIdDto,
+    data: UpdateClientDto
   ): Promise<Client | null> {
-    const updatedClient = await this.em.findOne(Client, { dni });
+    const updatedClient = await this.em.findOne(Client, id);
     if (updatedClient) {
-      this.em.assign(updatedClient, data);
+
+        if (data.orderHistory) {
+          const orders = await this.em.find(Order, {
+            orderId: { $in: data.orderHistory },
+          });
+          updatedClient.orderHistory.set(orders);
+        }
+
+
+      this.em.assign(updatedClient, {
+        dni: data.dni,
+        penalty: data.penalty,
+      });
       this.em.flush();
       return updatedClient;
     } else {
@@ -42,8 +57,8 @@ export class ClientService {
     }
   }
 
-  async deleteClient(dni: number): Promise<Client | null> {
-    const deletedClient = await this.em.findOne(Client, { dni });
+  async deleteClient(id: ClientIdDto): Promise<Client | null> {
+    const deletedClient = await this.em.findOne(Client, id);
     if (deletedClient) {
       this.em.removeAndFlush(deletedClient);
       return deletedClient;

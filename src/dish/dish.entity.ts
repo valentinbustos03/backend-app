@@ -30,7 +30,7 @@ export class Dish {
   price!: number;
 
   @Property()
-  calification!: number;
+  calification?: number;
 
   @ManyToMany(() => Ingredient, (ingredient) => ingredient.dishes, {
     eager: true,

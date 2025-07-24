@@ -3,6 +3,7 @@ import {
   Collection,
   Entity,
   OneToMany,
+  OptionalProps,
   PrimaryKey,
   Property,
 } from '@mikro-orm/core';
@@ -11,15 +12,21 @@ import snowflake from 'snowflake-id';
 
 @Entity()
 export class Client {
+
+  //[OptionalProps]?: 'createdAt' | 'updatedAt';
+
   @PrimaryKey({ nullable: false, unique: true })
   id: string = snowflake();
 
   @Property({ nullable: false, unique: true })
   dni!: number;
 
-  @OneToMany(() => Order, (order) => order.client, { cascade: [Cascade.ALL] })
-  orderHistory = new Collection<Order>(this);
-
-  @Property({ nullable: false })
+  @Property()
   penalty: number = 0;
+
+  @OneToMany(() => Order, (order) => order.client, {
+    mappedBy: 'client',
+    cascade: [Cascade.REMOVE],
+  })
+  orderHistory = new Collection<Order>(this);
 }

@@ -1,88 +1,134 @@
 import { Request, Response, NextFunction } from 'express';
 import { orm } from '../shared/db/orm.js';
 import { ClientService } from '../client/client.service.js';
+import { ClientSchema, ClientIdSchema, ClientDniSchema } from './client.schema.js';
 
 const clientService = new ClientService(orm.em);
 
-//API Sanitize
-function sanitizeClientInput(req: Request, res: Response, next: NextFunction) {
-  req.body.sanitizedInput = {
-    dni: parseInt(req.body.dni),
-    orderHistory: req.body.orderHistory,
-    penalty: req.body.penalty,
-  
-  };
-  Object.keys(req.body.sanitizedInput).forEach((key) => {
-    if (req.body.sanitizedInput[key] === undefined) {
-      delete req.body.sanitizedInput[key];
-    }
-  });
-
-  next();
-}
-
-//CRUD
 async function add(req: Request, res: Response) {
-  try {
-    const input = req.body.sanitizedInput;
-    const clientInput = await clientService.createClient(input);
-    res.status(201).json({ message: 'Client created', data: clientInput });
-  } catch (erro: any) {
-    res.status(500).json({ message: 'Client can not be created' });
+  const clientInput = await ClientSchema.safeParseAsync(req.body);
+  if (clientInput.success) {
+    try {
+      const client = await clientService.createClient(
+        clientInput.data
+      );
+      res.status(201).json({ message: 'Client created', data: client });
+    } catch (error: any) {
+      res
+        .status(500)
+        .json({ message: 'Error creating client', error: error.message });
+    }
+  } else {
+    res
+      .status(400)
+      .json({ message: 'Validation error', error: clientInput.error });
   }
 }
 
 async function findAll(req: Request, res: Response) {
+  const clientList = await clientService.findAllClient();
   try {
-    const clientList = await clientService.findAllClient();
-    if (!clientList) {
-      res.status(404).json({ message: 'Client not found' });
+    if (clientList) {
+      res
+        .status(200)
+        .json({ message: 'Found all clients', data: clientList });
+    } else {
+      res.status(404).json({ message: 'Clients not found' });
     }
-    res.status(200).json({ message: 'Found all clients', data: clientList });
   } catch (error: any) {
-    res.status(500).json({ message: 'not found' });
+    res.status(500).json({ error: error.message });
   }
 }
 
-async function findOne(req: Request, res: Response) {
-  try {
-    const dni = parseInt(req.params.dni);
-    const client = await clientService.findClientByDni(dni);  
-    if (!client) {
-      res.status(404).json({ message: 'Client not found' });
+async function findOneById(req: Request, res: Response) {
+  const idInput = await ClientIdSchema.safeParseAsync(req.body.id);
+  if (idInput.success) {
+    //validacion de que el id ES UN SNOWFLAKE ID
+    try {
+      const client = await clientService.findClientById(
+        idInput.data
+      );
+      if (client) {
+        //validacion de que el id EXISTE EN LA BD
+        res.status(200).json({ message: 'Client found', data: client }); //EXISTE
+      } else {
+        res
+          .status(404)
+          .json({ message: 'Client not found', data: client }); //NO EXISTE
+      }
+    } catch (error: any) {
+      res.status(500).json({ error: error.message }); //SERVER ERROR
     }
-    res.status(200).json({ message: 'client found', data: client });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+  } else {
+    res.status(400).json({ message: 'Validation error', error: idInput.error }); //FALLA VALIDACION
+  }
+}
+
+async function findOneByDni(req: Request, res: Response) {
+  const dniInput = await ClientDniSchema.safeParseAsync(req.body.dni);
+  if (dniInput.success) {
+    //validacion de que el id ES UN SNOWFLAKE ID
+    try {
+      const client = await clientService.findClientByDni(dniInput.data.dni);
+      if (client) {
+        //validacion de que el id EXISTE EN LA BD
+        res.status(200).json({ message: 'Client found', data: client }); //EXISTE
+      } else {
+        res.status(404).json({ message: 'Client not found', data: client }); //NO EXISTE
+      }
+    } catch (error: any) {
+      res.status(500).json({ error: error.message }); //SERVER ERROR
+    }
+  } else {
+    res.status(400).json({ message: 'Validation error', error: dniInput.error }); //FALLA VALIDACION
   }
 }
 
 async function update(req: Request, res: Response) {
-  try {
-    const dni = parseInt(req.params.dni);
-    const client = await clientService.updateClient(dni, req.body.sanitizedInput);
-    if (!client) {
-      res.status(404).send({ message: 'Client not found' });
+  const idInput = await ClientIdSchema.safeParseAsync(req.body.id);
+  const clientInput = await ClientSchema.safeParseAsync(req.body);
+  if (idInput.success && clientInput.success) {
+    try {
+      const client = await clientService.updateClient(
+        idInput.data,
+        clientInput.data
+      );
+      if (client) {
+        res.status(200).json({
+          message: 'Client updated successfully',
+          data: client,
+        });
+      } else {
+        res
+          .status(404)
+          .json({ message: 'Client not found', data: client });
+      }
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
-    res
-      .status(200)
-      .send({ message: 'Client updated successfully', data: client });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+  } else {
+    res.status(400).json({
+      message: 'Validation error',
+      error1: idInput.error,
+      error2: clientInput.error,
+    });
   }
 }
 
 async function remove(req: Request, res: Response) {
-  try {
-    const dni = parseInt(req.params.dni);
-    const client = await clientService.deleteClient(dni);
-    if (!client) {
-      res.status(404).send({ message: 'Client not found' });
+  const idInput = await ClientIdSchema.safeParseAsync(req.body.id);
+  if (idInput.success) {
+    try {
+      await clientService.deleteClient(idInput.data);
+      res.status(200).json({
+        message: 'Client deleted successfully',
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
-    res.status(200).send({ message: 'Client deleted successfully' });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+  } else {
+    res.status(400).json({ message: 'Validation error', error: idInput.error });
   }
 }
 
-export { sanitizeClientInput, findAll, findOne, add, update, remove };
+export {add, findAll, findOneById, findOneByDni, update, remove};

@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import {
-  sanitizeClientInput,
   findAll,
-  findOne,
+  findOneById,
+  findOneByDni,
   add,
   update,
   remove,
@@ -10,8 +10,9 @@ import {
 
 export const clientRouter = Router();
 
-clientRouter.post('/add', sanitizeClientInput, add);
+clientRouter.post('/add', add);
 clientRouter.get('/findAll', findAll);
-clientRouter.get('/findOne/:dni', findOne);
-clientRouter.put('/update/:dni', sanitizeClientInput, update);
-clientRouter.delete('/remove/:dni', remove);
+clientRouter.get('/findOne/:dni', findOneByDni);
+clientRouter.get('/findOne/:id', findOneById);
+clientRouter.put('/update/:id', update);
+clientRouter.delete('/remove/:id', remove);
