@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import {
-  sanitizeEmployeeInput,
   findAll,
-  findOne,
+  findOneById,
+  findOneByTaxId,
   add,
   update,
   remove,
@@ -10,8 +10,9 @@ import {
 
 export const employeeRouter = Router();
 
-employeeRouter.post('/add',sanitizeEmployeeInput, add);
+employeeRouter.post('/add', add);
 employeeRouter.get('/findAll', findAll);
-employeeRouter.get('/findOne/:taxId', findOne);
-employeeRouter.put('/update/:taxId',sanitizeEmployeeInput, update);
-employeeRouter.delete('/remove/:taxId', remove);
+employeeRouter.get('/findOne/:taxId', findOneByTaxId);
+employeeRouter.get('/findOne/:id', findOneById);
+employeeRouter.put('/update/:id', update);
+employeeRouter.delete('/remove/:id', remove);

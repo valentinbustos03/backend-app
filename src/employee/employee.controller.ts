@@ -1,100 +1,134 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { EmployeeService } from '../employee/employee.service.js';
+import {
+  EmployeeSchema,
+  EmployeeIdSchema,
+  EmployeeTaxIdSchema,
+} from './employee.schema.js';
 import { orm } from '../shared/db/orm.js';
 
 const employeeService = new EmployeeService(orm.em);
 
-//API Sanitize
-function sanitizeEmployeeInput(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  req.body.sanitizedInput = {
-    taxId: req.body.taxId,
-    companyName: req.body.companyName,
-    shift: req.body.shift,
-    workedHours: parseFloat(req.body.workedHours),
-    priceHour: parseFloat(req.body.priceHour),
-  };
-
-  Object.keys(req.body.sanitizedInput).forEach((key) => {
-    if (req.body.sanitizedInput[key] === undefined) {
-      delete req.body.sanitizedInput[key];
-    }
-  });
-
-  next();
-}
-
-//CRUD
-
 async function add(req: Request, res: Response) {
-  try {
-    const input = req.body.sanitizedInput;
-    const employeeInput = await employeeService.createEmployee(input);
-    res.status(201).json({ message: 'Employee created', data: employeeInput });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+  const employeeInput = await EmployeeSchema.safeParseAsync(req.body);
+  if (employeeInput.success) {
+    try {
+      const employee = await employeeService.createEmployee(employeeInput.data);
+      res.status(201).json({ message: 'Employee created', data: employee });
+    } catch (error: any) {
+      res
+        .status(500)
+        .json({ message: 'Error creating employee', error: error.message });
+    }
+  } else {
+    res
+      .status(400)
+      .json({ message: 'Validation error', error: employeeInput.error });
   }
 }
 
 async function findAll(req: Request, res: Response) {
+  const employeeList = await employeeService.findAllEmployee();
   try {
-    const employeeList = await employeeService.findAllEmployee();
-    if (!employeeList) {
-      res.status(404).json({ message: 'Employee not found' });
+    if (employeeList) {
+      res
+        .status(200)
+        .json({ message: 'Found all employees', data: employeeList });
+    } else {
+      res.status(404).json({ message: 'Employees not found' });
     }
-    res
-      .status(200)
-      .json({ message: 'Found all employees', data: employeeList });
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
   }
 }
 
-async function findOne(req: Request, res: Response) {
-  try {
-    const taxId = req.params.taxId;
-    const employee = await employeeService.findEmployeeByTaxId(taxId);
-    if (!employee) {
-      res.status(404).json({ message: 'Employee not found' });
+async function findOneById(req: Request, res: Response) {
+  const idInput = await EmployeeIdSchema.safeParseAsync(req.body.id);
+  if (idInput.success) {
+    //validacion de que el id ES UN SNOWFLAKE ID
+    try {
+      const employee = await employeeService.findEmployeeById(idInput.data);
+      if (employee) {
+        //validacion de que el id EXISTE EN LA BD
+        res.status(200).json({ message: 'Employee found', data: employee }); //EXISTE
+      } else {
+        res.status(404).json({ message: 'Employee not found', data: employee }); //NO EXISTE
+      }
+    } catch (error: any) {
+      res.status(500).json({ error: error.message }); //SERVER ERROR
     }
-    res.status(200).json({ message: 'found employee', data: employee });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+  } else {
+    res.status(400).json({ message: 'Validation error', error: idInput.error }); //FALLA VALIDACION
+  }
+}
+
+async function findOneByTaxId(req: Request, res: Response) {
+  const taxIdInput = await EmployeeTaxIdSchema.safeParseAsync(req.body.taxId);
+  if (taxIdInput.success) {
+    //validacion de que el id ES UN SNOWFLAKE ID
+    try {
+      const employee = await employeeService.findEmployeeByTaxId(
+        taxIdInput.data.taxId
+      );
+      if (employee) {
+        //validacion de que el id EXISTE EN LA BD
+        res.status(200).json({ message: 'Employee found', data: employee }); //EXISTE
+      } else {
+        res.status(404).json({ message: 'Employee not found', data: employee }); //NO EXISTE
+      }
+    } catch (error: any) {
+      res.status(500).json({ error: error.message }); //SERVER ERROR
+    }
+  } else {
+    res
+      .status(400)
+      .json({ message: 'Validation error', error: taxIdInput.error }); //FALLA VALIDACION
   }
 }
 
 async function update(req: Request, res: Response) {
-  try {
-    const taxId = req.params.taxId;
-    const employee = await employeeService.updateEmployee(
-      taxId,
-      req.body.sanitizedInput
-    );
-    if (!employee) {
-      res.status(404).send({ message: 'Employee not found' });
+  const idInput = await EmployeeIdSchema.safeParseAsync(req.body.id);
+  const employeeInput = await EmployeeSchema.safeParseAsync(req.body);
+  if (idInput.success && employeeInput.success) {
+    try {
+      const employee = await employeeService.updateEmployee(
+        idInput.data,
+        employeeInput.data
+      );
+      if (employee) {
+        res.status(200).json({
+          message: 'Employee updated successfully',
+          data: employee,
+        });
+      } else {
+        res.status(404).json({ message: 'Employee not found', data: employee });
+      }
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
-    res
-      .status(200)
-      .send({ message: 'Employee updated successfully', data: employee });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+  } else {
+    res.status(400).json({
+      message: 'Validation error',
+      error1: idInput.error,
+      error2: employeeInput.error,
+    });
   }
 }
 
 async function remove(req: Request, res: Response) {
-  try {
-    const taxId = req.params.taxId;
-    const employee = await employeeService.deleteEmployee(taxId);
-    if (!employee) {
-      res.status(404).send({ message: 'Employee not found' });
+  const idInput = await EmployeeIdSchema.safeParseAsync(req.body.id);
+  if (idInput.success) {
+    try {
+      await employeeService.deleteEmployee(idInput.data);
+      res.status(200).json({
+        message: 'Employee deleted successfully',
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
-    res.status(200).send({ message: 'Employee deleted successfully' });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+  } else {
+    res.status(400).json({ message: 'Validation error', error: idInput.error });
   }
 }
 
-export { sanitizeEmployeeInput, findAll, findOne, add, update, remove };
+export { findAll, findOneById, findOneByTaxId, add, update, remove };

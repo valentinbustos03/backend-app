@@ -41,7 +41,7 @@ export class IngredientService {
       return null;
     }
   }
-  async deleteIngredient(id: IngredientIdDto): Promise<void> {
+  async deleteIngredient(id: IngredientIdDto) {
     const ingredient = await this.em.findOne(Ingredient, id);
     if (ingredient) {
       await this.em.removeAndFlush(ingredient);

@@ -34,19 +34,9 @@ export class Supplier {
   @Property({ nullable: false })
   bussinessName!: string;
 
-  //try 1
-  // @ManyToMany(() => Ingredient, (ingredient) => ingredient.suppliers, {
-  //   mappedBy: 'suppliers',
-  // })
-  // ingredients = new Collection<Ingredient>(this);
-
-  //try 2
-  // @Property({ type: ReferenceKind.MANY_TO_MANY })
-  // ingredients = new Collection<Ingredient>(this);
-
   //try 3 (working)
-  @ManyToMany(() => Ingredient, undefined, {
-    mappedBy: 'suppliers',
+  @ManyToMany(() => Ingredient, ingredient => ingredient.suppliers, {
+    //mappedBy: 'suppliers',
   })
   ingredients = new Collection<Ingredient>(this);
 }

@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import {
-  sanitizeSupplierInput,
   findAll,
-  findOne,
+  findOneById,
+  findOneByTaxId,
   add,
   update,
   remove,
@@ -10,8 +10,9 @@ import {
 
 export const supplierRouter = Router();
 
-supplierRouter.post('/add', sanitizeSupplierInput, add);
+supplierRouter.post('/add', add);
 supplierRouter.get('/findAll', findAll);
-supplierRouter.get('/findOne/:id', findOne);
-supplierRouter.put('/update/:id', sanitizeSupplierInput, update);
+supplierRouter.get('/findOne/:taxId', findOneByTaxId);
+supplierRouter.get('/findOne/:id', findOneById);
+supplierRouter.put('/update/:id', update);
 supplierRouter.delete('/remove/:id', remove);

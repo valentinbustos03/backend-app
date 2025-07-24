@@ -45,7 +45,6 @@ export class ClientService {
           updatedClient.orderHistory.set(orders);
         }
 
-
       this.em.assign(updatedClient, {
         dni: data.dni,
         penalty: data.penalty,
@@ -57,13 +56,10 @@ export class ClientService {
     }
   }
 
-  async deleteClient(id: ClientIdDto): Promise<Client | null> {
+  async deleteClient(id: ClientIdDto){
     const deletedClient = await this.em.findOne(Client, id);
     if (deletedClient) {
       this.em.removeAndFlush(deletedClient);
-      return deletedClient;
-    } else {
-      return null;
     }
   }
 

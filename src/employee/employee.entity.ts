@@ -13,7 +13,7 @@ export class Employee {
   companyName!: string;
 
   @Property({ nullable: false })
-  shift?: string;
+  shift!: string;
 
   @Property({ nullable: false, type: 'decimal', precision: 10, scale: 2 })
   workedHours!: number;

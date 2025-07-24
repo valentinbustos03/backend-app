@@ -36,10 +36,10 @@ export class DishService {
     }
   }
 
-  async deleteDish(id: DishIdDto): Promise<void> {
-    const dish = await this.em.findOne(Dish, id);
-    if (dish) {
-      await this.em.removeAndFlush(dish);
+  async deleteDish(id: DishIdDto){
+    const deletedDish = await this.em.findOne(Dish, id);
+    if (deletedDish) {
+      await this.em.removeAndFlush(deletedDish);
     }
   }
 }
