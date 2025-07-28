@@ -7,119 +7,126 @@ const tableService = new TableService(orm.em);
 
 async function add(req: Request, res: Response) {
   const tableInput = await TableSchema.safeParseAsync(req.body);
-  if (tableInput.success) {
-    try {
-      const table = await tableService.createTable(tableInput.data);
-      res.status(201).json({ message: 'Table created', data: table });
-    } catch (error: any) {
+  if (!tableInput.success) {
       res
-        .status(500)
-        .json({ message: 'Error creating table', error: error.message });
-    }
-  } else {
+    .status(400)
+    .json({ message: 'Validation error', error: tableInput.error });
+  }
+  try {
+    const table = await tableService.createTable(tableInput.data);
     res
-      .status(400)
-      .json({ message: 'Validation error', error: tableInput.error });
+      .status(201)
+      .json({ message: 'Table created', data: table });
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ message: 'Error creating table', error: error.message });
   }
 }
 
 async function findAll(req: Request, res: Response) {
-  const tableList = await tableService.findAllTable();
   try {
-    if (tableList) {
-      res.status(200).json({ message: 'Found all tables', data: tableList });
-    } else {
-      res.status(404).json({ message: 'Tables not found' });
-    }
+    const tableList = await tableService.findAllTable();
+    res
+      .status(200)
+      .json({ message: 'Found all tables', data: tableList });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    res
+      .status(500)
+      .json({ error: error.message });
   }
 }
 
 async function findOneById(req: Request, res: Response) {
   const idInput = await TableIdSchema.safeParseAsync(req.body.id);
-  if (idInput.success) {
+  if (!idInput.success) {
+    res
+      .status(400)
+      .json({ message: 'Validation error', error: idInput.error }); //FALLA VALIDACION
+  }
     //validacion de que el id ES UN SNOWFLAKE ID
-    try {
-      const table = await tableService.findTableById(idInput.data);
-      if (table) {
-        //validacion de que el id EXISTE EN LA BD
-        res.status(200).json({ message: 'Table found', data: table }); //EXISTE
-      } else {
-        res.status(404).json({ message: 'Table not found', data: table }); //NO EXISTE
-      }
-    } catch (error: any) {
-      res.status(500).json({ error: error.message }); //SERVER ERROR
-    }
-  } else {
-    res.status(400).json({ message: 'Validation error', error: idInput.error }); //FALLA VALIDACION
+  try {
+    const table = await tableService.findTableById(idInput.data);
+      //validacion de que el id EXISTE EN LA BD
+    res
+      .status(200)
+      .json({ message: 'Table found', data: table }); //EXISTE
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ error: error.message }); //SERVER ERROR
   }
 }
 
 async function findOneByCod(req: Request, res: Response) {
   const codInput = await TableCodSchema.safeParseAsync(req.body.cod);
-  if (codInput.success) {
-    //validacion de que el id ES UN SNOWFLAKE ID
-    try {
-      const table = await tableService.findTableByCod(codInput.data.cod);
-      if (table) {
-        //validacion de que el id EXISTE EN LA BD
-        res.status(200).json({ message: 'Table found', data: table }); //EXISTE
-      } else {
-        res.status(404).json({ message: 'Table not found', data: table }); //NO EXISTE
-      }
-    } catch (error: any) {
-      res.status(500).json({ error: error.message }); //SERVER ERROR
-    }
-  } else {
+  if (!codInput.success) {
     res
       .status(400)
       .json({ message: 'Validation error', error: codInput.error }); //FALLA VALIDACION
+  }
+    //validacion de que el id ES UN SNOWFLAKE ID
+  try {
+    const table = await tableService.findTableByCod(codInput.data.cod);
+      //validacion de que el id EXISTE EN LA BD
+    res
+      .status(200)
+      .json({ message: 'Table found', data: table }); //EXISTE
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ error: error.message }); //SERVER ERROR
   }
 }
 
 async function update(req: Request, res: Response) {
   const idInput = await TableIdSchema.safeParseAsync(req.body.id);
   const tableInput = await TableSchema.safeParseAsync(req.body);
-  if (idInput.success && tableInput.success) {
-    try {
-      const table = await tableService.updateTable(
-        idInput.data,
-        tableInput.data
-      );
-      if (table) {
-        res.status(200).json({
-          message: 'Table updated successfully',
-          data: table,
-        });
-      } else {
-        res.status(404).json({ message: 'Table not found', data: table });
-      }
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  } else {
-    res.status(400).json({
+  if (!idInput.success && !tableInput.success) {
+    res
+      .status(400)
+      .json({
       message: 'Validation error',
       error1: idInput.error,
       error2: tableInput.error,
     });
   }
+  try {
+    const table = await tableService.updateTable(
+      idInput.data,
+      tableInput.data
+    );
+    res
+      .status(200)
+      .json({
+        message: 'Table updated successfully',
+        data: table,
+    });
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ error: error.message });
+  }
 }
 
 async function remove(req: Request, res: Response) {
   const idInput = await TableIdSchema.safeParseAsync(req.body.id);
-  if (idInput.success) {
-    try {
-      await tableService.deleteTable(idInput.data);
-      res.status(200).json({
-        message: 'Table deleted successfully',
-      });
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  } else {
-    res.status(400).json({ message: 'Validation error', error: idInput.error });
+  if (!idInput.success) {
+    res
+      .status(400)
+      .json({ message: 'Validation error', error: idInput.error });
+  }
+  try {
+    await tableService.deleteTable(idInput.data);
+    res
+      .status(200)
+      .json({
+      message: 'Table deleted successfully',
+    });
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ error: error.message });
   }
 }
 
