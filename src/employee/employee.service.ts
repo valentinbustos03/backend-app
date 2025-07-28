@@ -1,5 +1,6 @@
-import { Employee } from '../entities/employee.entity.js';
+import { Employee } from '../employee/employee.entity.js';
 import { EntityManager} from '@mikro-orm/core';
+import { CreateEmployeeDto, EmployeeIdDto, UpdateEmployeeDto } from '../employee/employee.dto.js';
 
 export class EmployeeService {
   private readonly em: EntityManager;
@@ -8,13 +9,7 @@ export class EmployeeService {
     this.em = em;
   }
 
-  async createEmployee(data: {
-    taxId: string;
-    companyName: string;
-    shift: string;
-    workedHours: number;
-    priceHour: number;
-  }): Promise<Employee> {
+  async createEmployee(data: CreateEmployeeDto): Promise<Employee> {
     const newEmployee = this.em.create(Employee, data);
     newEmployee.salary = this.computeSalary(data.workedHours,data.priceHour)
     await this.em.persistAndFlush(newEmployee);
@@ -30,17 +25,17 @@ export class EmployeeService {
     const employee = this.em.findOne(Employee, { taxId });
     return employee;
   }
+ 
+  async findEmployeeById(id: EmployeeIdDto): Promise<Employee | null> {
+    const employee = this.em.findOne(Employee,  id );
+    return employee;
+  }
 
   async updateEmployee(
-    taxId: string,
-    data: {
-      companyName: string;
-      shift: string;
-      workedHours: number;
-      priceHour: number;
-    }
+    id: EmployeeIdDto,
+    data: UpdateEmployeeDto
   ): Promise<Employee | null> {
-    const updatedEmployee = await this.em.findOne(Employee, { taxId });
+    const updatedEmployee = await this.em.findOne(Employee, id);
     if (updatedEmployee) {
       this.em.assign(updatedEmployee, data);
       updatedEmployee.salary = this.computeSalary(data.workedHours,data.priceHour)
@@ -51,17 +46,17 @@ export class EmployeeService {
     }
   }
 
-  async deleteEmployee(taxId: string): Promise<Employee | null> {
-    const deletedEmployee = await this.em.findOne(Employee, { taxId });
+  async deleteEmployee(id: EmployeeIdDto) {
+    const deletedEmployee = await this.em.findOne(Employee, id);
     if (deletedEmployee) {
       this.em.removeAndFlush(deletedEmployee);
-      return deletedEmployee;
-    } else {
-      return null;
     }
   }
 
-  computeSalary(wH: number, pH: number){
-    return wH*pH;
+    private computeSalary(workedHours: number, priceHour: number): number {
+      if (workedHours < 0 || priceHour < 0) {
+          throw new Error('Invalid input for salary computation');
+      }
+      return Math.round((workedHours * priceHour) * 100) / 100; // Redondear a 2 decimales
   }
 }
