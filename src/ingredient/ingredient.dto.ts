@@ -1,3 +1,6 @@
+import { Dish } from "../dish/dish.entity.js";
+import { Supplier } from "../supplier/supplier.entity.js";
+
 export interface CreateIngredientDto {
   cod: string;
   name: string;
@@ -6,8 +9,7 @@ export interface CreateIngredientDto {
   uniteOfMeasure: string;
   origin: string;
   stockLimit: number;
-  suppliers: string[];
-  dishes: string[];
+  suppliers: Partial<Supplier>[];
 }
 
 export interface IngredientIdDto {

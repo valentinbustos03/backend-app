@@ -2,7 +2,7 @@ import z from 'zod';
 
 export const ClientSchema = z.object({
   dni: z.number().int().min(1),
-  orderHistory: z.array(z.string().min(1).regex(/^\d+$/)),
+  orderHistory: z.object(z.array(z.string().min(1).regex(/^\d+$/))), //MODIFICAR CUANDO ESTE 'ORRDER' HECHO
   penalty: z.number().int().min(0).default(0),
 });
 

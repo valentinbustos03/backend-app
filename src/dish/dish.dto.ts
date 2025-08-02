@@ -1,3 +1,5 @@
+import { Ingredient } from '../ingredient/ingredient.entity.js';
+
 export interface CreateDishDto {
   cod: string;
   name: string;
@@ -5,7 +7,8 @@ export interface CreateDishDto {
   picture?: string; //usar Cloudinary
   price: number;
   calification: number;
-  ingredients: string[]; // Array de IDs de ingredientes
+  ingredients: Partial<Ingredient>[]; // Array de IDs de ingredientes
+  //chef: Partial<Chef>;
 }
 
 export interface DishIdDto {

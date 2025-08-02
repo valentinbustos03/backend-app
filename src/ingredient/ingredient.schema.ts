@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SupplierIdSchema,  } from '../supplier/supplier.schema.js';
 
 const SnowflakeId = z.string().min(1).regex(/^\d+$/, 'ID inválido');
 
@@ -10,8 +11,7 @@ export const IngredientSchema = z.object({
   uniteOfMeasure: z.string().min(1).trim(),
   origin: z.string().min(1).trim(),
   stockLimit: z.number().int().min(0),
-  suppliers: z.array(SnowflakeId),
-  dishes: z.array(SnowflakeId),
+  suppliers: z.array(SupplierIdSchema),
 });
 
 export const IngredientIdSchema = z.object({

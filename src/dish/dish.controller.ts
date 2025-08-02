@@ -1,115 +1,104 @@
-import { Request, Response } from "express";
-import { DishSchema, DishIdSchema } from "./dish.schema.js";
-import { DishService } from "./dish.service.js";
-import { orm } from "../shared/db/orm.js";
-import { IngredientIdSchema } from "../ingredient/ingredient.schema.js";
+import { Request, Response } from 'express';
+import { DishSchema, DishIdSchema } from './dish.schema.js';
+import { DishService } from './dish.service.js';
+import { orm } from '../shared/db/orm.js';
 
 const dishService = new DishService(orm.em);
 
 async function add(req: Request, res: Response) {
-  const ingredientInput = await DishSchema.safeParseAsync(req.body);
-  if (ingredientInput.success) {
-    try {
-      const ingredient = await dishService.createDish(
-        ingredientInput.data
-      );
-      res.status(201).json({ message: 'Ingredient created', data: ingredient });
-    } catch (error: any) {
-      res
-        .status(500)
-        .json({ message: 'Error creating ingredient', error: error.message });
-    }
-  } else {
-    res
+  const dishInput = await DishSchema.safeParseAsync(req.body);
+  if (!dishInput.success) {
+    return res
       .status(400)
-      .json({ message: 'Validation error', error: ingredientInput.error });
+      .json({ message: 'Validation error', error: dishInput.error });
+  }
+  try {
+    const dish = await dishService.createDish(dishInput.data);
+    return res
+      .status(201)
+      .json({ message: 'Dish created', data: dish });
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ message: 'Error creating dish', error: error.message });
   }
 }
 
 async function findAll(req: Request, res: Response) {
-  const ingredientList = await dishService.findAllDishes();
   try {
-    if (ingredientList) {
-      res
-        .status(200)
-        .json({ message: 'Found all ingredients', data: ingredientList });
-    } else {
-      res.status(404).json({ message: 'Ingredients not found' });
-    }
+    const dishList = await dishService.findAllDishes();
+    const msg =
+      (dishList?.length ?? 0) === 0
+        ? 'No dishs found'
+        : 'Dishs found';
+    return res.status(200).json({ message: msg, data: dishList });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 }
 
 async function findOne(req: Request, res: Response) {
-  const idInput = await IngredientIdSchema.safeParseAsync(req.body.id);
-  if (idInput.success) {
-    //validacion de que el id ES UN SNOWFLAKE ID
-    try {
-      const ingredient = await dishService.findDishById(
-        idInput.data
-      );
-      if (ingredient) {
-        //validacion de que el id EXISTE EN LA BD
-        res.status(200).json({ message: 'Ingredient found', data: ingredient }); //EXISTE
-      } else {
-        res
-          .status(404)
-          .json({ message: 'Ingredient not found', data: ingredient }); //NO EXISTE
-      }
-    } catch (error: any) {
-      res.status(500).json({ error: error.message }); //SERVER ERROR
-    }
-  } else {
-    res.status(400).json({ message: 'Validation error', error: idInput.error }); //FALLA VALIDACION
+  const idInput = await DishIdSchema.safeParseAsync(req.body.id);
+  if (!idInput.success) {
+    return res
+      .status(400)
+      .json({ message: 'Validation error', error: idInput.error });
+  }
+
+  try {
+    const dish = await dishService.findDishById(idInput.data);
+    const msg =
+      dish === null ? 'No dish found' : 'Dish found';
+    return res.status(200).json({ message: msg, data: dish });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
   }
 }
 
 async function update(req: Request, res: Response) {
-  const idInput = await IngredientIdSchema.safeParseAsync(req.body.id);
-  const ingredientInput = await DishSchema.safeParseAsync(req.body);
-  if (idInput.success && ingredientInput.success) {
-    try {
-      const ingredient = await dishService.updateDish(
-        idInput.data,
-        ingredientInput.data
-      );
-      if (ingredient) {
-        res.status(200).json({
-          message: 'Ingredient updated successfully',
-          data: ingredient,
-        });
-      } else {
-        res
-          .status(404)
-          .json({ message: 'Ingredient not found', data: ingredient });
-      }
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  } else {
-    res.status(400).json({
+  const idInput = await DishIdSchema.safeParseAsync(req.body.id);
+  if (!idInput.success) {
+    return res.status(400).json({
       message: 'Validation error',
-      error1: idInput.error,
-      error2: ingredientInput.error,
+      error: idInput.error,
     });
+  }
+
+  const dishInput = await DishSchema.safeParseAsync(req.body);
+  if (!dishInput.success) {
+    return res.status(400).json({
+      message: 'Validation error',
+      error: dishInput.error,
+    });
+  }
+
+  try {
+    const dish = await dishService.updateDish(
+      idInput.data,
+      dishInput.data
+    );
+    return res.status(200).json({
+      message: 'Dish updated successfully',
+      data: dish,
+    });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
   }
 }
 
 async function remove(req: Request, res: Response) {
-  const idInput = await IngredientIdSchema.safeParseAsync(req.body.id);
-  if (idInput.success) {
-    try {
-      const ingredient = await dishService.deleteDish(idInput.data);
-      res.status(200).json({
-        message: 'Ingredient deleted successfully',
-      });
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  } else {
-    res.status(400).json({ message: 'Validation error', error: idInput.error });
+  const idInput = await DishIdSchema.safeParseAsync(req.body.id);
+  if (!idInput.success) {
+    return res.status(400).json({ message: 'Validation error', error: idInput.error });
+  }
+  try {
+    await dishService.deleteDish(idInput.data);
+    return res.status(200).json({
+      message: 'Dish deleted successfully',
+    });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
   }
 }
 
-export {add, findAll, findOne, update, remove};
+export { add, findAll, findOne, update, remove };

@@ -34,9 +34,8 @@ export class Supplier {
   @Property({ nullable: false })
   bussinessName!: string;
 
-  //try 3 (working)
-  @ManyToMany(() => Ingredient, ingredient => ingredient.suppliers, {
-    //mappedBy: 'suppliers',
+  @ManyToMany(() => Ingredient, undefined, {
+    mappedBy: 'suppliers',
   })
   ingredients = new Collection<Ingredient>(this);
 }

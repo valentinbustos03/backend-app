@@ -37,19 +37,8 @@ export class ClientService {
   ): Promise<Client | null> {
     const updatedClient = await this.em.findOne(Client, id);
     if (updatedClient) {
-
-        if (data.orderHistory) {
-          const orders = await this.em.find(Order, {
-            orderId: { $in: data.orderHistory },
-          });
-          updatedClient.orderHistory.set(orders);
-        }
-
-      this.em.assign(updatedClient, {
-        dni: data.dni,
-        penalty: data.penalty,
-      });
-      this.em.flush();
+      this.em.assign(updatedClient, data);
+      await this.em.flush();
       return updatedClient;
     } else {
       return null;

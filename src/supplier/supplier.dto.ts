@@ -6,7 +6,6 @@ export interface createSupplierDto {
   typeIngredient: string;
   fullName: string;
   bussinessName: string;
-  ingredients: string[];
 }
 
 export interface SupplierIdDto{
