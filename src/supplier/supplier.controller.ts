@@ -12,17 +12,17 @@ const supplierService = new SupplierService(orm.em);
 async function add(req: Request, res: Response) {
   const supplierInput = await SupplierSchema.safeParseAsync(req.body);
   if (!supplierInput.success) {
-    res
+    return res
       .status(400)
       .json({ message: 'Validation error', error: supplierInput.error });
   }
   try {
     const supplier = await supplierService.createSupplier(supplierInput.data);
-    res
+    return res
       .status(201)
       .json({ message: 'Supplier created', data: supplier });
   } catch (error: any) {
-    res
+    return res
       .status(500)
       .json({ message: 'Error creating supplier', error: error.message });
   }
@@ -31,98 +31,91 @@ async function add(req: Request, res: Response) {
 async function findAll(req: Request, res: Response) {
   try {
     const supplierList = await supplierService.findAllSupplier();
-    res
-      .status(200)
-      .json({ message: 'Found all suppliers', data: supplierList });
+    const msg =
+      (supplierList?.length ?? 0) === 0
+        ? 'No suppliers found'
+        : 'Suppliers found';
+    return res.status(200).json({ message: msg, data: supplierList });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 }
 
 async function findOneById(req: Request, res: Response) {
   const idInput = await SupplierIdSchema.safeParseAsync(req.body.id);
   if (!idInput.success) {
-    //validacion de que el id ES UN SNOWFLAKE ID
-    res.status(400).json({ message: 'Validation error', error: idInput.error }); //FALLA VALIDACION
+    return res.status(400).json({ message: 'Validation error', error: idInput.error }); 
   }
   try {
     const supplier = await supplierService.findSupplierById(idInput.data);
-      //validacion de que el id EXISTE EN LA BD
-      res
-        .status(200)
-        .json({ message: 'Supplier found', data: supplier }); //EXISTE
+    const msg = supplier === null ? 'No supplier found' : 'Supplier found';
+    return res.status(200).json({ message: msg, data: supplier }); 
   } catch (error: any) {
-    res.status(500).json({ error: error.message }); //SERVER ERROR
+    return res.status(500).json({ error: error.message }); 
   }
 }
 
 async function findOneByTaxId(req: Request, res: Response) {
   const taxIdInput = await SupplierTaxIdSchema.safeParseAsync(req.body.taxId);
   if (!taxIdInput.success) {
-    //validacion de que el id ES UN SNOWFLAKE ID
-    res
+    return res
       .status(400)
-      .json({ message: 'Validation error', error: taxIdInput.error }); //FALLA VALIDACION
+      .json({ message: 'Validation error', error: taxIdInput.error });
   }
-    try {
-      const supplier = await supplierService.findSupplierByTaxId(
-        taxIdInput.data.taxId
-      );
-        //validacion de que el id EXISTE EN LA BD
-      res
-        .status(200)
-        .json({ message: 'Supplier found', data: supplier }); //EXISTE
-    } catch (error: any) {
-      res.status(500).json({ error: error.message }); //SERVER ERROR
-    }
+  try {
+    const supplier = await supplierService.findSupplierByTaxId(
+      taxIdInput.data.taxId
+    );
+    const msg = supplier === null ? 'No supplier found' : 'Supplier found';
+    return res.status(200).json({ message: msg, data: supplier }); 
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });  
+  }
 }
 
 async function update(req: Request, res: Response) {
   const idInput = await SupplierIdSchema.safeParseAsync(req.body.id);
-  const supplierInput = await SupplierSchema.safeParseAsync(req.body);
-  if (!idInput.success && !supplierInput.success) {
-      res
-        .status(400)
-        .json({
-    message: 'Validation error',
-    error1: idInput.error,
-    error2: supplierInput.error,
+  if (!idInput.success) {
+    return res.status(400).json({
+      message: 'Validation error',
+      error: idInput.error,
     });
   }
+  
+  const supplierInput = await SupplierSchema.safeParseAsync(req.body);
+  if (!supplierInput.success) {
+    return res.status(400).json({
+      message: 'Validation error',
+      error: supplierInput.error,
+    });
+  }
+
   try {
     const supplier = await supplierService.updateSupplier(
       idInput.data,
       supplierInput.data
     );
-    res
-      .status(200)
-      .json({
+    return res.status(200).json({
       message: 'Supplier updated successfully',
       data: supplier,
     });
   } catch (error: any) {
-    res
-      .status(500)
-      .json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 }
 
 async function remove(req: Request, res: Response) {
   const idInput = await SupplierIdSchema.safeParseAsync(req.body.id);
   if (!idInput.success) {
-    res
-      .status(400)
-      .json({ message: 'Validation error', error: idInput.error });
+    return res.status(400).json({ message: 'Validation error', error: idInput.error });
   }
   try {
     await supplierService.deleteSupplier(idInput.data);
-    res
-    .status(200)
-    .json({
+    return res.status(200).json({
       message: 'Supplier deleted successfully',
     });
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 }
 

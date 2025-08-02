@@ -35,8 +35,8 @@ export class Dish {
   @ManyToMany(() => Ingredient, (ingredient) => ingredient.dishes, {
     eager: true,
   })
-  ingredients = new Collection<Ingredient>(this);
+  ingredients = new Collection<Partial<Ingredient>>(this);
 
   //@ManyToOne(()=> Chef { nullable: false})
-  //createdBy: Chef;
+  //createdBy: Partial<Chef>;
 }

@@ -10,7 +10,6 @@ export const SupplierSchema = z.object({
   typeIngredient: z.string().min(1),
   fullName: z.string().min(1),
   bussinessName: z.string().min(1),
-  ingredients: z.array(SnowflakeId),
 }) 
 
 export const SupplierIdSchema = z.object({
