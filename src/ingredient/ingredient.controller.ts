@@ -1,20 +1,26 @@
 import { Request, Response } from 'express';
-import { IngredientSchema, IngredientIdSchema } from './ingredient.schema.js';
+import {
+  IngredientSchema,
+  IngredientIdSchema,
+  CreateIngredientInput,
+  UpdateIngredientInput,
+} from './ingredient.schema.js';
 import { IngredientService } from './ingredient.service.js';
 import { orm } from '../shared/db/orm.js';
 
 const ingredientService = new IngredientService(orm.em);
 
 async function add(req: Request, res: Response) {
-  const ingredientInput = await IngredientSchema.safeParseAsync(req.body);
-  if (!ingredientInput.success) {
+  const ingredientBody = await IngredientSchema.safeParseAsync(req.body);
+  if (!ingredientBody.success) {
     return res
       .status(400)
-      .json({ message: 'Validation error', error: ingredientInput.error });
+      .json({ message: 'Validation error', error: ingredientBody.error });
   }
   try {
+    const ingredientInput: CreateIngredientInput = ingredientBody.data;
     const ingredient = await ingredientService.createIngredient(
-      ingredientInput.data
+      ingredientInput
     );
     return res
       .status(201)
@@ -65,18 +71,19 @@ async function update(req: Request, res: Response) {
     });
   }
 
-  const ingredientInput = await IngredientSchema.safeParseAsync(req.body);
-  if (!ingredientInput.success) {
+  const ingredientBody = await IngredientSchema.safeParseAsync(req.body);
+  if (!ingredientBody.success) {
     return res.status(400).json({
       message: 'Validation error',
-      error: ingredientInput.error,
+      error: ingredientBody.error,
     });
   }
 
   try {
+    const ingredientInput: UpdateIngredientInput = ingredientBody.data;
     const ingredient = await ingredientService.updateIngredient(
       idInput.data,
-      ingredientInput.data
+      ingredientInput
     );
     return res.status(200).json({
       message: 'Ingredient updated successfully',

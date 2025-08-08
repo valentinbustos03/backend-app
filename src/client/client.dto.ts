@@ -10,5 +10,4 @@ export interface ClientIdDto {
 }
 
 export interface UpdateClientDto extends Partial<CreateClientDto> {
-  orderHistory: Partial<Order>[]; 
 }

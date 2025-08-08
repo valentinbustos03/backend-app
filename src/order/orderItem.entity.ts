@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, ManyToOne, PrimaryKey, Property, Rel } from "@mikro-orm/core";
 import snowflake from "snowflake-id";
 import { Order } from "./order.entity.js";
 import { Dish } from "../dish/dish.entity.js";
@@ -9,7 +9,7 @@ export class OrderItem{
   orderItemId: string = snowflake();
 
   @ManyToOne(() => Order)
-  order!: Order;
+  order!: Rel<Order>;
 
   @ManyToOne(() => Dish)
   dish!: Dish;

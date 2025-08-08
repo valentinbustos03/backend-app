@@ -40,7 +40,7 @@ export class Ingredient {
   @ManyToMany(() => Supplier, (supplier) => supplier.ingredients, {
     cascade: [Cascade.PERSIST],
   })
-  suppliers = new Collection<Partial<Supplier>>(this);
+  suppliers = new Collection<Supplier>(this);
 
   @ManyToMany(() => Dish, undefined,{
     mappedBy: 'ingredients',

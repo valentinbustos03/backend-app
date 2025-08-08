@@ -1,39 +1,91 @@
-import { EntityManager } from "@mikro-orm/mysql";
-import { CreateOrderDto, OrderItemsDto } from "./order.dto.js";
-import { Order } from "./order.entity.js";
-import { Dish } from "../dish/dish.entity.js";
-import { Client } from "../client/client.entity.js";
+import { EntityManager } from '@mikro-orm/mysql';
+import {
+  CreateOrderDto,
+  OrderIdDto,
+  OrderItemDto,
+  UpdateOrderDto,
+} from './order.dto.js';
+import { Order } from './order.entity.js';
+import { Client } from '../client/client.entity.js';
+import { OrderItem } from './orderItem.entity.js';
+import { ClientIdDto } from '../client/client.dto.js';
 
-export class OrderService{
+export class OrderService {
   private readonly em: EntityManager;
 
   constructor(em: EntityManager) {
     this.em = em;
   }
 
-  async createOrder(data: CreateOrderDto): Promise<Order> {
-    const client = this.em.getReference(Client, data.clientId);
+  async createOrder(
+    data: CreateOrderDto
+    //orderItemList: OrderItemDto[]
+  ): Promise<Order> {
+    const newOrder = new Order();
+    newOrder.description = data.description;
+    newOrder.status = data.status;
+    newOrder.startTime = data.startTime;
+    newOrder.estimatedEndTime = data.estimatedEndTime;
+    newOrder.endTime = data.endTime;
+    newOrder.subtotal = this.computeSubtotal(data.orderItems);
 
-    const newOrder = this.em.create(Order, {
-      ...data,
-      client, // override el string por la entidad
-      subtotal: this.computeSubtotal(data.orderItems),
+    newOrder.client = this.em.getReference(Client, data.client);
+
+    const orderItemList = data.orderItems.map((item) => {
+      const orderItem = new OrderItem();
+      orderItem.dish = item.dish;
+      orderItem.order = newOrder;
+      orderItem.quantity = item.quantity;
+      return orderItem;
     });
-    await this.em.persistAndFlush(newOrder);
+
+    newOrder.orderItems = orderItemList;
+
     return newOrder;
   }
 
+  async findAllOrders(): Promise<Order[] | null> {
+    const orderList = this.em.findAll(Order);
+    return orderList;
+  }
 
-  private computeSubtotal(orderItems: OrderItemsDto[]): number {
-    let subtotal = 0;
-    for (const item of orderItems) {
-      const dish = this.em.getReference(Dish, item.dishId);
-      if (dish) {
+  async findOrderById(id: OrderIdDto): Promise<Order | null> {
+    const order = this.em.findOne(Order, id);
+    return order;
+  }
 
-        subtotal += dish.price * item.quantity;
-      }
+  async updateOrder(
+    id: OrderIdDto,
+    data: UpdateOrderDto
+  ): Promise<Order | null> {
+    const updatedOrder = await this.em.findOne(Order, id);
+    if (updatedOrder) {
+      this.em.assign(updatedOrder, data);
+      await this.em.flush();
+      return updatedOrder;
+    } else {
+      return null;
     }
-    
+  }
+
+  async deleteOrder(id: OrderIdDto) {
+    const deletedOrder = await this.em.findOne(Order, id);
+    if (deletedOrder) {
+      await this.em.removeAndFlush(deletedOrder);
+    }
+  }
+
+  async findOrdersByClientId(clientId: ClientIdDto): Promise<Order[] | null> {
+    const orderList = await this.em.find(Order, { client: clientId });
+    return orderList;
+  }
+
+  private computeSubtotal(orderItemList: OrderItemDto[]): number {
+    let subtotal = 0;
+    for (const item of orderItemList) {
+      const dish = item.dish;
+      subtotal += dish.price * item.quantity;
+    }
     return Math.round(subtotal * 100) / 100; // Redondear a 2 decimales
   }
 }

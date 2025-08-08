@@ -9,7 +9,7 @@ export interface CreateIngredientDto {
   uniteOfMeasure: string;
   origin: string;
   stockLimit: number;
-  suppliers: Partial<Supplier>[];
+  suppliers: string[];
 }
 
 export interface IngredientIdDto {
