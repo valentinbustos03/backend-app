@@ -1,5 +1,8 @@
 import z from 'zod';
-import { IngredientIdSchema, IngredientSchema } from '../ingredient/ingredient.schema.js';
+import {
+  IngredientIdSchema,
+  IngredientSchema,
+} from '../ingredient/ingredient.schema.js';
 
 export const DishSchema = z.object({
   cod: z.string().min(1).trim(),
@@ -8,9 +11,15 @@ export const DishSchema = z.object({
   picture: z.string().url().optional(), // usar Cloudinary
   price: z.number().min(0),
   calification: z.number().min(0).max(5),
-  ingredients: z.array(IngredientIdSchema), // Array de ingredientes
+  ingredients: z
+    .array(IngredientIdSchema)
+    .transform((arr) => arr.map((obj) => obj.id)), 
   chef: z.string().min(1).regex(/^\d+$/).optional(), // CUANDO ESTE 'CHEF' SACAR EL OPTIONAL
 });
+
+export type CreateDishInput = z.infer<typeof DishSchema>;
+
+export type UpdateDishInput = Partial<CreateDishInput>;
 
 export const DishIdSchema = z.object({
   id: z
@@ -18,3 +27,4 @@ export const DishIdSchema = z.object({
     .min(1, 'ID is required')
     .regex(/^\d+$/, 'ID must be a valid snowflake ID'),
 });
+

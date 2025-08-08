@@ -24,5 +24,5 @@ export class Client {
     mappedBy: 'client',
     cascade: [Cascade.REMOVE],
   })
-  orderHistory = new Collection<Partial<Order>>(this);
+  orderHistory = new Collection<Order>(this);
 }

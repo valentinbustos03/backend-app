@@ -7,7 +7,7 @@ export interface CreateDishDto {
   picture?: string; //usar Cloudinary
   price: number;
   calification: number;
-  ingredients: Partial<Ingredient>[]; // Array de IDs de ingredientes
+  ingredients: string[]; 
   //chef: Partial<Chef>;
 }
 

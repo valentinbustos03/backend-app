@@ -1,6 +1,15 @@
-import { Entity, ManyToOne, PrimaryKey, Property, Ref, Rel } from '@mikro-orm/core';
+import {
+  Cascade,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryKey,
+  Property,
+  Rel,
+} from '@mikro-orm/core';
 import { Client } from '../client/client.entity.js';
 import snowflake from 'snowflake-id';
+import { OrderItem } from './orderItem.entity.js';
 
 @Entity()
 export class Order {
@@ -17,22 +26,20 @@ export class Order {
   startTime: Date = new Date();
 
   @Property({ type: 'datetime' })
-  estimatedEndTime!: Date; //calculado con respecto a los productos pedidos
+  estimatedEndTime!: Date; //calculado con respecto a los productos pedidos??
 
   @Property({ type: 'datetime' })
   endTime!: Date;
 
   @Property({ nullable: false })
-  subtotal!: number; //calcular con el precio de los productos + iva + otros impuestos
+  subtotal!: number; 
 
-  @Property({ nullable: false })
-  orderItems!: string;
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.order, {
+    cascade: [Cascade.ALL],
+    //eager: true,
+  })
+  orderItems!: OrderItem[];
 
   @ManyToOne(() => Client)
-  client!: Ref<Client>;
-
-  constructor(id: string) {
-    this.orderId = id;
-  }
+  client!: Rel<Client>;
 }
-

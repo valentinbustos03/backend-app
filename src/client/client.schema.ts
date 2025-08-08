@@ -1,8 +1,9 @@
 import z from 'zod';
+import { OrderSchema } from '../order/order.schema.js';
 
 export const ClientSchema = z.object({
   dni: z.number().int().min(1),
-  orderHistory: z.object(z.array(z.string().min(1).regex(/^\d+$/))), //MODIFICAR CUANDO ESTE 'ORRDER' HECHO
+  //orderHistory: z.array(OrderSchema), 
   penalty: z.number().int().min(0).default(0),
 });
 

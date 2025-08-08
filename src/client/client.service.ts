@@ -1,5 +1,5 @@
 import { Client } from '../client/client.entity.js';
-import { Collection, EntityManager, Reference, wrap } from '@mikro-orm/core';
+import { EntityManager } from '@mikro-orm/core';
 import { ClientIdDto, CreateClientDto, UpdateClientDto } from './client.dto.js';
 import { Order } from '../order/order.entity.js';
 
@@ -22,7 +22,7 @@ export class ClientService {
   }
 
   async findClientByDni(dni: number): Promise<Client | null> {
-    const client = this.em.findOne(Client,  {dni} );
+    const client = this.em.findOne(Client, { dni });
     return client;
   }
 
@@ -45,7 +45,7 @@ export class ClientService {
     }
   }
 
-  async deleteClient(id: ClientIdDto){
+  async deleteClient(id: ClientIdDto) {
     const deletedClient = await this.em.findOne(Client, id);
     if (deletedClient) {
       this.em.removeAndFlush(deletedClient);
