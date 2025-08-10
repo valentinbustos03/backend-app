@@ -42,7 +42,7 @@ async function findAll(req: Request, res: Response) {
 }
 
 async function findOneById(req: Request, res: Response) {
-  const idInput = await EmployeeIdSchema.safeParseAsync(req.body.id);
+  const idInput = await EmployeeIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res
       .status(400)
@@ -58,7 +58,7 @@ async function findOneById(req: Request, res: Response) {
 }
 
 async function findOneByTaxId(req: Request, res: Response) {
-  const taxIdInput = await EmployeeTaxIdSchema.safeParseAsync(req.body.taxId);
+  const taxIdInput = await EmployeeTaxIdSchema.safeParseAsync(req.params);
   if (!taxIdInput.success) {
     return res
       .status(400)
@@ -76,7 +76,7 @@ async function findOneByTaxId(req: Request, res: Response) {
 }
 
 async function update(req: Request, res: Response) {
-  const idInput = await EmployeeIdSchema.safeParseAsync(req.body.id);
+  const idInput = await EmployeeIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res.status(400).json({
       message: 'Validation error',
@@ -107,14 +107,17 @@ async function update(req: Request, res: Response) {
 }
 
 async function remove(req: Request, res: Response) {
-  const idInput = await EmployeeIdSchema.safeParseAsync(req.body.id);
+  const idInput = await EmployeeIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res
       .status(400)
       .json({ message: 'Validation error', error: idInput.error });
   }
   try {
-    await employeeService.deleteEmployee(idInput.data);
+    const deleted = await employeeService.deleteEmployee(idInput.data);
+    if(!deleted){
+      return res.status(404).json({ message: 'Employee not found' });
+    }    
     return res.status(200).json({
       message: 'Employee deleted successfully',
     });

@@ -1,10 +1,10 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
-import snowflake from 'snowflake-id';
+import generateId from '../shared/db/generate-id.js';
 
 @Entity()
 export class Table {
   @PrimaryKey({ nullable: false, unique: true })
-  id: string = snowflake();
+  id: string = generateId();
 
   @Property({ nullable: false, unique: true })
   cod!: string;

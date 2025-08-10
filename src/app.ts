@@ -11,20 +11,25 @@ import { employeeRouter } from './employee/employee.route.js';
 import { supplierRouter } from './supplier/supplier.route.js';
 import { tableRouter } from './table/table.route.js';
 import { ingredientRouter } from './ingredient/ingredient.route.js';
+import { dishRouter } from './dish/dish.route.js';
+import { orderRouter } from './order/order.router.js';
 
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   RequestContext.create(orm.em, next);
 });
 
-app.use('/api/table', tableRouter);
-app.use('/api/supplier', supplierRouter);
-app.use('/api/employee', employeeRouter);
-app.use('/api/client',clientRouter);
-app.use('/api/ingredient',ingredientRouter);
+app.use('/client', clientRouter);
+app.use('/dish',dishRouter);
+app.use('/employee', employeeRouter);
+app.use('/ingredient',ingredientRouter);
+app.use('/order',orderRouter);
+app.use('/supplier', supplierRouter);
+app.use('/table', tableRouter);
 
 //Configura Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

@@ -11,8 +11,12 @@ import {
 export const clientRouter = Router();
 
 clientRouter.post('/add', add);
+
 clientRouter.get('/findAll', findAll);
-clientRouter.get('/findOne/:dni', findOneByDni);
-clientRouter.get('/findOne/:id', findOneById);
-clientRouter.put('/update/:id', update);
-clientRouter.delete('/remove/:id', remove);
+
+clientRouter.get('/dni/:dni', findOneByDni);
+clientRouter.get('/id/:id', findOneById);
+
+clientRouter.put('/:id', update);
+
+clientRouter.delete('/:id', remove);

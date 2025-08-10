@@ -1,10 +1,18 @@
 import z from 'zod';
-import { OrderSchema } from '../order/order.schema.js';
 
 export const ClientSchema = z.object({
-  dni: z.number().int().min(1),
-  //orderHistory: z.array(OrderSchema), 
-  penalty: z.number().int().min(0).default(0),
+  dni: z
+    .union([
+      z.number().int().min(1),
+      z.string().regex(/^\d+$/).transform(Number),
+    ]),
+    
+  penalty: z
+    .union([
+      z.number().int().min(0),
+      z.string().regex(/^\d+$/).transform(Number),
+    ])
+    .default(0),
 });
 
 export const ClientIdSchema = z.object({
@@ -15,5 +23,8 @@ export const ClientIdSchema = z.object({
 });
 
 export const ClientDniSchema = z.object({
-  dni: z.number().int().min(1, 'ID is required'),
+  dni: z.union([
+    z.number().int().min(1),
+    z.string().regex(/^\d+$/).transform(Number),
+  ]),
 });

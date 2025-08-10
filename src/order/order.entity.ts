@@ -8,13 +8,13 @@ import {
   Rel,
 } from '@mikro-orm/core';
 import { Client } from '../client/client.entity.js';
-import snowflake from 'snowflake-id';
 import { OrderItem } from './orderItem.entity.js';
+import generateId from '../shared/db/generate-id.js';
 
 @Entity()
 export class Order {
   @PrimaryKey({ nullable: false, unique: true })
-  orderId: string = snowflake();
+  orderId: string = generateId();
 
   @Property()
   description?: string;

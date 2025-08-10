@@ -44,10 +44,12 @@ export class TableService {
     }
   }
 
-  async deleteTable(id: TableIdDto) {
+  async deleteTable(id: TableIdDto): Promise<boolean> {
     const deletedTable = await this.em.findOne(Table, id);
     if (deletedTable) {
       await this.em.removeAndFlush(deletedTable);
+      return true;
     }
+    return false;
   }
 }

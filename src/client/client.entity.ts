@@ -7,12 +7,12 @@ import {
   Property,
 } from '@mikro-orm/core';
 import { Order } from '../order/order.entity.js';
-import snowflake from 'snowflake-id';
+import generateId from '../shared/db/generate-id.js';
 
 @Entity()
 export class Client {
   @PrimaryKey({ nullable: false, unique: true })
-  id: string = snowflake();
+  id: string = generateId()
 
   @Property({ nullable: false, unique: true })
   dni!: number;

@@ -11,8 +11,12 @@ import {
 export const tableRouter = Router();
 
 tableRouter.post('/add', add);
+
 tableRouter.get('/findAll', findAll);
-tableRouter.get('/findOne/:cod', findOneByCod);
-tableRouter.get('/findOne/:id', findOneById);
-tableRouter.put('/update/:id', update);
-tableRouter.delete('/remove/:id', remove);
+
+tableRouter.get('/cod/:cod', findOneByCod);
+tableRouter.get('/id/:id', findOneById);
+
+tableRouter.put('/:id', update);
+
+tableRouter.delete('/:id', remove);

@@ -42,21 +42,23 @@ async function findAll(req: Request, res: Response) {
 }
 
 async function findOneById(req: Request, res: Response) {
-  const idInput = await SupplierIdSchema.safeParseAsync(req.body.id);
+  const idInput = await SupplierIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
-    return res.status(400).json({ message: 'Validation error', error: idInput.error }); 
+    return res
+      .status(400)
+      .json({ message: 'Validation error', error: idInput.error });
   }
   try {
     const supplier = await supplierService.findSupplierById(idInput.data);
     const msg = supplier === null ? 'No supplier found' : 'Supplier found';
-    return res.status(200).json({ message: msg, data: supplier }); 
+    return res.status(200).json({ message: msg, data: supplier });
   } catch (error: any) {
-    return res.status(500).json({ error: error.message }); 
+    return res.status(500).json({ error: error.message });
   }
 }
 
 async function findOneByTaxId(req: Request, res: Response) {
-  const taxIdInput = await SupplierTaxIdSchema.safeParseAsync(req.body.taxId);
+  const taxIdInput = await SupplierTaxIdSchema.safeParseAsync(req.params);
   if (!taxIdInput.success) {
     return res
       .status(400)
@@ -67,21 +69,21 @@ async function findOneByTaxId(req: Request, res: Response) {
       taxIdInput.data.taxId
     );
     const msg = supplier === null ? 'No supplier found' : 'Supplier found';
-    return res.status(200).json({ message: msg, data: supplier }); 
+    return res.status(200).json({ message: msg, data: supplier });
   } catch (error: any) {
-    return res.status(500).json({ error: error.message });  
+    return res.status(500).json({ error: error.message });
   }
 }
 
 async function update(req: Request, res: Response) {
-  const idInput = await SupplierIdSchema.safeParseAsync(req.body.id);
+  const idInput = await SupplierIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res.status(400).json({
       message: 'Validation error',
       error: idInput.error,
     });
   }
-  
+
   const supplierInput = await SupplierSchema.safeParseAsync(req.body);
   if (!supplierInput.success) {
     return res.status(400).json({
@@ -105,12 +107,17 @@ async function update(req: Request, res: Response) {
 }
 
 async function remove(req: Request, res: Response) {
-  const idInput = await SupplierIdSchema.safeParseAsync(req.body.id);
+  const idInput = await SupplierIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
-    return res.status(400).json({ message: 'Validation error', error: idInput.error });
+    return res
+      .status(400)
+      .json({ message: 'Validation error', error: idInput.error });
   }
   try {
-    await supplierService.deleteSupplier(idInput.data);
+    const deleted = await supplierService.deleteSupplier(idInput.data);
+    if (!deleted) {
+      return res.status(404).json({ message: 'Supplier not found' });
+    }
     return res.status(200).json({
       message: 'Supplier deleted successfully',
     });

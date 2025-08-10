@@ -1,11 +1,18 @@
 import z from 'zod';
 
+const stringToNumberSchema = z
+  .union([
+    z.number().min(0),
+    z.string().regex(/^\d+(\.\d+)?$/).transform(Number),
+  ]);
+
 export const EmployeeSchema = z.object({
   taxId: z.string().min(1),
-  companyName: z.string().min(1),
   shift: z.string().min(1),
-  workedHours: z.number().min(0),
-  priceHour: z.number().min(0),
+  // workedHours: z.number().min(0),
+  // priceHour: z.number().min(0),
+  workedHours: stringToNumberSchema,
+  priceHour: stringToNumberSchema,
 });
 
 export const EmployeeIdSchema = z.object({

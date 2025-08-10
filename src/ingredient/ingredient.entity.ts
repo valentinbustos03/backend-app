@@ -6,15 +6,14 @@ import {
   PrimaryKey,
   Property,
 } from '@mikro-orm/core';
-
-import snowflake from 'snowflake-id';
 import { Supplier } from '../supplier/supplier.entity.js';
 import { Dish } from '../dish/dish.entity.js';
+import generateId from '../shared/db/generate-id.js';
 
 @Entity()
 export class Ingredient {
   @PrimaryKey({ nullable: false, unique: true })
-  id: string = snowflake();
+  id: string = generateId();
 
   @Property({ nullable: false, unique: true })
   cod!: string;

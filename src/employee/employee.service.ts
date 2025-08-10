@@ -53,11 +53,13 @@ export class EmployeeService {
     }
   }
 
-  async deleteEmployee(id: EmployeeIdDto) {
+  async deleteEmployee(id: EmployeeIdDto): Promise<boolean> {
     const deletedEmployee = await this.em.findOne(Employee, id);
     if (deletedEmployee) {
-      this.em.removeAndFlush(deletedEmployee);
+      await this.em.removeAndFlush(deletedEmployee);
+      return true; 
     }
+    return false; 
   }
 
   private computeSalary(workedHours: number, priceHour: number): number {

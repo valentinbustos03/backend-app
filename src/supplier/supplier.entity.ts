@@ -5,13 +5,13 @@ import {
   Property,
   ManyToMany,
 } from '@mikro-orm/core';
-import snowflake from 'snowflake-id';
 import { Ingredient } from '../ingredient/ingredient.entity.js';
+import generateId from '../shared/db/generate-id.js';
 
 @Entity()
 export class Supplier {
   @PrimaryKey({ nullable: false, unique: true })
-  id: string = snowflake();
+  id: string = generateId();
 
   @Property({ nullable: false })
   companyName!: string;

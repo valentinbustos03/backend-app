@@ -22,6 +22,6 @@ export interface OrderItemDto {
   quantity: number;
 }
 
-export interface OrderItemListDto {
-  orderItemList: OrderItemDto[];
-}
+// export interface OrderItemListDto {
+//   orderItemList: OrderItemDto[];
+// }

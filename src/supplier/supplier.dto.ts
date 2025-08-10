@@ -1,8 +1,8 @@
 export interface createSupplierDto {
   companyName: string;
-  taxId: string; //yo lo pondria como number
+  taxId: string; 
   mail: string;
-  phoneNumber: string; //yo lo pondria como number
+  phoneNumber: string; 
   typeIngredient: string;
   fullName: string;
   bussinessName: string;
