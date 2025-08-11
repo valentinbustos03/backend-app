@@ -1,6 +1,10 @@
 import { EntityManager } from '@mikro-orm/core';
 import { Supplier } from '../supplier/supplier.entity.js';
-import { createSupplierDto, SupplierIdDto, UpdateSupplierDto } from './supplier.dto.js';
+import {
+  createSupplierDto,
+  SupplierIdDto,
+  UpdateSupplierDto,
+} from './supplier.dto.js';
 import { EmployeeIdDto } from '../employee/employee.dto.js';
 
 export class SupplierService {
@@ -27,7 +31,7 @@ export class SupplierService {
   }
 
   async findSupplierByTaxId(taxId: string): Promise<Supplier | null> {
-    const supplier = this.em.findOne(Supplier, taxId);
+    const supplier = await this.em.findOne(Supplier, { taxId });
     return supplier;
   }
 
@@ -45,10 +49,12 @@ export class SupplierService {
     }
   }
 
-  async deleteSupplier(id: EmployeeIdDto){
+  async deleteSupplier(id: EmployeeIdDto) {
     const deletedSupplier = await this.em.findOne(Supplier, id);
     if (deletedSupplier) {
-      this.em.removeAndFlush(deletedSupplier);
+      await this.em.removeAndFlush(deletedSupplier);
+      return true;
     }
+    return false;
   }
 }

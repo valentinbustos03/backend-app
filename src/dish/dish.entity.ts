@@ -6,13 +6,14 @@ import {
   Collection,
   ManyToOne,
 } from '@mikro-orm/core';
-import snowflake from 'snowflake-id';
 import { Ingredient } from '../ingredient/ingredient.entity.js';
+import generateId from '../shared/db/generate-id.js';
+import { nullable } from 'zod';
 
 @Entity()
 export class Dish {
   @PrimaryKey({ nullable: false, unique: true })
-  id: string = snowflake();
+  id: string = generateId();
 
   @Property({ nullable: false, unique: true })
   cod!: string;
@@ -23,13 +24,13 @@ export class Dish {
   @Property({ unique: true })
   description?: string;
 
-  @Property()
+  @Property({ nullable: true })
   picture?: string; //usar Cloudinary
 
   @Property({ nullable: false, type: 'decimal', precision: 10, scale: 2 })
   price!: number;
 
-  @Property()
+  @Property({ type: 'decimal', precision: 10, scale: 2 })
   calification?: number;
 
   @ManyToMany(() => Ingredient, (ingredient) => ingredient.dishes, {

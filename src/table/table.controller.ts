@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { TableService } from '../table/table.service.js';
 import { orm } from '../shared/db/orm.js';
 import { TableCodSchema, TableIdSchema, TableSchema } from './table.schema.js';
@@ -34,7 +34,7 @@ async function findAll(req: Request, res: Response) {
 }
 
 async function findOneById(req: Request, res: Response) {
-  const idInput = await TableIdSchema.safeParseAsync(req.body.id);
+  const idInput = await TableIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res
       .status(400)
@@ -50,7 +50,7 @@ async function findOneById(req: Request, res: Response) {
 }
 
 async function findOneByCod(req: Request, res: Response) {
-  const codInput = await TableCodSchema.safeParseAsync(req.body.cod);
+  const codInput = await TableCodSchema.safeParseAsync(req.params);
   if (!codInput.success) {
     return res
       .status(400)
@@ -66,7 +66,7 @@ async function findOneByCod(req: Request, res: Response) {
 }
 
 async function update(req: Request, res: Response) {
-  const idInput = await TableIdSchema.safeParseAsync(req.body.id);
+  const idInput = await TableIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res.status(400).json({
       message: 'Validation error',
@@ -94,14 +94,17 @@ async function update(req: Request, res: Response) {
 }
 
 async function remove(req: Request, res: Response) {
-  const idInput = await TableIdSchema.safeParseAsync(req.body.id);
+  const idInput = await TableIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res
       .status(400)
       .json({ message: 'Validation error', error: idInput.error });
   }
   try {
-    await tableService.deleteTable(idInput.data);
+    const deleted = await tableService.deleteTable(idInput.data);
+    if (!deleted) {
+      return res.status(404).json({ message: 'Table not found' });
+    }
     return res.status(200).json({
       message: 'Table deleted successfully',
     });

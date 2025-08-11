@@ -1,5 +1,3 @@
-import { Ingredient } from '../ingredient/ingredient.entity.js';
-
 export interface CreateDishDto {
   cod: string;
   name: string;

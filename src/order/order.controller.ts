@@ -21,14 +21,14 @@ async function add(req: Request, res: Response) {
   try {
     const orderInput: CreateOrderInput = orderBody.data;
     //const orderItemInput: OrderItemListInput = orderBody.data.orderItems;
-    const client = await orderService.createOrder(
+    const order = await orderService.createOrder(
       orderInput /*, orderItemInput*/
     );
-    return res.status(201).json({ message: 'Client created', data: client });
+    return res.status(201).json({ message: 'Order created', data: order });
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: 'Error creating client', error: error.message });
+      .json({ message: 'Error creating order', error: error.message });
   }
 }
 
@@ -44,7 +44,7 @@ async function findAll(req: Request, res: Response) {
 }
 
 async function findOne(req: Request, res: Response) {
-  const idInput = await OrderIdSchema.safeParseAsync(req.body.id);
+  const idInput = await OrderIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res
       .status(400)
@@ -61,7 +61,7 @@ async function findOne(req: Request, res: Response) {
 }
 
 async function update(req: Request, res: Response) {
-  const idInput = await OrderIdSchema.safeParseAsync(req.body.id);
+  const idInput = await OrderIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res.status(400).json({
       message: 'Validation error',
@@ -90,15 +90,18 @@ async function update(req: Request, res: Response) {
 }
 
 async function remove(req: Request, res: Response) {
-  const idInput = await OrderIdSchema.safeParseAsync(req.body.id);
+  const idInput = await OrderIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res
       .status(400)
       .json({ message: 'Validation error', error: idInput.error });
   }
   try {
-    await orderService.deleteOrder(idInput.data);
-    return res.status(200).json({
+    const deleted = await orderService.deleteOrder(idInput.data);
+    if(!deleted){
+      return res.status(404).json({ message: 'Order not found' });
+    }
+      return res.status(200).json({
       message: 'Order deleted successfully',
     });
   } catch (error: any) {
@@ -107,7 +110,7 @@ async function remove(req: Request, res: Response) {
 }
 
 async function findAllOrdersByClientId(req: Request, res: Response) {
-  const clientIdInput = await ClientIdSchema.safeParseAsync(req.body.id);
+  const clientIdInput = await ClientIdSchema.safeParseAsync(req.params);
   if (!clientIdInput.success) {
     return res
       .status(400)
@@ -126,4 +129,4 @@ async function findAllOrdersByClientId(req: Request, res: Response) {
   }
 }
 
-export {add, findAll, findOne, update, remove, findAllOrdersByClientId};
+export { add, findAll, findOne, update, remove, findAllOrdersByClientId };

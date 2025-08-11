@@ -12,7 +12,9 @@ export const employeeRouter = Router();
 
 employeeRouter.post('/add', add);
 employeeRouter.get('/findAll', findAll);
-employeeRouter.get('/findOne/:taxId', findOneByTaxId);
-employeeRouter.get('/findOne/:id', findOneById);
-employeeRouter.put('/update/:id', update);
-employeeRouter.delete('/remove/:id', remove);
+
+employeeRouter.get('/taxId/:taxId', findOneByTaxId);
+employeeRouter.get('/id/:id', findOneById);
+
+employeeRouter.put('/:id', update);
+employeeRouter.delete('/:id', remove);

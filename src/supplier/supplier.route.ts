@@ -11,8 +11,12 @@ import {
 export const supplierRouter = Router();
 
 supplierRouter.post('/add', add);
+
 supplierRouter.get('/findAll', findAll);
-supplierRouter.get('/findOne/:taxId', findOneByTaxId);
-supplierRouter.get('/findOne/:id', findOneById);
-supplierRouter.put('/update/:id', update);
-supplierRouter.delete('/remove/:id', remove);
+
+supplierRouter.get('/taxId/:taxId', findOneByTaxId);
+supplierRouter.get('/id/:id', findOneById);
+
+supplierRouter.put('/:id', update);
+
+supplierRouter.delete('/:id', remove);

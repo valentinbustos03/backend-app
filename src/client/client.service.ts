@@ -45,12 +45,13 @@ export class ClientService {
     }
   }
 
-  async deleteClient(id: ClientIdDto) {
+  async deleteClient(id: ClientIdDto): Promise<boolean> {
     const deletedClient = await this.em.findOne(Client, id);
     if (deletedClient) {
-      this.em.removeAndFlush(deletedClient);
+      await this.em.removeAndFlush(deletedClient);
+      return true; 
     }
+    return false; 
   }
 
-  // addOrderToClient - crear metodo para cargar una orden a un nuevo cliente. Considerar hacer dentro de order.service -> createOrder()
 }

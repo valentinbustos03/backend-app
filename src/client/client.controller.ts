@@ -38,7 +38,7 @@ async function findAll(req: Request, res: Response) {
 }
 
 async function findOneById(req: Request, res: Response) {
-  const idInput = await ClientIdSchema.safeParseAsync(req.body.id);
+  const idInput = await ClientIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res
       .status(400)
@@ -54,12 +54,13 @@ async function findOneById(req: Request, res: Response) {
 }
 
 async function findOneByDni(req: Request, res: Response) {
-  const dniInput = await ClientDniSchema.safeParseAsync(req.body.dni);
+  const dniInput = await ClientDniSchema.safeParseAsync(req.params);
   if (!dniInput.success) {
     return res
       .status(400)
       .json({ message: 'Validation error', error: dniInput.error });
   }
+
   try {
     const client = await clientService.findClientByDni(dniInput.data.dni);
     const msg = client === null ? 'No client found' : 'Client found';
@@ -70,18 +71,18 @@ async function findOneByDni(req: Request, res: Response) {
 }
 
 async function update(req: Request, res: Response) {
-  const idInput = await ClientIdSchema.safeParseAsync(req.body.id);
+  const idInput = await ClientIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res.status(400).json({
-      message: 'Validation error',
+      message: 'ID validation error',
       error: idInput.error,
     });
   }
-  
+
   const clientInput = await ClientSchema.safeParseAsync(req.body);
   if (!clientInput.success) {
     return res.status(400).json({
-      message: 'Validation error',
+      message: 'Client validation error',
       error: clientInput.error,
     });
   }
@@ -101,17 +102,18 @@ async function update(req: Request, res: Response) {
 }
 
 async function remove(req: Request, res: Response) {
-  const idInput = await ClientIdSchema.safeParseAsync(req.body.id);
+  const idInput = await ClientIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res
       .status(400)
       .json({ message: 'Validation error', error: idInput.error });
   }
   try {
-    await clientService.deleteClient(idInput.data);
-    return res.status(200).json({
-      message: 'Client deleted successfully',
-    });
+    const deleted = await clientService.deleteClient(idInput.data);
+    if (!deleted) {
+      return res.status(404).json({ message: 'Client not found' });
+    }
+    return res.status(200).json({ message: 'Client deleted successfully' });
   } catch (error: any) {
     return res.status(500).json({ error: error.message });
   }

@@ -1,6 +1,3 @@
-import { Dish } from "../dish/dish.entity.js";
-import { Supplier } from "../supplier/supplier.entity.js";
-
 export interface CreateIngredientDto {
   cod: string;
   name: string;
