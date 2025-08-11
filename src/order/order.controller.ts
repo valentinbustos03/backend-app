@@ -21,14 +21,14 @@ async function add(req: Request, res: Response) {
   try {
     const orderInput: CreateOrderInput = orderBody.data;
     //const orderItemInput: OrderItemListInput = orderBody.data.orderItems;
-    const client = await orderService.createOrder(
+    const order = await orderService.createOrder(
       orderInput /*, orderItemInput*/
     );
-    return res.status(201).json({ message: 'Client created', data: client });
+    return res.status(201).json({ message: 'Order created', data: order });
   } catch (error: any) {
     return res
       .status(500)
-      .json({ message: 'Error creating client', error: error.message });
+      .json({ message: 'Error creating order', error: error.message });
   }
 }
 
@@ -129,4 +129,4 @@ async function findAllOrdersByClientId(req: Request, res: Response) {
   }
 }
 
-export {add, findAll, findOne, update, remove, findAllOrdersByClientId};
+export { add, findAll, findOne, update, remove, findAllOrdersByClientId };

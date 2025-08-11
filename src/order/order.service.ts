@@ -9,6 +9,8 @@ import { Order } from './order.entity.js';
 import { Client } from '../client/client.entity.js';
 import { OrderItem } from './orderItem.entity.js';
 import { ClientIdDto } from '../client/client.dto.js';
+import { Dish } from '../dish/dish.entity.js';
+import { id } from 'zod/locales';
 
 export class OrderService {
   private readonly em: EntityManager;
@@ -19,26 +21,27 @@ export class OrderService {
 
   async createOrder(
     data: CreateOrderDto
-    //orderItemList: OrderItemDto[]
   ): Promise<Order> {
     const newOrder = new Order();
     newOrder.description = data.description;
     newOrder.status = data.status;
     newOrder.estimatedEndTime = data.estimatedEndTime;
     newOrder.endTime = data.endTime;
-    newOrder.subtotal = this.computeSubtotal(data.orderItems);
 
     newOrder.client = this.em.getReference(Client, data.client);
 
     const orderItemList = data.orderItems.map((item) => {
       const orderItem = new OrderItem();
-      orderItem.dish = item.dish;
+      orderItem.dish = this.em.getReference(Dish, item.dish);
       orderItem.order = newOrder;
       orderItem.quantity = item.quantity;
       return orderItem;
     });
+    newOrder.subtotal = await this.computeSubtotal(orderItemList);
 
     newOrder.orderItems = orderItemList;
+
+    this.em.persist(newOrder).flush();
 
     return newOrder;
   }
@@ -67,9 +70,13 @@ export class OrderService {
     }
   }
 
-  async deleteOrder(id: OrderIdDto) : Promise<boolean> {
+  async deleteOrder(id: OrderIdDto): Promise<boolean> {
     const deletedOrder = await this.em.findOne(Order, id);
     if (deletedOrder) {
+      const order = await this.em.findOneOrFail(Order, id, {
+        populate: ['orderItems'],
+      });
+      await this.em.removeAndFlush(deletedOrder.orderItems);
       await this.em.removeAndFlush(deletedOrder);
       return true;
     }
@@ -81,11 +88,19 @@ export class OrderService {
     return orderList;
   }
 
-  private computeSubtotal(orderItemList: OrderItemDto[]): number {
+  private async computeSubtotal(orderItemList: OrderItem[]): Promise<number> {
     let subtotal = 0;
-    for (const item of orderItemList) {
-      const dish = item.dish;
-      subtotal += dish.price * item.quantity;
+
+    const dishPromises = orderItemList.map((item) =>
+      this.em.findOne(Dish, item.dish)
+    );
+    const dishes = await Promise.all(dishPromises);
+
+    for (let i = 0; i < dishes.length; i++) {
+      const dish = dishes[i];
+      const item = orderItemList[i];
+      if(dish)
+        subtotal += dish.price * item.quantity;
     }
     return Math.round(subtotal * 100) / 100; // Redondear a 2 decimales
   }

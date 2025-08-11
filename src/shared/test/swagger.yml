@@ -816,7 +816,7 @@ paths:
           '400':
             description: Invalid status value
             content: {}
-  /order/id/{id}:
+  /order/orderId/{orderId}:
     get:
       tags:
         - order
@@ -824,7 +824,7 @@ paths:
       description: Returns a single order by its ID
       operationId: findOneOrderID
       parameters:
-        - name: id
+        - name: orderId
           in: path
           description: ID of order to find
           required: true
@@ -843,37 +843,38 @@ paths:
         '404':
           description: Order not found
           content: {}
-  /order/{id}:
-    put:
-      tags:
-        - order
-      summary: Updates an order in the db with form data
-      operationId: updateOrder
-      parameters:
-        - name: id
-          in: path
-          description: ID of order that needs to be updated
-          required: true
-          schema:
-            $ref: '#/components/schemas/OrderIdDto'
-      requestBody:
-        content:
-          # ¡CORREGIDO! Cambiar a application/json para enviar el cuerpo correctamente
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateOrderDto'
-        required: true
-      responses:
-        '405':
-          description: Invalid input
-          content: {}
+  /order/{orderId}:
+    # put:
+    #   tags:
+    #     - order
+    #   summary: Updates an order in the db with form data
+    #   operationId: updateOrder
+    #   parameters:
+    #     - name: orderId
+    #       in: path
+    #       description: ID of order that needs to be updated
+    #       required: true
+    #       schema:
+    #         $ref: '#/components/schemas/OrderIdDto'
+    #   requestBody:
+    #     content:
+    #       # ¡CORREGIDO! Cambiar a application/json para enviar el cuerpo correctamente
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/UpdateOrderDto'
+    #     required: true
+    #   responses:
+    #     '405':
+    #       description: Invalid input
+    #       content: {}
+    #USAR ACTUALIZAR SOLO PARA LOS ESTADOS DEL PEDIDO, NO PARA OTRO CAMPO -> REGLA DE NEGOCIO, UN PEDIDO NO SE PUEDE ACTUALIZAR, SOLO ELIMINAR Y CREAR OTRO
     delete:
       tags:
         - order
       summary: Deletes an order
       operationId: removeOrder
       parameters:
-        - name: id
+        - name: orderId
           in: path
           description: Order id to delete
           required: true
@@ -1092,7 +1093,11 @@ components:
           items:
             $ref: '#/components/schemas/OrderItem'
         client:
-          type: string
+          type: object
+          properties:
+            id:
+              type: string
+              example: "1954371590753882225"
           description: ID del cliente que realizó el pedido
     OrderIdDto:
       type: string
@@ -1106,7 +1111,11 @@ components:
       type: object
       properties:
         dish:
-          $ref: '#/components/schemas/DishIdDto'
+          type: object
+          properties:
+            id:
+              type: string
+              example: "1954371590753882225"
         quantity:
           type: integer
           example: 2

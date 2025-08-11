@@ -12,8 +12,8 @@ export const orderRouter = Router();
 
 orderRouter.post('/add', add);
 orderRouter.get('/findAll', findAll);
-orderRouter.get('/id/:id', findOne);
-orderRouter.put('/:id', update);
-orderRouter.delete('/:id', remove);
+orderRouter.get('/orderId/:orderId', findOne);
+orderRouter.put('/:orderId', update);
+orderRouter.delete('/:orderId', remove);
 
-orderRouter.get('/findAllClientOrders/:id ', findAllOrdersByClientId);
+orderRouter.get('/findAllClientOrders/:id', findAllOrdersByClientId);
