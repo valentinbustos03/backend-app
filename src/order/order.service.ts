@@ -1,4 +1,4 @@
-import { EntityManager } from '@mikro-orm/mysql';
+import { EntityManager, Loaded } from '@mikro-orm/mysql';
 import {
   CreateOrderDto,
   OrderIdDto,
@@ -24,7 +24,6 @@ export class OrderService {
     const newOrder = new Order();
     newOrder.description = data.description;
     newOrder.status = data.status;
-    newOrder.startTime = data.startTime;
     newOrder.estimatedEndTime = data.estimatedEndTime;
     newOrder.endTime = data.endTime;
     newOrder.subtotal = this.computeSubtotal(data.orderItems);
@@ -68,11 +67,13 @@ export class OrderService {
     }
   }
 
-  async deleteOrder(id: OrderIdDto) {
+  async deleteOrder(id: OrderIdDto) : Promise<boolean> {
     const deletedOrder = await this.em.findOne(Order, id);
     if (deletedOrder) {
       await this.em.removeAndFlush(deletedOrder);
+      return true;
     }
+    return false;
   }
 
   async findOrdersByClientId(clientId: ClientIdDto): Promise<Order[] | null> {

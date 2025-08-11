@@ -37,7 +37,7 @@ export class Ingredient {
   stockLimit!: number;
 
   @ManyToMany(() => Supplier, (supplier) => supplier.ingredients, {
-    cascade: [Cascade.PERSIST],
+    cascade: [Cascade.ALL],
   })
   suppliers = new Collection<Supplier>(this);
 

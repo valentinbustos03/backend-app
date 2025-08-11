@@ -8,6 +8,7 @@ import {
 } from '@mikro-orm/core';
 import { Ingredient } from '../ingredient/ingredient.entity.js';
 import generateId from '../shared/db/generate-id.js';
+import { nullable } from 'zod';
 
 @Entity()
 export class Dish {
@@ -23,13 +24,13 @@ export class Dish {
   @Property({ unique: true })
   description?: string;
 
-  @Property()
+  @Property({ nullable: true })
   picture?: string; //usar Cloudinary
 
   @Property({ nullable: false, type: 'decimal', precision: 10, scale: 2 })
   price!: number;
 
-  @Property()
+  @Property({ type: 'decimal', precision: 10, scale: 2 })
   calification?: number;
 
   @ManyToMany(() => Ingredient, (ingredient) => ingredient.dishes, {

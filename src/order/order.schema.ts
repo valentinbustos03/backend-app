@@ -15,7 +15,7 @@ import { Dish } from '../dish/dish.entity.js';
 export const OrderItemSchema = z
   .object({
     dish: DishIdSchema.transform((obj) => obj.id),
-    quantity: z.number().int().min(1),
+    quantity: z.coerce.number().pipe(z.number().min(1)),
   })
   .transform((data) => {
     const orderItem = new OrderItem();
@@ -43,7 +43,6 @@ export const OrderItemIdSchema = z.object({
 export const OrderSchema = z.object({
   description: z.string().optional(),
   status: z.string(),
-  startTime: z.date(),
   estimatedEndTime: z.date(),
   endTime: z.date(),
   orderItems: z

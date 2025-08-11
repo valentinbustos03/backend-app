@@ -44,7 +44,7 @@ async function findAll(req: Request, res: Response) {
 }
 
 async function findOne(req: Request, res: Response) {
-  const idInput = await OrderIdSchema.safeParseAsync(req.body.id);
+  const idInput = await OrderIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res
       .status(400)
@@ -61,7 +61,7 @@ async function findOne(req: Request, res: Response) {
 }
 
 async function update(req: Request, res: Response) {
-  const idInput = await OrderIdSchema.safeParseAsync(req.body.id);
+  const idInput = await OrderIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res.status(400).json({
       message: 'Validation error',
@@ -90,15 +90,18 @@ async function update(req: Request, res: Response) {
 }
 
 async function remove(req: Request, res: Response) {
-  const idInput = await OrderIdSchema.safeParseAsync(req.body.id);
+  const idInput = await OrderIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
     return res
       .status(400)
       .json({ message: 'Validation error', error: idInput.error });
   }
   try {
-    await orderService.deleteOrder(idInput.data);
-    return res.status(200).json({
+    const deleted = await orderService.deleteOrder(idInput.data);
+    if(!deleted){
+      return res.status(404).json({ message: 'Order not found' });
+    }
+      return res.status(200).json({
       message: 'Order deleted successfully',
     });
   } catch (error: any) {
@@ -107,7 +110,7 @@ async function remove(req: Request, res: Response) {
 }
 
 async function findAllOrdersByClientId(req: Request, res: Response) {
-  const clientIdInput = await ClientIdSchema.safeParseAsync(req.body.id);
+  const clientIdInput = await ClientIdSchema.safeParseAsync(req.params);
   if (!clientIdInput.success) {
     return res
       .status(400)

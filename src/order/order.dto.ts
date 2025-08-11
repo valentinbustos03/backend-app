@@ -4,7 +4,6 @@ import { OrderItem } from './orderItem.entity.js';
 export interface CreateOrderDto {
   description?: string;
   status: string;
-  startTime: Date;
   estimatedEndTime: Date;
   endTime: Date;
   orderItems: OrderItem[];
