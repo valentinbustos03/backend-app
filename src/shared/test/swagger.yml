@@ -1099,6 +1099,13 @@ components:
               type: string
               example: "1954371590753882225"
           description: ID del cliente que realizó el pedido
+        table:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "1954371590753882225"
+          description: ID de la mesa del pedido
     OrderIdDto:
       type: string
       required:
@@ -1115,7 +1122,7 @@ components:
           properties:
             id:
               type: string
-              example: "1954371590753882225"
+              example: "1954707475630395502"
         quantity:
           type: integer
           example: 2
