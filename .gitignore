@@ -1,6 +1,6 @@
 dist/*
 node_modules/*
-src/shared/db/*
+src/shared/db/orm
 .gitignore
 .node-version
 package.json

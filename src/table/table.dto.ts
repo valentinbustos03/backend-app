@@ -3,6 +3,7 @@ export interface CreateTableDto{
   capacity: number;
   description?: string;
   occupied: boolean;
+  sector: string
 }
 
 export interface TableIdDto{

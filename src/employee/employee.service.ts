@@ -5,6 +5,9 @@ import {
   EmployeeIdDto,
   UpdateEmployeeDto,
 } from '../employee/employee.dto.js';
+import { EmployeeRole } from '../shared/enum/employee.roleEnum.js';
+import { Chef } from './chef/chef.entity.js';
+import { Waiter } from './waiter/waiter.entity.js';
 
 export class EmployeeService {
   private readonly em: EntityManager;
@@ -14,32 +17,40 @@ export class EmployeeService {
   }
 
   async createEmployee(data: CreateEmployeeDto): Promise<Employee> {
-    const newEmployee = this.em.create(Employee, data);
+    const newEmployee =
+      data.role === EmployeeRole.CHEF
+        ? this.em.create(Chef, data)
+        : this.em.create(Waiter, data);
     newEmployee.salary = this.computeSalary(data.workedHours, data.priceHour);
     await this.em.persistAndFlush(newEmployee);
     return newEmployee;
   }
 
   async findAllEmployee(): Promise<Employee[] | null> {
-    const employeeList = this.em.findAll(Employee);
+    const chefList = await this.em.findAll(Chef); 
+    const waiterList = await this.em.findAll(Waiter); 
+    const employeeList = [...chefList, ...waiterList];
     return employeeList;
   }
 
   async findEmployeeByTaxId(taxId: string): Promise<Employee | null> {
-    const employee = this.em.findOne(Employee, { taxId });
+    const employee = await this.em.findOne(Employee, { taxId });
     return employee;
   }
 
   async findEmployeeById(id: EmployeeIdDto): Promise<Employee | null> {
-    const employee = this.em.findOne(Employee, id);
+    const employee = await this.em.findOne(Employee, id);
     return employee;
   }
 
   async updateEmployee(
     id: EmployeeIdDto,
     data: UpdateEmployeeDto
-  ): Promise<Employee | null> {
-    const updatedEmployee = await this.em.findOne(Employee, id);
+  ): Promise<Chef | Waiter | null> {
+    const updatedEmployee =
+      data.role === EmployeeRole.CHEF
+        ? await this.em.findOne(Chef, id)
+        : await this.em.findOne(Waiter, id);
     if (updatedEmployee) {
       this.em.assign(updatedEmployee, data);
       updatedEmployee.salary = this.computeSalary(
@@ -57,12 +68,12 @@ export class EmployeeService {
     const deletedEmployee = await this.em.findOne(Employee, id);
     if (deletedEmployee) {
       await this.em.removeAndFlush(deletedEmployee);
-      return true; 
+      return true;
     }
-    return false; 
+    return false;
   }
 
-  private computeSalary(workedHours: number, priceHour: number): number {
+  private computeSalary(workedHours: number , priceHour: number): number {
     if (workedHours < 0 || priceHour < 0) {
       throw new Error('Invalid input for salary computation');
     }

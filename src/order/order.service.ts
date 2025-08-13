@@ -1,16 +1,11 @@
-import { EntityManager, Loaded } from '@mikro-orm/mysql';
-import {
-  CreateOrderDto,
-  OrderIdDto,
-  OrderItemDto,
-  UpdateOrderDto,
-} from './order.dto.js';
+import { EntityManager } from '@mikro-orm/mysql';
+import { CreateOrderDto, OrderIdDto, UpdateOrderDto } from './order.dto.js';
 import { Order } from './order.entity.js';
 import { Client } from '../client/client.entity.js';
 import { OrderItem } from './orderItem.entity.js';
 import { ClientIdDto } from '../client/client.dto.js';
 import { Dish } from '../dish/dish.entity.js';
-import { id } from 'zod/locales';
+import { Table } from '../table/table.entity.js';
 
 export class OrderService {
   private readonly em: EntityManager;
@@ -19,9 +14,7 @@ export class OrderService {
     this.em = em;
   }
 
-  async createOrder(
-    data: CreateOrderDto
-  ): Promise<Order> {
+  async createOrder(data: CreateOrderDto): Promise<Order> {
     const newOrder = new Order();
     newOrder.description = data.description;
     newOrder.status = data.status;
@@ -29,6 +22,7 @@ export class OrderService {
     newOrder.endTime = data.endTime;
 
     newOrder.client = this.em.getReference(Client, data.client);
+    newOrder.table = this.em.getReference(Table, data.table);
 
     const orderItemList = data.orderItems.map((item) => {
       const orderItem = new OrderItem();
@@ -99,8 +93,7 @@ export class OrderService {
     for (let i = 0; i < dishes.length; i++) {
       const dish = dishes[i];
       const item = orderItemList[i];
-      if(dish)
-        subtotal += dish.price * item.quantity;
+      if (dish) subtotal += dish.price * item.quantity;
     }
     return Math.round(subtotal * 100) / 100; // Redondear a 2 decimales
   }

@@ -5,6 +5,7 @@ export interface CreateOrderDto {
   endTime: Date;
   orderItems: OrderItemDto[];
   client: string;
+  table: string;
 }
 
 export interface OrderIdDto {

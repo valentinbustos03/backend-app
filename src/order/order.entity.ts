@@ -3,6 +3,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryKey,
   Property,
   Rel,
@@ -10,6 +11,7 @@ import {
 import { Client } from '../client/client.entity.js';
 import { OrderItem } from './orderItem.entity.js';
 import generateId from '../shared/db/generate-id.js';
+import { Table } from '../table/table.entity.js';
 
 @Entity()
 export class Order {
@@ -43,4 +45,7 @@ export class Order {
 
   @ManyToOne(() => Client)
   client!: Rel<Client>;
+
+  @ManyToOne(()=> Table)
+  table!: Rel<Table>;
 }

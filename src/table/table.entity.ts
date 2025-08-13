@@ -1,5 +1,12 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import {
+  Collection,
+  Entity,
+  OneToMany,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
 import generateId from '../shared/db/generate-id.js';
+import { Order } from '../order/order.entity.js';
 
 @Entity()
 export class Table {
@@ -17,4 +24,12 @@ export class Table {
 
   @Property({ nullable: false })
   occupied: boolean = false;
+
+  @Property()
+  sector!: string
+
+  @OneToMany(() => Order, (order) => order.table, {
+    mappedBy: 'table',
+  })
+  order = new Collection<Order>(this);
 }

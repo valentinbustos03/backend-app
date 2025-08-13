@@ -1,4 +1,5 @@
-import z from 'zod';
+import z, { string } from 'zod';
+import { EmployeeRole } from '../shared/enum/employee.roleEnum.js';
 
 const stringToNumberSchema = z
   .union([
@@ -6,14 +7,30 @@ const stringToNumberSchema = z
     z.string().regex(/^\d+(\.\d+)?$/).transform(Number),
   ]);
 
-export const EmployeeSchema = z.object({
+export const BaseEmployeeSchema = z.object({
   taxId: z.string().min(1),
   shift: z.string().min(1),
-  // workedHours: z.number().min(0),
-  // priceHour: z.number().min(0),
   workedHours: stringToNumberSchema,
   priceHour: stringToNumberSchema,
+  role: z.enum(EmployeeRole),
 });
+
+export const ChefSchema = BaseEmployeeSchema.extend({
+  role: z.literal(EmployeeRole.CHEF),
+  hierarchy: z.string().min(1),
+  tag: z.string().min(1),
+});
+
+export const WaiterSchema = BaseEmployeeSchema.extend({
+  role: z.literal(EmployeeRole.WAITER),
+  calification: stringToNumberSchema,
+  sector: z.string().min(1),
+});
+
+export const EmployeeSchema = z.discriminatedUnion('role', [
+  ChefSchema,
+  WaiterSchema,
+]);
 
 export const EmployeeIdSchema = z.object({
   id: z

@@ -8,7 +8,6 @@ import {
 } from '@mikro-orm/core';
 import { Ingredient } from '../ingredient/ingredient.entity.js';
 import generateId from '../shared/db/generate-id.js';
-import { nullable } from 'zod';
 
 @Entity()
 export class Dish {
@@ -32,6 +31,9 @@ export class Dish {
 
   @Property({ type: 'decimal', precision: 10, scale: 2 })
   calification?: number;
+
+  @Property()
+  tag!: string;
 
   @ManyToMany(() => Ingredient, (ingredient) => ingredient.dishes, {
     eager: true,

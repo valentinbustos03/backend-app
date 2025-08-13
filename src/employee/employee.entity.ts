@@ -1,8 +1,9 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Entity, Enum, PrimaryKey, Property } from '@mikro-orm/core';
 import generateId from '../shared/db/generate-id.js';
+import { EmployeeRole } from '../shared/enum/employee.roleEnum.js';
 
-@Entity()
-export class Employee {
+@Entity({ abstract: true })
+export abstract class Employee {
   @PrimaryKey({ nullable: false, unique: true })
   id: string = generateId();
 
@@ -20,4 +21,7 @@ export class Employee {
 
   @Property({ type: 'decimal', precision: 10, scale: 2 })
   salary?: number;
+
+  @Enum(() => EmployeeRole)
+  role!: EmployeeRole;
 }

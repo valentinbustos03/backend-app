@@ -3,6 +3,7 @@ import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
 import { MySqlDriver } from '@mikro-orm/mysql';
 
 export const orm = await MikroORM.init({
+  // metadataProvider: AnnotationMetadataProvider,
   entities: ['dist/**/*.entity.js'],
   entitiesTs: ['src/**/*.entity.ts'],
   dbName: 'sgidb',
@@ -24,7 +25,7 @@ export const orm = await MikroORM.init({
 });
 
 export const syncSchema = async () => {
-  const generator = orm.getSchemaGenerator();  
+  const generator = orm.getSchemaGenerator();
   // await generator.dropSchema()
   // await generator.createSchema()
   await generator.updateSchema();
