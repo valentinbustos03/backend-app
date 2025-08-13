@@ -9,6 +9,7 @@ export const TableSchema = z.object({
   description: z.string().optional(),
   //occupied: z.boolean().default(false),
   occupied: z.preprocess((val) => val === 'true' || val === true, z.boolean()),
+  sector: z.string().min(1),
 });
 
 export const TableIdSchema = z.object({

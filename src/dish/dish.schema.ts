@@ -11,6 +11,7 @@ export const DishSchema = z.object({
   picture: z.url().optional(), // usar Cloudinary
   price: z.coerce.number().pipe(z.number().min(0)),
   calification: z.coerce.number().pipe(z.number().min(0).max(5)),
+  tag: z.string().min(1).trim(),
   ingredients: z
     .array(IngredientIdSchema)
     .transform((arr) => arr.map((obj) => obj.id)),

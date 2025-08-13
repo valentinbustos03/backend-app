@@ -5,6 +5,7 @@ export interface CreateDishDto {
   picture?: string; //usar Cloudinary
   price: number;
   calification: number;
+  tag: string;
   ingredients: string[]; 
   //chef: Partial<Chef>;
 }

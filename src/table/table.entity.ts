@@ -25,6 +25,9 @@ export class Table {
   @Property({ nullable: false })
   occupied: boolean = false;
 
+  @Property()
+  sector!: string
+
   @OneToMany(() => Order, (order) => order.table, {
     mappedBy: 'table',
   })
