@@ -6,8 +6,8 @@ import {
   UpdateEmployeeDto,
 } from '../employee/employee.dto.js';
 import { EmployeeRole } from '../shared/enum/employee.roleEnum.js';
-import { Chef } from './chef/chef.entity.js';
-import { Waiter } from './waiter/waiter.entity.js';
+import { Chef } from './type/chef.entity.js';
+import { Waiter } from './type/waiter.entity.js';
 
 export class EmployeeService {
   private readonly em: EntityManager;
@@ -46,11 +46,10 @@ export class EmployeeService {
   async updateEmployee(
     id: EmployeeIdDto,
     data: UpdateEmployeeDto
-  ): Promise<Chef | Waiter | null> {
-    const updatedEmployee =
-      data.role === EmployeeRole.CHEF
-        ? await this.em.findOne(Chef, id)
-        : await this.em.findOne(Waiter, id);
+  ): Promise<Employee | null> {
+    console.log(id)
+    const updatedEmployee = await this.em.findOne(Employee, id);
+    console.log(updatedEmployee)
     if (updatedEmployee) {
       this.em.assign(updatedEmployee, data);
       updatedEmployee.salary = this.computeSalary(
