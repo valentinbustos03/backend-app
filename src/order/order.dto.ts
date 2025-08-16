@@ -1,6 +1,8 @@
+import { OrderStatus } from "../shared/enum/order.statusEnum.js";
+
 export interface CreateOrderDto {
   description?: string;
-  status: string;
+  status: OrderStatus;
   estimatedEndTime: Date;
   endTime: Date;
   orderItems: OrderItemDto[];
