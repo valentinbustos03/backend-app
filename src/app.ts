@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import express from 'express';
-import { orm, syncSchema } from './shared/db/orm.js'
-import { RequestContext } from '@mikro-orm/core'
+import { orm, syncSchema } from './shared/db/orm.js';
+import { RequestContext } from '@mikro-orm/core';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swagger.config.js';
 
@@ -13,7 +13,7 @@ import { tableRouter } from './table/table.route.js';
 import { ingredientRouter } from './ingredient/ingredient.route.js';
 import { dishRouter } from './dish/dish.route.js';
 import { orderRouter } from './order/order.router.js';
-
+import { billRouter } from './order/bill/bill.router.js';
 
 const app = express();
 app.use(express.json());
@@ -24,10 +24,11 @@ app.use((req, res, next) => {
 });
 
 app.use('/client', clientRouter);
-app.use('/dish',dishRouter);
+app.use('/dish', dishRouter);
 app.use('/employee', employeeRouter);
-app.use('/ingredient',ingredientRouter);
-app.use('/order',orderRouter);
+app.use('/ingredient', ingredientRouter);
+app.use('/order', orderRouter, billRouter);
+// app.use('/order', billRouter);
 app.use('/supplier', supplierRouter);
 app.use('/table', tableRouter);
 

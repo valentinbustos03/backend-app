@@ -12,6 +12,7 @@ import { Client } from '../client/client.entity.js';
 import { OrderItem } from './orderItem.entity.js';
 import generateId from '../shared/db/generate-id.js';
 import { Table } from '../table/table.entity.js';
+import { Bill } from './bill/bill.entity.js';
 
 @Entity()
 export class Order {
@@ -34,7 +35,7 @@ export class Order {
   endTime!: Date;
 
   @Property({ nullable: false })
-  subtotal!: number; 
+  subtotal!: number;
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order, {
     cascade: [Cascade.ALL],
@@ -46,6 +47,15 @@ export class Order {
   @ManyToOne(() => Client)
   client!: Rel<Client>;
 
-  @ManyToOne(()=> Table)
+  @ManyToOne(() => Table)
   table!: Rel<Table>;
+
+  @OneToOne(() => Bill, {
+    mappedBy: 'order',
+    nullable: true,
+    cascade: [Cascade.ALL],
+    unique: true,
+    orphanRemoval: true,
+  })
+  bill?: Rel<Bill>;
 }

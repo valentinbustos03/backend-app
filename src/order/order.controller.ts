@@ -20,10 +20,7 @@ async function add(req: Request, res: Response) {
   }
   try {
     const orderInput: CreateOrderInput = orderBody.data;
-    //const orderItemInput: OrderItemListInput = orderBody.data.orderItems;
-    const order = await orderService.createOrder(
-      orderInput /*, orderItemInput*/
-    );
+    const order = await orderService.createOrder(orderInput);
     return res.status(201).json({ message: 'Order created', data: order });
   } catch (error: any) {
     return res
@@ -98,10 +95,10 @@ async function remove(req: Request, res: Response) {
   }
   try {
     const deleted = await orderService.deleteOrder(idInput.data);
-    if(!deleted){
+    if (!deleted) {
       return res.status(404).json({ message: 'Order not found' });
     }
-      return res.status(200).json({
+    return res.status(200).json({
       message: 'Order deleted successfully',
     });
   } catch (error: any) {
