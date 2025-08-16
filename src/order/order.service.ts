@@ -67,9 +67,9 @@ export class OrderService {
   async deleteOrder(id: OrderIdDto): Promise<boolean> {
     const deletedOrder = await this.em.findOne(Order, id);
     if (deletedOrder) {
-      const order = await this.em.findOneOrFail(Order, id, {
-        populate: ['orderItems'],
-      });
+      // const order = await this.em.findOneOrFail(Order, id, {
+      //   populate: ['orderItems'],
+      // });
       await this.em.removeAndFlush(deletedOrder.orderItems);
       await this.em.removeAndFlush(deletedOrder);
       return true;

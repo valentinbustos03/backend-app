@@ -9,12 +9,14 @@ tags:
     description: Everything about your Clietns
   - name: dish
     description: Everything about your Dishes
-  - name: employee 
+  - name: employee
     description: Everything about your Employee
   - name: ingredient
     description: Everything about your Ingredients
   - name: order
     description: Everything about your Orders
+  - name: order bill
+    description: Everything about your Orders bill
   - name: supplier
     description: Everything about your Suppliers
   - name: table
@@ -47,25 +49,25 @@ paths:
       #   - petstore_auth:
       #       - write:pets
       #       - read:pets
-      x-codegen-request-body-name: body  
+      x-codegen-request-body-name: body
   /client/findAll:
     get:
-        tags:
-          - client
-        summary: Get all clients
-        operationId: findAllClient
-        responses:
-          '200':
-            description: successful operation
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Client'
-          '400':
-            description: Invalid status value
-            content: {}
+      tags:
+        - client
+      summary: Get all clients
+      operationId: findAllClient
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+        '400':
+          description: Invalid status value
+          content: {}
   /client/id/{id}:
     get:
       tags:
@@ -92,7 +94,7 @@ paths:
           content: {}
         '404':
           description: Client not found
-          content: {}  
+          content: {}
   /client/{id}:
     put:
       tags:
@@ -183,22 +185,22 @@ paths:
       x-codegen-request-body-name: body
   /supplier/findAll:
     get:
-        tags:
-          - supplier
-        summary: Get all suppliers
-        operationId: findAllSupplier
-        responses:
-          '200':
-            description: successful operation
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Supplier'
-          '400':
-            description: Invalid status value
-            content: {}
+      tags:
+        - supplier
+      summary: Get all suppliers
+      operationId: findAllSupplier
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Supplier'
+        '400':
+          description: Invalid status value
+          content: {}
   /supplier/id/{id}:
     get:
       tags:
@@ -289,7 +291,6 @@ paths:
           description: Invalid tax ID value
           content: {}
 
-
   /table/add:
     post:
       tags:
@@ -316,22 +317,22 @@ paths:
       x-codegen-request-body-name: body
   /table/findAll:
     get:
-        tags:
-          - table
-        summary: Get all tables
-        operationId: findAllTable
-        responses:
-          '200':
-            description: successful operation
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Table'
-          '400':
-            description: Invalid status value
-            content: {}
+      tags:
+        - table
+      summary: Get all tables
+      operationId: findAllTable
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Table'
+        '400':
+          description: Invalid status value
+          content: {}
   /table/id/{id}:
     get:
       tags:
@@ -448,22 +449,22 @@ paths:
       x-codegen-request-body-name: body
   /employee/findAll:
     get:
-        tags:
-          - employee
-        summary: Get all employees
-        operationId: findAllEmployee
-        responses:
-          '200':
-            description: successful operation
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Employee'
-          '400':
-            description: Invalid status value
-            content: {}
+      tags:
+        - employee
+      summary: Get all employees
+      operationId: findAllEmployee
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+        '400':
+          description: Invalid status value
+          content: {}
   /employee/id/{id}:
     get:
       tags:
@@ -580,22 +581,22 @@ paths:
       x-codegen-request-body-name: body
   /ingredient/findAll:
     get:
-        tags:
-          - ingredient
-        summary: Get all ingredients
-        operationId: findAllIngredient
-        responses:
-          '200':
-            description: successful operation
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Ingredient'
-          '400':
-            description: Invalid status value
-            content: {}
+      tags:
+        - ingredient
+      summary: Get all ingredients
+      operationId: findAllIngredient
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ingredient'
+        '400':
+          description: Invalid status value
+          content: {}
   /ingredient/id/{id}:
     get:
       tags:
@@ -690,22 +691,22 @@ paths:
       x-codegen-request-body-name: body
   /dish/findAll:
     get:
-        tags:
-          - dish
-        summary: Get all dishs
-        operationId: findAllDish
-        responses:
-          '200':
-            description: successful operation
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Dish'
-          '400':
-            description: Invalid status value
-            content: {}
+      tags:
+        - dish
+      summary: Get all dishs
+      operationId: findAllDish
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dish'
+        '400':
+          description: Invalid status value
+          content: {}
   /dish/id/{id}:
     get:
       tags:
@@ -800,22 +801,22 @@ paths:
       x-codegen-request-body-name: body
   /order/findAll:
     get:
-        tags:
-          - order
-        summary: Get all orders
-        operationId: findAllOrder
-        responses:
-          '200':
-            description: successful operation
-            content:
-              application/json:
-                schema:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Order'
-          '400':
-            description: Invalid status value
-            content: {}
+      tags:
+        - order
+      summary: Get all orders
+      operationId: findAllOrder
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid status value
+          content: {}
   /order/orderId/{orderId}:
     get:
       tags:
@@ -897,7 +898,7 @@ paths:
           description: ID of client to find orders for
           required: true
           schema:
-            $ref: '#/components/schemas/ClientIdDto' 
+            $ref: '#/components/schemas/ClientIdDto'
       responses:
         '200':
           description: successful operation
@@ -912,6 +913,98 @@ paths:
           content: {}
         '404':
           description: Client not found
+          content: {}
+
+  /order/{id}/bill/add:
+    post:
+      tags:
+        - order bill
+      summary: Create a bill for an order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the order
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bill'
+
+      responses:
+        '201':
+          description: Bill created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        '400':
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+  /order/bill/findAll:
+    get:
+      tags:
+        - order bill
+      summary: Get all orders bills
+      operationId: findAllOrderBill
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bill'
+        '400':
+          description: Invalid status value
+          content: {}
+  /order/{orderId}/bill:
+    get:
+      tags:
+        - order bill
+      summary: Finds order bill by order ID
+      description: Returns a single bill by its order ID
+      operationId: findOneOrderBillByOrderID
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of order to find its bill
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrderIdDto'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        '400':
+          description: Invalid status value
+          content: {}
+        '404':
+          description: Order bill not found
+          content: {}
+    delete:
+      tags:
+        - order bill
+      summary: Deletes an order bill
+      operationId: removeOrder
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id to delete its bill
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrderIdDto'
+      responses:
+        '404':
+          description: Order bill not found
           content: {}
 
 components:
@@ -944,13 +1037,13 @@ components:
       properties:
         cod:
           type: string
-          example: "PLT001"
+          example: 'PLT001'
         name:
           type: string
-          example: "Bife Ancho con Salsa de Vino y Papas Rústicas"
+          example: 'Bife Ancho con Salsa de Vino y Papas Rústicas'
         description:
           type: string
-          example: "Jugoso bife ancho de res de Carnes Libertarias, sellado a la parrilla y bañado en salsa de vino tinto con reducción de especias del mundo. Acompañado de papas rústicas crocantes y vegetales salteados."
+          example: 'Jugoso bife ancho de res de Carnes Libertarias, sellado a la parrilla y bañado en salsa de vino tinto con reducción de especias del mundo. Acompañado de papas rústicas crocantes y vegetales salteados.'
         picture:
           type: string
           description: URL de la imagen (por ejemplo, de Cloudinary)
@@ -960,7 +1053,7 @@ components:
         calification:
           type: number
           format: float
-        tag: 
+        tag:
           type: string
           description: Categoria del plato (carnes/parrilla/pastas/postres/ensalada/etc)
         ingredients:
@@ -1015,13 +1108,13 @@ components:
         tag:
           type: string
           example: 'pastas'
-        calification: 
+        calification:
           type: number
           example: 0
-        sector: 
+        sector:
           type: string
           example: 'terraza'
-        
+
       required:
         - taxId
         - shift
@@ -1116,14 +1209,14 @@ components:
           properties:
             id:
               type: string
-              example: "1954371590753882225"
+              example: '1954371590753882225'
           description: ID del cliente que realizó el pedido
         table:
           type: object
           properties:
             id:
               type: string
-              example: "1954371590753882225"
+              example: '1954371590753882225'
           description: ID de la mesa del pedido
     OrderIdDto:
       type: string
@@ -1141,10 +1234,17 @@ components:
           properties:
             id:
               type: string
-              example: "1954707475630395502"
+              example: '1954707475630395502'
         quantity:
           type: integer
           example: 2
+
+    Bill:
+      type: object
+      properties:
+        paymentMethod:
+          type: string
+          example: 'Mercado Pago'
 
     Supplier:
       type: object
