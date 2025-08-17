@@ -5,7 +5,7 @@ const swaggerOptions: swaggerJSDoc.Options = {
     openapi: '3.0.0',
     info: {
       title: 'API del sistema de restaurante',
-      version: '1.0.6',
+      version: '1.0.14',
     },
     servers: [
       {

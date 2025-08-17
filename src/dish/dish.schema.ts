@@ -3,6 +3,7 @@ import {
   IngredientIdSchema,
   IngredientSchema,
 } from '../ingredient/ingredient.schema.js';
+import { EmployeeIdSchema } from '../employee/employee.schema.js';
 
 export const DishSchema = z.object({
   cod: z.string().min(1).trim(),
@@ -15,7 +16,7 @@ export const DishSchema = z.object({
   ingredients: z
     .array(IngredientIdSchema)
     .transform((arr) => arr.map((obj) => obj.id)),
-  chef: z.string().min(1).regex(/^\d+$/).optional(), // CUANDO ESTE 'CHEF' SACAR EL OPTIONAL
+  chef: EmployeeIdSchema.transform((obj) => obj.id), 
 });
 
 export type CreateDishInput = z.infer<typeof DishSchema>;
@@ -28,4 +29,3 @@ export const DishIdSchema = z.object({
     .min(1, 'ID is required')
     .regex(/^\d+$/, 'ID must be a valid snowflake ID'),
 });
-
