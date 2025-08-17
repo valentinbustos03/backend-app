@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { ClientIdSchema } from '../client/client.schema.js';
 import { DishIdSchema } from '../dish/dish.schema.js';
 import { TableIdSchema } from '../table/table.schema.js';
+import { OrderStatus } from '../shared/enum/order.statusEnum.js';
 
 export const OrderItemSchema = z.object({
   dish: DishIdSchema.transform((obj) => obj.id),
@@ -17,7 +18,7 @@ export const OrderItemIdSchema = z.object({
 
 export const OrderSchema = z.object({
   description: z.string().optional(),
-  status: z.string(),
+  status: z.enum(OrderStatus),
   // estimatedEndTime: z.date(),
   // endTime: z.date(),
   estimatedEndTime: z

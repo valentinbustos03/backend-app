@@ -1,6 +1,7 @@
 import {
   Cascade,
   Entity,
+  Enum,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -13,6 +14,7 @@ import { OrderItem } from './orderItem.entity.js';
 import generateId from '../shared/db/generate-id.js';
 import { Table } from '../table/table.entity.js';
 import { Bill } from './bill/bill.entity.js';
+import { OrderStatus } from '../shared/enum/order.statusEnum.js';
 
 @Entity()
 export class Order {
@@ -22,8 +24,8 @@ export class Order {
   @Property()
   description?: string;
 
-  @Property({ nullable: false })
-  status!: string;
+  @Enum(() => OrderStatus)
+  status!: OrderStatus;
 
   @Property({ type: 'datetime' })
   startTime: Date = new Date();

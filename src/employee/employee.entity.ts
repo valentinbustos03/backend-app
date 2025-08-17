@@ -2,7 +2,7 @@ import { Entity, Enum, PrimaryKey, Property } from '@mikro-orm/core';
 import generateId from '../shared/db/generate-id.js';
 import { EmployeeRole } from '../shared/enum/employee.roleEnum.js';
 
-@Entity({ abstract: true })
+@Entity({ discriminatorColumn: 'role', abstract: true })
 export abstract class Employee {
   @PrimaryKey({ nullable: false, unique: true })
   id: string = generateId();
