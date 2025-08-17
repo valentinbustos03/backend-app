@@ -3,16 +3,19 @@ import {
   Collection,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryKey,
   Property,
+  Rel,
 } from '@mikro-orm/core';
 import { Order } from '../order/order.entity.js';
 import generateId from '../shared/db/generate-id.js';
+import { User } from '../user/user.entity.js';
 
 @Entity()
 export class Client {
   @PrimaryKey({ nullable: false, unique: true })
-  id: string = generateId()
+  id: string = generateId();
 
   @Property({ nullable: false, unique: true })
   dni!: number;
@@ -25,4 +28,7 @@ export class Client {
     cascade: [Cascade.REMOVE],
   })
   orderHistory = new Collection<Order>(this);
+
+  @OneToOne(() => User, (user) => user.client)
+  user?: Rel<User>;
 }

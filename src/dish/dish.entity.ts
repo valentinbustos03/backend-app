@@ -5,9 +5,11 @@ import {
   ManyToMany,
   Collection,
   ManyToOne,
+  Rel,
 } from '@mikro-orm/core';
 import { Ingredient } from '../ingredient/ingredient.entity.js';
 import generateId from '../shared/db/generate-id.js';
+import { Chef } from '../employee/type/chef.entity.js';
 
 @Entity()
 export class Dish {
@@ -40,6 +42,6 @@ export class Dish {
   })
   ingredients = new Collection<Ingredient>(this);
 
-  //@ManyToOne(()=> Chef { nullable: false})
-  //createdBy: Partial<Chef>;
+  @ManyToOne(() => Chef)
+  chef!: Rel<Chef>;
 }

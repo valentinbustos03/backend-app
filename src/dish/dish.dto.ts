@@ -7,7 +7,7 @@ export interface CreateDishDto {
   calification: number;
   tag: string;
   ingredients: string[]; 
-  //chef: Partial<Chef>;
+  chef: string;
 }
 
 export interface DishIdDto {

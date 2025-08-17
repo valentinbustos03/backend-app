@@ -21,6 +21,8 @@ tags:
     description: Everything about your Suppliers
   - name: table
     description: Everything about your Tables
+  - name: user
+    description: Everything about your Users
 paths:
   /client/add:
     post:
@@ -801,7 +803,7 @@ paths:
       x-codegen-request-body-name: body
   /order/findAll:
     get:
-      tags:
+      tags: 
         - order
       summary: Get all orders
       operationId: findAllOrder
@@ -1007,6 +1009,112 @@ paths:
           description: Order bill not found
           content: {}
 
+  /user/add:
+    post:
+      tags:
+        - user
+      summary: Add a new user to the db
+      operationId: addUser
+      requestBody:
+        description: User object that needs to be added to the db
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+  /user/findAll:
+    get:
+      tags:
+        - user
+      summary: Get all users
+      operationId: findAllUser
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid status value
+          content: {}
+  /user/id/{id}:
+    get:
+      tags:
+        - user
+      summary: Finds user by ID
+      description: Returns a single user by its ID
+      operationId: findOneUserID
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to find
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserIdDto'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid status value
+          content: {}
+  /user/{id}:
+    put:
+      tags:
+        - user
+      summary: Updates an user in the db with form data
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of user that needs to be updated
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserIdDto'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+        required: true
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+    delete:
+      tags:
+        - user
+      summary: Deletes an user
+      operationId: removeUser
+      parameters:
+        - name: id
+          in: path
+          description: User id to delete
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserIdDto'
+      responses:
+        '404':
+          description: User not found
+          content: {}
+
 components:
   schemas:
     Client:
@@ -1068,12 +1176,19 @@ components:
           example:
             - id: '1954371590753882225'
             - id: '1954371590753882226'
+          chef:
+            type: object
+            properties:
+              id:
+                type: string
+                example: '1954371590753882225'
       required:
         - cod
         - name
         - price
         - calification
         - ingredients
+        - chef
     DishIdDto:
       type: string
       required:
@@ -1307,6 +1422,54 @@ components:
       allOf:
         - $ref: '#/components/schemas/Table'
       description: DTO para actualizar una mesa, todos los campos son opcionales
+
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          example: 'admin@admin.com'
+        fullName:
+          type: string
+          example: 'Valentin'
+        password:
+          type: string
+          format: password
+          example: 'ValenPro123'
+        phoneNumber:
+          type: string
+          example: '+54 9 341 254 7935'
+        role:
+          type: string
+          example: 'admin'
+        profilePicture:
+          type: string
+        client:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1954371590753882225'
+        employee:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1954371590753882225'
+      required:
+        - email
+        - fullName
+        - password
+        - phoneNumber
+        - role            
+    UserIdDto:
+      type: string
+      required:
+        - id
+    UpdateUserDto:
+      allOf:
+        - $ref: '#/components/schemas/User'
+
   # securitySchemes:
   #   petstore_auth:
   #     type: oauth2
