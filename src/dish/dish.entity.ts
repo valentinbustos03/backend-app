@@ -42,6 +42,6 @@ export class Dish {
   })
   ingredients = new Collection<Ingredient>(this);
 
-  @ManyToOne(() => Chef)
+  @ManyToOne(() => Chef, { eager: true })
   chef!: Rel<Chef>;
 }

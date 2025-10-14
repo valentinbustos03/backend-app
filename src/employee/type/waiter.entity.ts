@@ -1,13 +1,27 @@
-import { Entity, Property } from "@mikro-orm/core";
+import { Collection, Entity, OneToMany, Property } from "@mikro-orm/core";
 import { Employee } from "../employee.entity.js";
 import { EmployeeRole } from "../../shared/enum/employee.roleEnum.js";
+import { Table } from "../../table/table.entity.js";
 
-@Entity({discriminatorValue: EmployeeRole.WAITER})
-export class Waiter extends Employee{
+@Entity({ discriminatorValue: EmployeeRole.WAITER })
+export class Waiter extends Employee {
   @Property()
   calification!: number;
 
   @Property()
   sector!: string;
-  
+
+  @OneToMany(() => Table, (table) => table.waiter, {
+    mappedBy: 'waiter',
+  })
+  tables = new Collection<Table>(this);
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      role: EmployeeRole.WAITER,
+      calification: this.calification,
+      sector: this.sector,
+    };
+  }
 }

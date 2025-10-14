@@ -43,6 +43,7 @@ export class Ingredient {
 
   @ManyToMany(() => Dish, undefined,{
     mappedBy: 'ingredients',
+    owner: true,
   })
   dishes = new Collection<Dish>(this);
 }

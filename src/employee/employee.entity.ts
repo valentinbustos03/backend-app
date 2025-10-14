@@ -1,7 +1,16 @@
-import { Entity, Enum, OneToOne, PrimaryKey, Property, Rel } from '@mikro-orm/core';
+import {
+  Entity,
+  Enum,
+  OneToOne,
+  PrimaryKey,
+  Property,
+  Rel,
+} from '@mikro-orm/core';
 import generateId from '../shared/db/generate-id.js';
 import { EmployeeRole } from '../shared/enum/employee.roleEnum.js';
 import { User } from '../user/user.entity.js';
+import { Waiter } from './type/waiter.entity.js';
+import { Chef } from './type/chef.entity.js';
 
 @Entity({ discriminatorColumn: 'role', abstract: true })
 export abstract class Employee {
@@ -23,9 +32,34 @@ export abstract class Employee {
   @Property({ type: 'decimal', precision: 10, scale: 2 })
   salary?: number;
 
-  @OneToOne(() => User, (user) => user.employee)
+  @OneToOne(() => User, (user) => user.employee, {
+    eager: true,
+  })
   user?: Rel<User>;
 
   @Enum(() => EmployeeRole)
   role!: EmployeeRole;
+
+  toJSON() {
+    return {
+      id: this.id,
+      taxId: this.taxId,
+      shift: this.shift,
+      workedHours: this.workedHours,
+      priceHour: this.priceHour,
+      salary: this.salary,
+      role: this.role,
+      user: this.user
+        ? {
+            id: this.user.id,
+            email: this.user.email,
+            fullName: this.user.fullName,
+            password: this.user.password,
+            phoneNumber: this.user.phoneNumber,
+            role: this.user.role,
+            profilePicture: this.user.profilePicture,
+          }
+        : null,
+    };
+  }
 }

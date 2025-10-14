@@ -34,7 +34,8 @@ async function add(req: Request, res: Response) {
 
 async function findAll(req: Request, res: Response) {
   try {
-    const ingredientList = await ingredientService.findAllIngredients();
+    const includeDetails = req.query.includeDetails === 'true';
+    const ingredientList = await ingredientService.findAllIngredients(includeDetails);
     const msg =
       (ingredientList?.length ?? 0) === 0
         ? 'No ingredients found'
@@ -53,7 +54,8 @@ async function findOne(req: Request, res: Response) {
       .json({ message: 'Validation error', error: idInput.error });
   }
   try {
-    const ingredient = await ingredientService.findIngredientById(idInput.data);
+    const includeDetails = req.query.includeDetails === 'true';
+    const ingredient = await ingredientService.findIngredientById(idInput.data, includeDetails);
     const msg =
       ingredient === null ? 'No ingredient found' : 'Ingredient found';
     return res.status(200).json({ message: msg, data: ingredient });

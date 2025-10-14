@@ -21,7 +21,7 @@ export class Order {
   @PrimaryKey({ nullable: false, unique: true })
   orderId: string = generateId();
 
-  @Property()
+  @Property({nullable: true})
   description?: string;
 
   @Enum(() => OrderStatus)
@@ -46,10 +46,10 @@ export class Order {
   })
   orderItems!: OrderItem[];
 
-  @ManyToOne(() => Client)
+  @ManyToOne(() => Client, { eager: true })
   client!: Rel<Client>;
 
-  @ManyToOne(() => Table)
+  @ManyToOne(() => Table, { eager: true })
   table!: Rel<Table>;
 
   @OneToOne(() => Bill, {
@@ -58,6 +58,7 @@ export class Order {
     cascade: [Cascade.ALL],
     unique: true,
     orphanRemoval: true,
+    eager: true,
   })
   bill?: Rel<Bill>;
 }
