@@ -15,6 +15,7 @@ import generateId from '../shared/db/generate-id.js';
 import { Table } from '../table/table.entity.js';
 import { Bill } from './bill/bill.entity.js';
 import { OrderStatus } from '../shared/enum/order.statusEnum.js';
+import { Waiter } from '../employee/type/waiter.entity.js';
 
 @Entity()
 export class Order {
@@ -51,6 +52,9 @@ export class Order {
 
   @ManyToOne(() => Table, { eager: true })
   table!: Rel<Table>;
+
+  @ManyToOne(() => Waiter, { eager: true })
+  waiter!: Rel<Waiter>;
 
   @OneToOne(() => Bill, {
     mappedBy: 'order',

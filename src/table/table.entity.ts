@@ -36,7 +36,4 @@ export class Table {
     mappedBy: 'table',
   })
   order = new Collection<Order>(this);
-
-  @ManyToOne(() => Waiter, { eager: true })
-  waiter!: Rel<Waiter>;
 }
