@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import express from 'express';
+import cors from 'cors';
 import { orm, syncSchema } from './shared/db/orm.js';
 import { RequestContext } from '@mikro-orm/core';
 import swaggerUi from 'swagger-ui-express';
@@ -17,6 +18,13 @@ import { billRouter } from './order/bill/bill.router.js';
 import { userRoter } from './user/user.routes.js';
 
 const app = express();
+
+// Configurar CORS
+app.use(cors({
+  origin: 'http://localhost:3001', // URL del frontend Next.js
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
