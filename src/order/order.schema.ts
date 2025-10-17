@@ -3,6 +3,7 @@ import { ClientIdSchema } from '../client/client.schema.js';
 import { DishIdSchema } from '../dish/dish.schema.js';
 import { TableIdSchema } from '../table/table.schema.js';
 import { OrderStatus } from '../shared/enum/order.statusEnum.js';
+import { EmployeeIdSchema } from '../employee/employee.schema.js';
 
 export const OrderItemSchema = z.object({
   dish: DishIdSchema.transform((obj) => obj.id),
@@ -38,6 +39,7 @@ export const OrderSchema = z.object({
     .min(1, 'At least one order item is required'),
   client: ClientIdSchema.transform((obj) => obj.id), // Transformar a string
   table: TableIdSchema.transform((obj) => obj.id),
+  waiter: EmployeeIdSchema.transform((obj) => obj.id)
 });
 
 export type CreateOrderInput = z.infer<typeof OrderSchema>;
