@@ -1,0 +1,8 @@
+dist/*
+node_modules/*
+src/shared/db/orm
+.gitignore
+.node-version
+package.json
+pnpm-lock.yaml
+# Ignore environment files  

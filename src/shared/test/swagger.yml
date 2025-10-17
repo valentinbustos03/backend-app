@@ -1,0 +1,1499 @@
+openapi: 3.0.1
+info:
+  title: U-Kitchen API
+  description: 'API del sistema de restaurante.'
+  servers:
+    - url: http://localhost:3000/api-docs
+tags:
+  - name: client
+    description: Everything about your Clietns
+  - name: dish
+    description: Everything about your Dishes
+  - name: employee
+    description: Everything about your Employee
+  - name: ingredient
+    description: Everything about your Ingredients
+  - name: order
+    description: Everything about your Orders
+  - name: order bill
+    description: Everything about your Orders bill
+  - name: supplier
+    description: Everything about your Suppliers
+  - name: table
+    description: Everything about your Tables
+  - name: user
+    description: Everything about your Users
+paths:
+  /client/add:
+    post:
+      tags:
+        - client
+      summary: Add a new clietn to the db
+      operationId: addClient
+      requestBody:
+        description: Client object that needs to be added to the db
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Client'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          description: Invalid input
+          content: {}
+      # security:
+      #   - petstore_auth:
+      #       - write:pets
+      #       - read:pets
+      x-codegen-request-body-name: body
+  /client/findAll:
+    get:
+      tags:
+        - client
+      summary: Get all clients
+      operationId: findAllClient
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+        '400':
+          description: Invalid status value
+          content: {}
+  /client/id/{id}:
+    get:
+      tags:
+        - client
+      summary: Finds Client by ID
+      description: Returns a single client by its ID
+      operationId: findOneClientID
+      parameters:
+        - name: id
+          in: path
+          description: ID of client to find
+          required: true
+          schema:
+            $ref: '#/components/schemas/ClientIdDto'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          description: Invalid status value
+          content: {}
+        '404':
+          description: Client not found
+          content: {}
+  /client/{id}:
+    put:
+      tags:
+        - client
+      summary: Updates a client in the db with form data
+      operationId: updateClient
+      parameters:
+        - name: id
+          in: path
+          description: ID of client that needs to be updated
+          required: true
+          schema:
+            $ref: '#/components/schemas/ClientIdDto'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateClientDto'
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+    delete:
+      tags:
+        - client
+      summary: Deletes a client
+      operationId: removeClient
+      parameters:
+        - name: id
+          in: path
+          description: Client id to delete
+          required: true
+          schema:
+            $ref: '#/components/schemas/ClientIdDto'
+      responses:
+        '404':
+          description: Client not found
+          content: {}
+  /client/dni/{dni}:
+    get:
+      tags:
+        - client
+      summary: Finds Client by DNI
+      description: Returns a single client by its DNI
+      operationId: findOneClientDNI
+      parameters:
+        - name: dni
+          in: path
+          description: DNI of client to find
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '400':
+          description: Invalid DNI value
+          content: {}
+
+  /supplier/add:
+    post:
+      tags:
+        - supplier
+      summary: Add a new supplier to the db
+      operationId: addSupplier
+      requestBody:
+        description: Supplier object that needs to be added to the db
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Supplier'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Supplier'
+        '400':
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+  /supplier/findAll:
+    get:
+      tags:
+        - supplier
+      summary: Get all suppliers
+      operationId: findAllSupplier
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Supplier'
+        '400':
+          description: Invalid status value
+          content: {}
+  /supplier/id/{id}:
+    get:
+      tags:
+        - supplier
+      summary: Finds Supplier by ID
+      description: Returns a single supplier by its ID
+      operationId: findOneSupplierID
+      parameters:
+        - name: id
+          in: path
+          description: ID of supplier to find
+          required: true
+          schema:
+            $ref: '#/components/schemas/SupplierIdDto'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Supplier'
+        '400':
+          description: Invalid status value
+          content: {}
+        '404':
+          description: Supplier not found
+          content: {}
+  /supplier/{id}:
+    put:
+      tags:
+        - supplier
+      summary: Updates a supplier in the db with form data
+      operationId: updateSupplier
+      parameters:
+        - name: id
+          in: path
+          description: ID of supplier that needs to be updated
+          required: true
+          schema:
+            $ref: '#/components/schemas/SupplierIdDto'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateSupplierDto'
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+    delete:
+      tags:
+        - supplier
+      summary: Deletes a supplier
+      operationId: removeSupplier
+      parameters:
+        - name: id
+          in: path
+          description: Supplier id to delete
+          required: true
+          schema:
+            $ref: '#/components/schemas/SupplierIdDto'
+      responses:
+        '404':
+          description: Supplier not found
+          content: {}
+  /supplier/taxId/{taxId}:
+    get:
+      tags:
+        - supplier
+      summary: Finds supplier by tax ID
+      description: Returns a single supplier by its tax ID
+      operationId: findOneSupplierTaxID
+      parameters:
+        - name: taxId
+          in: path
+          description: Tax ID of supplier to find
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Supplier'
+        '400':
+          description: Invalid tax ID value
+          content: {}
+
+  /table/add:
+    post:
+      tags:
+        - table
+      summary: Add a new table to the db
+      operationId: addTable
+      requestBody:
+        description: Table object that needs to be added to the db
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Table'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Table'
+        '400':
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+  /table/findAll:
+    get:
+      tags:
+        - table
+      summary: Get all tables
+      operationId: findAllTable
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Table'
+        '400':
+          description: Invalid status value
+          content: {}
+  /table/id/{id}:
+    get:
+      tags:
+        - table
+      summary: Finds table by ID
+      description: Returns a single table by its ID
+      operationId: findOneTableID
+      parameters:
+        - name: id
+          in: path
+          description: ID of table to find
+          required: true
+          schema:
+            $ref: '#/components/schemas/TableIdDto'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Table'
+        '400':
+          description: Invalid status value
+          content: {}
+        '404':
+          description: Table not found
+          content: {}
+  /table/{id}:
+    put:
+      tags:
+        - table
+      summary: Updates a table in the db with form data
+      operationId: updateTable
+      parameters:
+        - name: id
+          in: path
+          description: ID of table that needs to be updated
+          required: true
+          schema:
+            $ref: '#/components/schemas/TableIdDto'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateTableDto'
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+    delete:
+      tags:
+        - table
+      summary: Deletes a table
+      operationId: removeTable
+      parameters:
+        - name: id
+          in: path
+          description: Table id to delete
+          required: true
+          schema:
+            $ref: '#/components/schemas/TableIdDto'
+      responses:
+        '404':
+          description: Table not found
+          content: {}
+  /table/cod/{cod}:
+    get:
+      tags:
+        - table
+      summary: Finds table by COD
+      description: Returns a single table by its COD
+      operationId: findOneTableCOD
+      parameters:
+        - name: cod
+          in: path
+          description: COD of table to find
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Table'
+        '400':
+          description: Invalid COD value
+          content: {}
+
+  /employee/add:
+    post:
+      tags:
+        - employee
+      summary: Add a new employee to the db
+      operationId: addEmployee
+      requestBody:
+        description: Employee object that needs to be added to the db
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '400':
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+  /employee/findAll:
+    get:
+      tags:
+        - employee
+      summary: Get all employees
+      operationId: findAllEmployee
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+        '400':
+          description: Invalid status value
+          content: {}
+  /employee/id/{id}:
+    get:
+      tags:
+        - employee
+      summary: Finds employee by ID
+      description: Returns a single employee by its ID
+      operationId: findOneEmployeeID
+      parameters:
+        - name: id
+          in: path
+          description: ID of employee to find
+          required: true
+          schema:
+            $ref: '#/components/schemas/EmployeeIdDto'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '400':
+          description: Invalid status value
+          content: {}
+        '404':
+          description: Employee not found
+          content: {}
+  /employee/{id}:
+    put:
+      tags:
+        - employee
+      summary: Updates an employee in the db with form data
+      operationId: updateEmployee
+      parameters:
+        - name: id
+          in: path
+          description: ID of employee that needs to be updated
+          required: true
+          schema:
+            $ref: '#/components/schemas/EmployeeIdDto'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateEmployeeDto'
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+    delete:
+      tags:
+        - employee
+      summary: Deletes an employee
+      operationId: removeEmployee
+      parameters:
+        - name: id
+          in: path
+          description: Employee id to delete
+          required: true
+          schema:
+            $ref: '#/components/schemas/EmployeeIdDto'
+      responses:
+        '404':
+          description: Employee not found
+          content: {}
+  /employee/taxId/{taxId}:
+    get:
+      tags:
+        - employee
+      summary: Finds employee by tax ID
+      description: Returns a single employee by its tax ID
+      operationId: findOneemployeeTaxID
+      parameters:
+        - name: taxId
+          in: path
+          description: Tax ID of employee to find
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '400':
+          description: Invalid tax ID value
+          content: {}
+
+  /ingredient/add:
+    post:
+      tags:
+        - ingredient
+      summary: Add a new ingredient to the db
+      operationId: addIngredient
+      requestBody:
+        description: Ingredient object that needs to be added to the db
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ingredient'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ingredient'
+        '400':
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+  /ingredient/findAll:
+    get:
+      tags:
+        - ingredient
+      summary: Get all ingredients
+      operationId: findAllIngredient
+      parameters:
+        - name: includeDetails
+          in: query
+          description: If true, includes supplier details in the response
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ingredient'
+        '400':
+          description: Invalid status value
+          content: {}
+  /ingredient/id/{id}:
+    get:
+      tags:
+        - ingredient
+      summary: Finds ingredient by ID
+      description: Returns a single ingredient by its ID
+      operationId: findOneIngredientID
+      parameters:
+        - name: id
+          in: path
+          description: ID of ingredient to find
+          required: true
+          schema:
+            $ref: '#/components/schemas/IngredientIdDto'
+        - name: includeDetails
+          in: query
+          description: If true, includes supplier details in the response
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ingredient'
+        '400':
+          description: Invalid status value
+          content: {}
+        '404':
+          description: Ingredient not found
+          content: {}
+  /ingredient/{id}:
+    put:
+      tags:
+        - ingredient
+      summary: Updates an ingredient in the db with form data
+      operationId: updateIngredient
+      parameters:
+        - name: id
+          in: path
+          description: ID of ingredient that needs to be updated
+          required: true
+          schema:
+            $ref: '#/components/schemas/IngredientIdDto'
+      requestBody:
+        content:
+          # ¡CORREGIDO! Cambiar a application/json para enviar el cuerpo correctamente
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIngredientDto'
+        required: true
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+    delete:
+      tags:
+        - ingredient
+      summary: Deletes an ingredient
+      operationId: removeIngredient
+      parameters:
+        - name: id
+          in: path
+          description: Ingredient id to delete
+          required: true
+          schema:
+            $ref: '#/components/schemas/IngredientIdDto'
+      responses:
+        '404':
+          description: Ingredient not found
+          content: {}
+
+  /dish/add:
+    post:
+      tags:
+        - dish
+      summary: Add a new dish to the db
+      operationId: addDish
+      requestBody:
+        description: Dish object that needs to be added to the db
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dish'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+        '400':
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+  /dish/findAll:
+    get:
+      tags:
+        - dish
+      summary: Get all dishs
+      operationId: findAllDish
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dish'
+        '400':
+          description: Invalid status value
+          content: {}
+  /dish/id/{id}:
+    get:
+      tags:
+        - dish
+      summary: Finds dish by ID
+      description: Returns a single dish by its ID
+      operationId: findOneDishID
+      parameters:
+        - name: id
+          in: path
+          description: ID of dish to find
+          required: true
+          schema:
+            $ref: '#/components/schemas/DishIdDto'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+        '400':
+          description: Invalid status value
+          content: {}
+        '404':
+          description: Dish not found
+          content: {}
+  /dish/{id}:
+    put:
+      tags:
+        - dish
+      summary: Updates an dish in the db with form data
+      operationId: updateDish
+      parameters:
+        - name: id
+          in: path
+          description: ID of dish that needs to be updated
+          required: true
+          schema:
+            $ref: '#/components/schemas/DishIdDto'
+      requestBody:
+        content:
+          # ¡CORREGIDO! Cambiar a application/json para enviar el cuerpo correctamente
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDishDto'
+        required: true
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+    delete:
+      tags:
+        - dish
+      summary: Deletes an dish
+      operationId: removeDish
+      parameters:
+        - name: id
+          in: path
+          description: Dish id to delete
+          required: true
+          schema:
+            $ref: '#/components/schemas/DishIdDto'
+      responses:
+        '404':
+          description: Dish not found
+          content: {}
+
+  /order/add:
+    post:
+      tags:
+        - order
+      summary: Add a new order to the db
+      operationId: addOrder
+      requestBody:
+        description: Order object that needs to be added to the db
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+  /order/findAll:
+    get:
+      tags: 
+        - order
+      summary: Get all orders
+      operationId: findAllOrder
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid status value
+          content: {}
+  /order/orderId/{orderId}:
+    get:
+      tags:
+        - order
+      summary: Finds order by ID
+      description: Returns a single order by its ID
+      operationId: findOneOrderID
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of order to find
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrderIdDto'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid status value
+          content: {}
+        '404':
+          description: Order not found
+          content: {}
+  /order/{orderId}:
+    # put:
+    #   tags:
+    #     - order
+    #   summary: Updates an order in the db with form data
+    #   operationId: updateOrder
+    #   parameters:
+    #     - name: orderId
+    #       in: path
+    #       description: ID of order that needs to be updated
+    #       required: true
+    #       schema:
+    #         $ref: '#/components/schemas/OrderIdDto'
+    #   requestBody:
+    #     content:
+    #       # ¡CORREGIDO! Cambiar a application/json para enviar el cuerpo correctamente
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/UpdateOrderDto'
+    #     required: true
+    #   responses:
+    #     '405':
+    #       description: Invalid input
+    #       content: {}
+    #USAR ACTUALIZAR SOLO PARA LOS ESTADOS DEL PEDIDO, NO PARA OTRO CAMPO -> REGLA DE NEGOCIO, UN PEDIDO NO SE PUEDE ACTUALIZAR, SOLO ELIMINAR Y CREAR OTRO
+    delete:
+      tags:
+        - order
+      summary: Deletes an order
+      operationId: removeOrder
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id to delete
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrderIdDto'
+      responses:
+        '404':
+          description: Order not found
+          content: {}
+  /order/findAllClientOrders/{id}:
+    get:
+      tags:
+        - order
+      summary: Finds all orders by client ID
+      description: Returns a list of all orders for a given client ID
+      operationId: findAllOrdersByClientId
+      parameters:
+        - name: id
+          in: path
+          description: ID of client to find orders for
+          required: true
+          schema:
+            $ref: '#/components/schemas/ClientIdDto'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid status value
+          content: {}
+        '404':
+          description: Client not found
+          content: {}
+
+  /order/{id}/bill/add:
+    post:
+      tags:
+        - order bill
+      summary: Create a bill for an order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the order
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bill'
+
+      responses:
+        '201':
+          description: Bill created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        '400':
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+  /order/bill/findAll:
+    get:
+      tags:
+        - order bill
+      summary: Get all orders bills
+      operationId: findAllOrderBill
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Bill'
+        '400':
+          description: Invalid status value
+          content: {}
+  /order/{orderId}/bill:
+    get:
+      tags:
+        - order bill
+      summary: Finds order bill by order ID
+      description: Returns a single bill by its order ID
+      operationId: findOneOrderBillByOrderID
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of order to find its bill
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrderIdDto'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bill'
+        '400':
+          description: Invalid status value
+          content: {}
+        '404':
+          description: Order bill not found
+          content: {}
+    delete:
+      tags:
+        - order bill
+      summary: Deletes an order bill
+      operationId: removeOrder
+      parameters:
+        - name: orderId
+          in: path
+          description: Order id to delete its bill
+          required: true
+          schema:
+            $ref: '#/components/schemas/OrderIdDto'
+      responses:
+        '404':
+          description: Order bill not found
+          content: {}
+
+  /user/add:
+    post:
+      tags:
+        - user
+      summary: Add a new user to the db
+      operationId: addUser
+      requestBody:
+        description: User object that needs to be added to the db
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid input
+          content: {}
+      x-codegen-request-body-name: body
+  /user/findAll:
+    get:
+      tags:
+        - user
+      summary: Get all users
+      operationId: findAllUser
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid status value
+          content: {}
+  /user/id/{id}:
+    get:
+      tags:
+        - user
+      summary: Finds user by ID
+      description: Returns a single user by its ID
+      operationId: findOneUserID
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to find
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserIdDto'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid status value
+          content: {}
+  /user/{id}:
+    put:
+      tags:
+        - user
+      summary: Updates an user in the db with form data
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          description: ID of user that needs to be updated
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserIdDto'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDto'
+        required: true
+      responses:
+        '405':
+          description: Invalid input
+          content: {}
+    delete:
+      tags:
+        - user
+      summary: Deletes an user
+      operationId: removeUser
+      parameters:
+        - name: id
+          in: path
+          description: User id to delete
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserIdDto'
+      responses:
+        '404':
+          description: User not found
+          content: {}
+
+components:
+  schemas:
+    Client:
+      type: object
+      properties:
+        dni:
+          type: number
+          format: int64
+        penalty:
+          type: number
+          format: float
+          default: 0
+      required:
+        - dni
+    ClientIdDto:
+      type: string
+      required:
+        - id
+    UpdateClientDto:
+      allOf:
+        - $ref: '#/components/schemas/Client'
+        - type: object
+          description: Campos opcionales para actualizar un cliente
+          required: [] # todos opcionales
+
+    Dish:
+      type: object
+      properties:
+        cod:
+          type: string
+          example: 'PLT001'
+        name:
+          type: string
+          example: 'Bife Ancho con Salsa de Vino y Papas Rústicas'
+        description:
+          type: string
+          example: 'Jugoso bife ancho de res de Carnes Libertarias, sellado a la parrilla y bañado en salsa de vino tinto con reducción de especias del mundo. Acompañado de papas rústicas crocantes y vegetales salteados.'
+        picture:
+          type: string
+          description: URL de la imagen (por ejemplo, de Cloudinary)
+        price:
+          type: number
+          format: float
+        calification:
+          type: number
+          format: float
+        tag:
+          type: string
+          description: Categoria del plato (carnes/parrilla/pastas/postres/ensalada/etc)
+        ingredients:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+            required:
+              - id
+          example:
+            - id: '1954371590753882225'
+            - id: '1954371590753882226'
+          chef:
+            type: object
+            properties:
+              id:
+                type: string
+                example: '1954371590753882225'
+      required:
+        - cod
+        - name
+        - price
+        - calification
+        - ingredients
+        - chef
+    DishIdDto:
+      type: string
+      required:
+        - id
+    UpdateDishDto:
+      allOf:
+        - $ref: '#/components/schemas/CreateDishDto'
+      description: DTO para actualizar un plato, todos los campos son opcionales
+
+    Employee:
+      type: object
+      properties:
+        taxId:
+          type: string
+          example: '20-12345678-9'
+        shift:
+          type: string
+          example: 'Noche'
+        workedHours:
+          type: number
+          format: float
+          example: 160
+        priceHour:
+          type: number
+          format: float
+          example: 15.5
+        role:
+          type: string
+          example: 'chef'
+        hierarchy:
+          type: string
+        tag:
+          type: string
+          example: 'pastas'
+        calification:
+          type: number
+          example: 0
+        sector:
+          type: string
+          example: 'terraza'
+
+      required:
+        - taxId
+        - shift
+        - workedHours
+        - priceHour
+        - role
+    EmployeeIdDto:
+      type: string
+      required:
+        - id
+    UpdateEmployeeDto:
+      allOf:
+        - $ref: '#/components/schemas/Employee'
+      description: DTO para actualizar un empleado. Los campos son opcionales excepto `workedHours` y `priceHour`.
+
+    Ingredient:
+      type: object
+      properties:
+        cod:
+          type: string
+          example: 'ING001'
+        name:
+          type: string
+          example: 'Pepinillo'
+        description:
+          type: string
+          example: 'Pepinillo fresco'
+        stock:
+          type: number
+          example: 50
+        uniteOfMeasure:
+          type: string
+          example: 'kg'
+        origin:
+          type: string
+          example: 'Vegetal'
+        stockLimit:
+          type: number
+          example: 10
+        suppliers:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+            required:
+              - id
+          example:
+            - id: '1954371590753882225'
+            - id: '1954371590753882226'
+      required:
+        - cod
+        - name
+        - stock
+        - uniteOfMeasure
+        - origin
+        - stockLimit
+        - suppliers
+    IngredientIdDto:
+      type: string
+      required:
+        - id
+    UpdateIngredientDto:
+      allOf:
+        - $ref: '#/components/schemas/Ingredient'
+      description: DTO para actualizar un ingrediente, todos los campos son opcionales
+
+    Order:
+      type: object
+      properties:
+        description:
+          type: string
+          example: 'Pedido para mesa 12 con preferencia sin sal'
+        status:
+          type: string
+          example: 'pending'
+        estimatedEndTime:
+          type: string
+          format: date-time
+          example: '2025-08-08T15:00:00Z'
+        endTime:
+          type: string
+          format: date-time
+          example: '2025-08-08T15:10:00Z'
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        client:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1954371590753882225'
+          description: ID del cliente que realizó el pedido
+        table:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1954371590753882225'
+          description: ID de la mesa del pedido
+    OrderIdDto:
+      type: string
+      required:
+        - orderId
+    UpdateOrderDto:
+      allOf:
+        - $ref: '#/components/schemas/Order'
+      description: 'Todos los campos son opcionales para actualización'
+    OrderItem:
+      type: object
+      properties:
+        dish:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1954707475630395502'
+        quantity:
+          type: integer
+          example: 2
+
+    Bill:
+      type: object
+      properties:
+        paymentMethod:
+          type: string
+          example: 'Mercado Pago'
+
+    Supplier:
+      type: object
+      properties:
+        companyName:
+          type: string
+          example: 'La fabrica de humo'
+        taxId:
+          type: string
+          example: '30-12345678-9'
+        mail:
+          type: string
+          format: email
+          example: 'contacto@ladrilloenlasmanos.com'
+        phoneNumber:
+          type: string
+          example: '+54 9 341 555 1234'
+        typeIngredient:
+          type: string
+          example: 'Pasta'
+        fullName:
+          type: string
+          example: 'Geronimo Benavides'
+        bussinessName:
+          type: string
+          example: 'Politica Evitemos S.A.'
+    SupplierIdDto:
+      type: string
+      required:
+        - id:
+    UpdateSupplierDto:
+      allOf:
+        - $ref: '#/components/schemas/Supplier'
+      description: 'Todos los campos son opcionales para actualización'
+
+    Table:
+      type: object
+      properties:
+        cod:
+          type: string
+        capacity:
+          type: integer
+        description:
+          type: string
+        occupied:
+          type: boolean
+          example: false
+        sector:
+          type: string
+          example: sector 1
+      required:
+        - cod
+        - capacity
+        - occupied
+    TableIdDto:
+      type: string
+      required:
+        - id
+    UpdateTableDto:
+      allOf:
+        - $ref: '#/components/schemas/Table'
+      description: DTO para actualizar una mesa, todos los campos son opcionales
+
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          example: 'admin@admin.com'
+        fullName:
+          type: string
+          example: 'Valentin'
+        password:
+          type: string
+          format: password
+          example: 'ValenPro123'
+        phoneNumber:
+          type: string
+          example: '+54 9 341 254 7935'
+        role:
+          type: string
+          example: 'admin'
+        profilePicture:
+          type: string
+        client:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1954371590753882225'
+        employee:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1954371590753882225'
+      required:
+        - email
+        - fullName
+        - password
+        - phoneNumber
+        - role            
+    UserIdDto:
+      type: string
+      required:
+        - id
+    UpdateUserDto:
+      allOf:
+        - $ref: '#/components/schemas/User'
+
+  # securitySchemes:
+  #   petstore_auth:
+  #     type: oauth2
+  #     flows:
+  #       implicit:
+  #         authorizationUrl: http://petstore.swagger.io/oauth/dialog
+  #         scopes:
+  #           write:pets: modify pets in your account
+  #           read:pets: read your pets
+  #   api_key:
+  #     type: apiKey
+  #     name: api_key
+  #     in: header
+x-original-swagger-version: '2.0'
