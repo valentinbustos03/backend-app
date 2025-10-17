@@ -8,6 +8,7 @@ export interface CreateOrderDto {
   orderItems: OrderItemDto[];
   client: string;
   table: string;
+  waiter: string;
 }
 
 export interface OrderIdDto {
