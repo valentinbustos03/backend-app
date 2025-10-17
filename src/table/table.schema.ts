@@ -11,7 +11,6 @@ export const TableSchema = z.object({
   //occupied: z.boolean().default(false),
   occupied: z.preprocess((val) => val === 'true' || val === true, z.boolean()),
   sector: z.string().min(1),
-  waiter: EmployeeIdSchema.transform((obj) => obj.id),
 });
 
 export const TableIdSchema = z.object({
