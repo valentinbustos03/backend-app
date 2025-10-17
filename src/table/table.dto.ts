@@ -4,7 +4,6 @@ export interface CreateTableDto{
   description?: string;
   occupied: boolean;
   sector: string;
-  waiter: string;
 }
 
 export interface TableIdDto{
