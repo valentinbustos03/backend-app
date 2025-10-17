@@ -1,12 +1,16 @@
 import {
   Collection,
   Entity,
+  ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryKey,
   Property,
+  Rel,
 } from '@mikro-orm/core';
 import generateId from '../shared/db/generate-id.js';
 import { Order } from '../order/order.entity.js';
+import { Waiter } from '../employee/type/waiter.entity.js';
 
 @Entity()
 export class Table {
@@ -26,7 +30,7 @@ export class Table {
   occupied: boolean = false;
 
   @Property()
-  sector!: string
+  sector!: string;
 
   @OneToMany(() => Order, (order) => order.table, {
     mappedBy: 'table',

@@ -20,69 +20,69 @@ export class IngredientService {
     return newIngredient;
   }
 
-  async findAllIngredients(): Promise<Ingredient[] | null> {
-    const ingredientList = this.em.findAll(Ingredient);
+  async findAllIngredients(
+    includeDetails?: boolean
+  ): Promise<Ingredient[] | null> {
+    const ingredientList = this.em.findAll(
+      Ingredient,
+      {
+        populate: includeDetails ? ['suppliers'] : [],
+      }
+    );
     return ingredientList;
   }
 
-  async findIngredientById(id: IngredientIdDto): Promise<Ingredient | null> {
-    const ingredient = this.em.findOne(Ingredient, id);
+  async findIngredientById(id: IngredientIdDto, includeDetails?: boolean): Promise<Ingredient | null> {
+    const ingredient = this.em.findOne(
+      Ingredient, id,
+      {
+        populate: includeDetails ? ['suppliers'] : [],
+      }
+    );
     return ingredient;
   }
 
-  // async updateIngredient(
-  //   id: IngredientIdDto,
-  //   data: UpdateIngredientDto
-  // ): Promise<Ingredient | null> {
-  //   const updatedIngredient = await this.em.findOne(Ingredient, id);
-  //   if (updatedIngredient) {
-  //     this.em.assign(updatedIngredient, data);
-  //     await this.em.flush();
-  //     return updatedIngredient;
-  //   } else {
-  //     return null;
-  //   }
-  // }
-  
   async updateIngredient(
-  id: IngredientIdDto,
-  data: UpdateIngredientDto
-): Promise<Loaded<Ingredient> | null> {
-  // Buscamos el ingrediente existente y cargamos la colección de proveedores
-  const updatedIngredient = await this.em.findOne(Ingredient, id, {
-    populate: ['suppliers'],
-  });
+    id: IngredientIdDto,
+    data: UpdateIngredientDto
+  ): Promise<Loaded<Ingredient> | null> {
+    // Buscamos el ingrediente existente y cargamos la colección de proveedores
+    const updatedIngredient = await this.em.findOne(Ingredient, id, {
+      populate: ['suppliers'],
+    });
 
-  if (!updatedIngredient) {
-    return null;
+    if (!updatedIngredient) {
+      return null;
+    }
+
+    // Verificamos si se envió el campo 'suppliers'
+    if (data.suppliers !== undefined) {
+      const newSupplierIds = data.suppliers;
+
+      // Buscamos todos los objetos Supplier que coincidan con los IDs
+      const suppliers = await this.em.find(Supplier, {
+        id: { $in: newSupplierIds },
+      });
+
+      // Sincronizamos la colección de proveedores con los nuevos datos
+      // MikroORM se encarga de las operaciones en la tabla pivote
+      updatedIngredient.suppliers.set(suppliers);
+
+      // Eliminamos la propiedad suppliers de `data` para que `em.assign`
+      // no intente manejarla como una propiedad simple.
+      delete data.suppliers;
+    }
+
+    // Asignamos el resto de las propiedades del DTO
+    this.em.assign(updatedIngredient, data);
+
+    // Guardamos todos los cambios
+    await this.em.flush();
+
+    return updatedIngredient;
   }
 
-  // Verificamos si se envió el campo 'suppliers'
-  if (data.suppliers !== undefined) {
-    const newSupplierIds = data.suppliers;
-
-    // Buscamos todos los objetos Supplier que coincidan con los IDs
-    const suppliers = await this.em.find(Supplier, { id: { $in: newSupplierIds } });
-
-    // Sincronizamos la colección de proveedores con los nuevos datos
-    // MikroORM se encarga de las operaciones en la tabla pivote
-    updatedIngredient.suppliers.set(suppliers);
-
-    // Eliminamos la propiedad suppliers de `data` para que `em.assign`
-    // no intente manejarla como una propiedad simple.
-    delete data.suppliers;
-  }
-
-  // Asignamos el resto de las propiedades del DTO
-  this.em.assign(updatedIngredient, data);
-
-  // Guardamos todos los cambios
-  await this.em.flush();
-
-  return updatedIngredient;
-}
-
-  async deleteIngredient(id: IngredientIdDto) : Promise<boolean> {
+  async deleteIngredient(id: IngredientIdDto): Promise<boolean> {
     const deletedIngredient = await this.em.findOne(Ingredient, id);
     if (deletedIngredient) {
       await this.em.removeAndFlush(deletedIngredient);

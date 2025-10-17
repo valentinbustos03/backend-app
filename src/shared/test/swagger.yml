@@ -587,6 +587,13 @@ paths:
         - ingredient
       summary: Get all ingredients
       operationId: findAllIngredient
+      parameters:
+        - name: includeDetails
+          in: query
+          description: If true, includes supplier details in the response
+          required: false
+          schema:
+            type: boolean
       responses:
         '200':
           description: successful operation
@@ -613,6 +620,12 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/IngredientIdDto'
+        - name: includeDetails
+          in: query
+          description: If true, includes supplier details in the response
+          required: false
+          schema:
+            type: boolean
       responses:
         '200':
           description: successful operation

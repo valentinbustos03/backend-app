@@ -2,6 +2,7 @@ import { Collection, Entity, OneToMany, Property } from '@mikro-orm/core';
 import { Employee } from '../employee.entity.js';
 import { EmployeeRole } from '../../shared/enum/employee.roleEnum.js';
 import { Dish } from '../../dish/dish.entity.js';
+import { UserRole } from '../../shared/enum/user.roleEnum.js';
 
 @Entity({ discriminatorValue: EmployeeRole.CHEF })
 export class Chef extends Employee {
@@ -15,4 +16,13 @@ export class Chef extends Employee {
     mappedBy: 'chef',
   })
   dishes = new Collection<Dish>(this);
+
+  toJSON() {
+    return {
+      ...super.toJSON(),
+      role: EmployeeRole.CHEF,
+      hierarchy: this.hierarchy,
+      tag: this.tag,
+    };
+  }
 }

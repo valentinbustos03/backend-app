@@ -15,13 +15,14 @@ import generateId from '../shared/db/generate-id.js';
 import { Table } from '../table/table.entity.js';
 import { Bill } from './bill/bill.entity.js';
 import { OrderStatus } from '../shared/enum/order.statusEnum.js';
+import { Waiter } from '../employee/type/waiter.entity.js';
 
 @Entity()
 export class Order {
   @PrimaryKey({ nullable: false, unique: true })
   orderId: string = generateId();
 
-  @Property()
+  @Property({nullable: true})
   description?: string;
 
   @Enum(() => OrderStatus)
@@ -46,11 +47,14 @@ export class Order {
   })
   orderItems!: OrderItem[];
 
-  @ManyToOne(() => Client)
+  @ManyToOne(() => Client, { eager: true })
   client!: Rel<Client>;
 
-  @ManyToOne(() => Table)
+  @ManyToOne(() => Table, { eager: true })
   table!: Rel<Table>;
+
+  @ManyToOne(() => Waiter, { eager: true })
+  waiter!: Rel<Waiter>;
 
   @OneToOne(() => Bill, {
     mappedBy: 'order',
@@ -58,6 +62,7 @@ export class Order {
     cascade: [Cascade.ALL],
     unique: true,
     orphanRemoval: true,
+    eager: true,
   })
   bill?: Rel<Bill>;
 }

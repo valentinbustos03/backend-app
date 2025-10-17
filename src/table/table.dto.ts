@@ -3,7 +3,8 @@ export interface CreateTableDto{
   capacity: number;
   description?: string;
   occupied: boolean;
-  sector: string
+  sector: string;
+  waiter: string;
 }
 
 export interface TableIdDto{
