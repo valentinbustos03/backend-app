@@ -6,6 +6,7 @@ import { OrderItem } from './orderItem.entity.js';
 import { ClientIdDto } from '../client/client.dto.js';
 import { Dish } from '../dish/dish.entity.js';
 import { Table } from '../table/table.entity.js';
+import { Waiter } from '../employee/type/waiter.entity.js';
 
 export class OrderService {
   private readonly em: EntityManager;
@@ -23,6 +24,7 @@ export class OrderService {
 
     newOrder.client = this.em.getReference(Client, data.client);
     newOrder.table = this.em.getReference(Table, data.table);
+    newOrder.waiter = this.em.getReference(Waiter, data.waiter);
 
     const orderItemList = data.orderItems.map((item) => {
       const orderItem = new OrderItem();
