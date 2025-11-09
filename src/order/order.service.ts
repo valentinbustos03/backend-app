@@ -72,7 +72,7 @@ export class OrderService {
       // const order = await this.em.findOneOrFail(Order, id, {
       //   populate: ['orderItems'],
       // });
-      await this.em.removeAndFlush(deletedOrder.orderItems);
+      await this.em.removeAndFlush(deletedOrder.orderItems); //probar de sacar esto y usar el cascade
       await this.em.removeAndFlush(deletedOrder);
       return true;
     }

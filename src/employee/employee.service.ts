@@ -49,7 +49,6 @@ export class EmployeeService {
   ): Promise<Employee | null> {
     console.log(id)
     const updatedEmployee = await this.em.findOne(Employee, id);
-    console.log(updatedEmployee)
     if (updatedEmployee) {
       this.em.assign(updatedEmployee, data);
       updatedEmployee.salary = this.computeSalary(
