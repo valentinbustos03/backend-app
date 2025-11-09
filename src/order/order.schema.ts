@@ -33,11 +33,11 @@ export const OrderSchema = z.object({
       message: 'Invalid date format',
     })
     .transform((val) => new Date(val)),
-  orderItems: z
-    .array(OrderItemSchema)
-    .min(1, 'At least one order item is required'),
-  client: ClientIdSchema.transform((obj) => obj.id), // Transformar a string
-  table: TableIdSchema.transform((obj) => obj.id),
+    client: ClientIdSchema.transform((obj) => obj.id), // Transformar a string
+    table: TableIdSchema.transform((obj) => obj.id),
+    orderItems: z
+      .array(OrderItemSchema)
+      .min(1, 'At least one order item is required'),
 });
 
 export type CreateOrderInput = z.infer<typeof OrderSchema>;
