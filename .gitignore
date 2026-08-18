@@ -5,4 +5,5 @@ src/shared/db/orm
 .node-version
 package.json
 pnpm-lock.yaml
-# Ignore environment files  
+# Ignore environment files
+.env
