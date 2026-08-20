@@ -27,6 +27,7 @@
     "@mikro-orm/core": "6.4.13",
     "@mikro-orm/mysql": "6.4.13",
     "@sapphire/snowflake": "^3.5.5",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "eslint": "^9.32.0",
     "express": "^5.1.0",

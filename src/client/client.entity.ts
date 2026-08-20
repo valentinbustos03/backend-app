@@ -44,7 +44,6 @@ export class Client {
             id: this.user.id,
             email: this.user.email,
             fullName: this.user.fullName,
-            password: this.user.password,
             phoneNumber: this.user.phoneNumber,
             role: this.user.role,
             profilePicture: this.user.profilePicture,
