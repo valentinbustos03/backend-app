@@ -5,6 +5,7 @@ import {
   OrderIdSchema,
   OrderSchema,
   UpdateOrderInput,
+  UpdateOrderSchema,
 } from './order.schema.js';
 import { OrderService } from './order.service.js';
 import { ClientIdSchema } from '../client/client.schema.js';
@@ -66,7 +67,7 @@ async function update(req: Request, res: Response) {
     });
   }
 
-  const orderBody = await OrderSchema.safeParseAsync(req.body);
+  const orderBody = await UpdateOrderSchema.safeParseAsync(req.body);
   if (!orderBody.success) {
     return res.status(400).json({
       message: 'Validation error',

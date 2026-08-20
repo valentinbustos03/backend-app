@@ -11,7 +11,6 @@ import {
 import { Order } from '../order/order.entity.js';
 import generateId from '../shared/db/generate-id.js';
 import { User } from '../user/user.entity.js';
-import { profile } from 'console';
 
 @Entity()
 export class Client {

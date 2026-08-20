@@ -1,7 +1,6 @@
 import { Collection, Entity, OneToMany, Property } from "@mikro-orm/core";
 import { Employee } from "../employee.entity.js";
 import { EmployeeRole } from "../../shared/enum/employee.roleEnum.js";
-import { Table } from "../../table/table.entity.js";
 import { Order } from "../../order/order.entity.js";
 
 @Entity({ discriminatorValue: EmployeeRole.WAITER })
@@ -15,7 +14,7 @@ export class Waiter extends Employee {
   @OneToMany(() => Order, (order) => order.waiter, {
     mappedBy: 'waiter',
   })
-  orders = new Collection<Table>(this);
+  orders = new Collection<Order>(this);
 
   toJSON() {
     return {

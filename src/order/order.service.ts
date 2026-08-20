@@ -37,7 +37,7 @@ export class OrderService {
 
     newOrder.orderItems = orderItemList;
 
-    this.em.persist(newOrder).flush();
+    await this.em.persist(newOrder).flush();
 
     return newOrder;
   }

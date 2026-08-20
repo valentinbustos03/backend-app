@@ -1,8 +1,5 @@
 import z from 'zod';
-import {
-  IngredientIdSchema,
-  IngredientSchema,
-} from '../ingredient/ingredient.schema.js';
+import { IngredientIdSchema } from '../ingredient/ingredient.schema.js';
 import { EmployeeIdSchema } from '../employee/employee.schema.js';
 
 export const DishSchema = z.object({

@@ -22,7 +22,7 @@ export class Dish {
   @Property({ nullable: false, unique: true })
   name!: string;
 
-  @Property({ unique: true })
+  @Property({ nullable: true })
   description?: string;
 
   @Property({ nullable: true })

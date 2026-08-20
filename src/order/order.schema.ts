@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { ClientIdSchema } from '../client/client.schema.js';
 import { DishIdSchema } from '../dish/dish.schema.js';
 import { TableIdSchema } from '../table/table.schema.js';
-import { OrderStatus } from '../shared/enum/order.statusEnum.js';
 import { EmployeeIdSchema } from '../employee/employee.schema.js';
+import { OrderStatus } from '../shared/enum/order.statusEnum.js';
 
 export const OrderItemSchema = z.object({
   dish: DishIdSchema.transform((obj) => obj.id),
@@ -44,7 +44,14 @@ export const OrderSchema = z.object({
 
 export type CreateOrderInput = z.infer<typeof OrderSchema>;
 
-export type UpdateOrderInput = Partial<CreateOrderInput>;
+// Un pedido no se actualiza entero, solo cambia de estado.
+// Si hay que cambiar los platos se cancela y se crea otro.
+export const UpdateOrderSchema = z.object({
+  status: z.enum(OrderStatus),
+  description: z.string().optional(),
+});
+
+export type UpdateOrderInput = z.infer<typeof UpdateOrderSchema>;
 
 export const OrderIdSchema = z.object({
   orderId: z

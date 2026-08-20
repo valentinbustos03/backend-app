@@ -55,7 +55,7 @@ export class EmployeeService {
         data.workedHours,
         data.priceHour
       );
-      this.em.flush();
+      await this.em.flush();
       return updatedEmployee;
     } else {
       return null;

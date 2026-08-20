@@ -5,7 +5,6 @@ import {
   SupplierIdDto,
   UpdateSupplierDto,
 } from './supplier.dto.js';
-import { EmployeeIdDto } from '../employee/employee.dto.js';
 
 export class SupplierService {
   private readonly em: EntityManager;
@@ -25,7 +24,7 @@ export class SupplierService {
     return supplierList;
   }
 
-  async findSupplierById(id: EmployeeIdDto): Promise<Supplier | null> {
+  async findSupplierById(id: SupplierIdDto): Promise<Supplier | null> {
     const supplier = this.em.findOne(Supplier, id);
     return supplier;
   }
@@ -42,14 +41,14 @@ export class SupplierService {
     const updatedSupplier = await this.em.findOne(Supplier, id);
     if (updatedSupplier) {
       this.em.assign(updatedSupplier, data);
-      this.em.flush();
+      await this.em.flush();
       return updatedSupplier;
     } else {
       return null;
     }
   }
 
-  async deleteSupplier(id: EmployeeIdDto) {
+  async deleteSupplier(id: SupplierIdDto) {
     const deletedSupplier = await this.em.findOne(Supplier, id);
     if (deletedSupplier) {
       await this.em.removeAndFlush(deletedSupplier);
