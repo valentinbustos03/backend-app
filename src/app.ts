@@ -16,6 +16,7 @@ import { dishRouter } from './dish/dish.route.js';
 import { orderRouter } from './order/order.router.js';
 import { billRouter } from './order/bill/bill.router.js';
 import { userRouter } from './user/user.routes.js';
+import { promotionRouter } from './promotion/promotion.route.js';
 import { reservationRouter } from './reservation/reservation.route.js';
 
 const app = express();
@@ -39,6 +40,7 @@ app.use('/employee', employeeRouter);
 app.use('/ingredient', ingredientRouter);
 app.use('/order', orderRouter, billRouter);
 // app.use('/order', billRouter);
+app.use('/promotion', promotionRouter);
 app.use('/reservation', reservationRouter);
 app.use('/supplier', supplierRouter);
 app.use('/table', tableRouter);
