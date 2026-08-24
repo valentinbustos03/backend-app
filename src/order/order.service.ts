@@ -15,8 +15,14 @@ import { Waiter } from '../employee/type/waiter.entity.js';
 import { Promotion } from '../promotion/promotion.entity.js';
 import { Ingredient } from '../ingredient/ingredient.entity.js';
 import { InsufficientStockError, StockShortage } from './order.error.js';
+import { OrderStatus } from '../shared/enum/order.statusEnum.js';
 
 export class OrderService {
+  private static readonly RESTOCK_STATUSES: OrderStatus[] = [
+    OrderStatus.CANCELADO,
+    OrderStatus.RECHAZADO,
+  ];
+
   private readonly em: EntityManager;
 
   constructor(em: EntityManager) {
@@ -114,19 +120,40 @@ export class OrderService {
     id: OrderIdDto,
     data: UpdateOrderDto
   ): Promise<Order | null> {
-    const updatedOrder = await this.em.findOne(Order, id);
-    if (updatedOrder) {
-      this.em.assign(updatedOrder, data);
-      await this.em.flush();
-      return updatedOrder;
-    } else {
+    const updatedOrder = await this.em.findOne(Order, id, {
+      populate: ['orderItems.dish.ingredients.ingredient'],
+    });
+
+    if (!updatedOrder) {
       return null;
     }
+
+    const wasRestocked = OrderService.RESTOCK_STATUSES.includes(
+      updatedOrder.status
+    );
+
+    this.em.assign(updatedOrder, data);
+
+    const isRestocked = OrderService.RESTOCK_STATUSES.includes(
+      updatedOrder.status
+    );
+
+    if (!wasRestocked && isRestocked) {
+      this.restoreStock(updatedOrder);
+    }
+
+    await this.em.flush();
+    return updatedOrder;
   }
 
   async deleteOrder(id: OrderIdDto): Promise<boolean> {
-    const deletedOrder = await this.em.findOne(Order, id);
+    const deletedOrder = await this.em.findOne(Order, id, {
+      populate: ['orderItems.dish.ingredients.ingredient'],
+    });
     if (deletedOrder) {
+      if (!OrderService.RESTOCK_STATUSES.includes(deletedOrder.status)) {
+        this.restoreStock(deletedOrder);
+      }
       // const order = await this.em.findOneOrFail(Order, id, {
       //   populate: ['orderItems'],
       // });
@@ -203,5 +230,17 @@ export class OrderService {
     }
 
     return consumption;
+  }
+
+  private restoreStock(order: Order): void {
+    const dishById = new Map<string, Dish>();
+    for (const item of order.orderItems) {
+      dishById.set(item.dish.id, item.dish);
+    }
+
+    const consumption = this.computeConsumption(order.orderItems, dishById);
+    for (const { ingredient, required } of consumption.values()) {
+      ingredient.stock += required;
+    }
   }
 }
