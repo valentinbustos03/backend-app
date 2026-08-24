@@ -15,6 +15,11 @@ export interface OrderIdDto {
   orderId: string;
 }
 
+export interface OrderFilterDto {
+  status?: OrderStatus;
+  date?: string;
+}
+
 export type UpdateOrderDto = Partial<CreateOrderDto>;
 
 export interface OrderItemDto {

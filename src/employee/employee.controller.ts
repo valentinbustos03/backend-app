@@ -4,6 +4,7 @@ import {
   EmployeeSchema,
   EmployeeIdSchema,
   EmployeeTaxIdSchema,
+  EmployeeFilterSchema,
 } from './employee.schema.js';
 import { orm } from '../shared/db/orm.js';
 
@@ -29,8 +30,16 @@ async function add(req: Request, res: Response) {
 }
 
 async function findAll(req: Request, res: Response) {
+  const filterInput = await EmployeeFilterSchema.safeParseAsync(req.query);
+  if (!filterInput.success) {
+    return res
+      .status(400)
+      .json({ message: 'Validation error', error: filterInput.error });
+  }
   try {
-    const employeeList = await employeeService.findAllEmployee();
+    const employeeList = await employeeService.findAllEmployee(
+      filterInput.data
+    );
     const msg =
       (employeeList?.length ?? 0) === 0
         ? 'No empleyees found'

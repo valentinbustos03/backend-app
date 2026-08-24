@@ -59,3 +59,13 @@ export const OrderIdSchema = z.object({
     .min(1, 'ID is required')
     .regex(/^\d+$/, 'ID must be a valid snowflake ID'),
 });
+
+export const OrderFilterSchema = z.object({
+  status: z.enum(OrderStatus).optional(),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')
+    .optional(),
+});
+
+export type OrderFilterInput = z.infer<typeof OrderFilterSchema>;

@@ -2,6 +2,7 @@ import { Employee } from '../employee/employee.entity.js';
 import { EntityManager } from '@mikro-orm/core';
 import {
   CreateEmployeeDto,
+  EmployeeFilterDto,
   EmployeeIdDto,
   UpdateEmployeeDto,
 } from '../employee/employee.dto.js';
@@ -26,9 +27,29 @@ export class EmployeeService {
     return newEmployee;
   }
 
-  async findAllEmployee(): Promise<Employee[] | null> {
-    const chefList = await this.em.findAll(Chef); 
-    const waiterList = await this.em.findAll(Waiter); 
+  async findAllEmployee(filter?: EmployeeFilterDto): Promise<Employee[] | null> {
+    const baseWhere: Record<string, unknown> = {};
+    if (filter?.shift) {
+      baseWhere.shift = filter.shift;
+    }
+
+    const includeChef = !filter?.role || filter.role === EmployeeRole.CHEF;
+    const includeWaiter = !filter?.role || filter.role === EmployeeRole.WAITER;
+
+    // minCalification es un campo de Waiter, un Chef nunca lo cumple
+    const chefList =
+      includeChef && filter?.minCalification === undefined
+        ? await this.em.find(Chef, baseWhere)
+        : [];
+
+    const waiterWhere: Record<string, unknown> = { ...baseWhere };
+    if (filter?.minCalification !== undefined) {
+      waiterWhere.calification = { $gte: filter.minCalification };
+    }
+    const waiterList = includeWaiter
+      ? await this.em.find(Waiter, waiterWhere)
+      : [];
+
     const employeeList = [...chefList, ...waiterList];
     return employeeList;
   }

@@ -1,5 +1,10 @@
 import { EntityManager } from '@mikro-orm/mysql';
-import { CreateOrderDto, OrderIdDto, UpdateOrderDto } from './order.dto.js';
+import {
+  CreateOrderDto,
+  OrderFilterDto,
+  OrderIdDto,
+  UpdateOrderDto,
+} from './order.dto.js';
 import { Order } from './order.entity.js';
 import { Client } from '../client/client.entity.js';
 import { OrderItem } from './orderItem.entity.js';
@@ -42,8 +47,24 @@ export class OrderService {
     return newOrder;
   }
 
-  async findAllOrders(): Promise<Order[] | null> {
-    const orderList = this.em.findAll(Order);
+  async findAllOrders(filter?: OrderFilterDto): Promise<Order[] | null> {
+    const where: Record<string, unknown> = {};
+
+    if (filter?.status) {
+      where.status = filter.status;
+    }
+
+    if (filter?.date) {
+      const start = new Date(`${filter.date}T00:00:00.000`);
+      const end = new Date(start);
+      end.setDate(end.getDate() + 1);
+      where.startTime = { $gte: start, $lt: end };
+    }
+
+    const orderList =
+      Object.keys(where).length > 0
+        ? await this.em.find(Order, where)
+        : await this.em.findAll(Order);
     return orderList;
   }
 

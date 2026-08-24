@@ -42,3 +42,11 @@ export const EmployeeIdSchema = z.object({
 export const EmployeeTaxIdSchema = z.object({
   taxId: z.string().min(1),
 });
+
+export const EmployeeFilterSchema = z.object({
+  shift: z.string().min(1).optional(),
+  role: z.enum(EmployeeRole).optional(),
+  minCalification: z.coerce.number().min(0).optional(),
+});
+
+export type EmployeeFilterInput = z.infer<typeof EmployeeFilterSchema>;

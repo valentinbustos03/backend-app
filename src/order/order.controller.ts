@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { orm } from '../shared/db/orm.js';
 import {
   CreateOrderInput,
+  OrderFilterSchema,
   OrderIdSchema,
   OrderSchema,
   UpdateOrderInput,
@@ -31,8 +32,14 @@ async function add(req: Request, res: Response) {
 }
 
 async function findAll(req: Request, res: Response) {
+  const filterInput = await OrderFilterSchema.safeParseAsync(req.query);
+  if (!filterInput.success) {
+    return res
+      .status(400)
+      .json({ message: 'Validation error', error: filterInput.error });
+  }
   try {
-    const orderList = await orderService.findAllOrders();
+    const orderList = await orderService.findAllOrders(filterInput.data);
     const msg =
       (orderList?.length ?? 0) === 0 ? 'No orders found' : 'Orders found';
     return res.status(200).json({ message: msg, data: orderList });
