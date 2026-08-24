@@ -13,6 +13,8 @@ import { Dish } from '../dish/dish.entity.js';
 import { Table } from '../table/table.entity.js';
 import { Waiter } from '../employee/type/waiter.entity.js';
 import { Promotion } from '../promotion/promotion.entity.js';
+import { Ingredient } from '../ingredient/ingredient.entity.js';
+import { InsufficientStockError, StockShortage } from './order.error.js';
 
 export class OrderService {
   private readonly em: EntityManager;
@@ -39,8 +41,39 @@ export class OrderService {
       orderItem.quantity = item.quantity;
       return orderItem;
     });
+
+    const dishes = await this.em.find(
+      Dish,
+      { id: { $in: data.orderItems.map((item) => item.dish) } },
+      { populate: ['ingredients.ingredient'] }
+    );
+    const dishById = new Map(dishes.map((dish) => [dish.id, dish]));
+
+    const consumption = this.computeConsumption(orderItemList, dishById);
+
+    const shortages: StockShortage[] = [];
+    for (const { ingredient, required } of consumption.values()) {
+      if (ingredient.stock < required) {
+        shortages.push({
+          id: ingredient.id,
+          name: ingredient.name,
+          stock: ingredient.stock,
+          required,
+        });
+      }
+    }
+
+    if (shortages.length > 0) {
+      throw new InsufficientStockError(shortages);
+    }
+
+    for (const { ingredient, required } of consumption.values()) {
+      ingredient.stock -= required;
+    }
+
     newOrder.subtotal = await this.computeSubtotal(
       orderItemList,
+      dishById,
       newOrder.startTime
     );
 
@@ -111,13 +144,9 @@ export class OrderService {
 
   private async computeSubtotal(
     orderItemList: OrderItem[],
+    dishById: Map<string, Dish>,
     when: Date
   ): Promise<number> {
-    const dishPromises = orderItemList.map((item) =>
-      this.em.findOne(Dish, item.dish)
-    );
-    const dishes = await Promise.all(dishPromises);
-
     const activePromotions = await this.em.find(
       Promotion,
       {
@@ -139,14 +168,40 @@ export class OrderService {
     }
 
     let subtotal = 0;
-    for (let i = 0; i < dishes.length; i++) {
-      const dish = dishes[i];
-      const item = orderItemList[i];
+    for (const item of orderItemList) {
+      const dish = dishById.get(item.dish.id);
       if (!dish) continue;
       const discount = bestDiscountByDish.get(dish.id) ?? 0;
       subtotal += Number(dish.price) * (1 - discount / 100) * item.quantity;
     }
 
     return Math.round(subtotal * 100) / 100;
+  }
+
+  private computeConsumption(
+    orderItemList: OrderItem[],
+    dishById: Map<string, Dish>
+  ): Map<string, { ingredient: Ingredient; required: number }> {
+    const consumption = new Map<
+      string,
+      { ingredient: Ingredient; required: number }
+    >();
+
+    for (const item of orderItemList) {
+      const dish = dishById.get(item.dish.id);
+      if (!dish) continue;
+
+      for (const recipeItem of dish.ingredients) {
+        const ingredient = recipeItem.ingredient;
+        const entry = consumption.get(ingredient.id) ?? {
+          ingredient,
+          required: 0,
+        };
+        entry.required += recipeItem.quantity * item.quantity;
+        consumption.set(ingredient.id, entry);
+      }
+    }
+
+    return consumption;
   }
 }

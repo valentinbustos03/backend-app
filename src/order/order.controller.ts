@@ -10,6 +10,7 @@ import {
 } from './order.schema.js';
 import { OrderService } from './order.service.js';
 import { ClientIdSchema } from '../client/client.schema.js';
+import { InsufficientStockError } from './order.error.js';
 
 const orderService = new OrderService(orm.em);
 
@@ -25,6 +26,11 @@ async function add(req: Request, res: Response) {
     const order = await orderService.createOrder(orderInput);
     return res.status(201).json({ message: 'Order created', data: order });
   } catch (error: any) {
+    if (error instanceof InsufficientStockError) {
+      return res
+        .status(409)
+        .json({ message: error.message, data: error.shortages });
+    }
     return res
       .status(500)
       .json({ message: 'Error creating order', error: error.message });
