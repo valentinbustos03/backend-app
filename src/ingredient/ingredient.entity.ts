@@ -20,7 +20,7 @@ export class Ingredient {
   @Property({ nullable: false })
   name!: string;
 
-  @Property()
+  @Property({ nullable: true })
   description?: string;
 
   @Property({ nullable: false })

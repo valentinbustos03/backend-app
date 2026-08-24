@@ -32,7 +32,7 @@ export class Dish {
   @Property({ nullable: false, type: 'decimal', precision: 10, scale: 2 })
   price!: number;
 
-  @Property({ type: 'decimal', precision: 10, scale: 2 })
+  @Property({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   calification?: number;
 
   @Property()

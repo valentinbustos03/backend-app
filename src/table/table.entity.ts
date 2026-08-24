@@ -20,7 +20,7 @@ export class Table {
   @Property({ nullable: false })
   capacity!: number;
 
-  @Property()
+  @Property({ nullable: true })
   description?: string;
 
   @Property({ nullable: false })
