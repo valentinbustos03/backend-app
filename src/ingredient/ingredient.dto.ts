@@ -6,6 +6,7 @@ export interface CreateIngredientDto {
   uniteOfMeasure: string;
   origin: string;
   stockLimit: number;
+  unitCost: number;
   suppliers: string[];
 }
 

@@ -21,6 +21,7 @@ export const IngredientSchema = z.object({
       z.string().regex(/^\d+$/).transform(Number),
     ])
     .default(0),
+  unitCost: z.coerce.number().pipe(z.number().min(0)),
   suppliers: z
     .array(SupplierIdSchema)
     .transform((arr) => arr.map((obj) => obj.id)),

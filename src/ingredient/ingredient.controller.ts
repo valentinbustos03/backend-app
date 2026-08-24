@@ -64,6 +64,19 @@ async function findOne(req: Request, res: Response) {
   }
 }
 
+async function findLowStock(req: Request, res: Response) {
+  try {
+    const lowStockList = await ingredientService.findLowStockIngredients();
+    const msg =
+      lowStockList.length === 0
+        ? 'No low stock ingredients found'
+        : 'Low stock ingredients found';
+    return res.status(200).json({ message: msg, data: lowStockList });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
 async function update(req: Request, res: Response) {
   const idInput = await IngredientIdSchema.safeParseAsync(req.params);
   if (!idInput.success) {
@@ -116,4 +129,4 @@ async function remove(req: Request, res: Response) {
   }
 }
 
-export { add, findAll, findOne, update, remove };
+export { add, findAll, findOne, findLowStock, update, remove };
