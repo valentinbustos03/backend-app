@@ -16,9 +16,13 @@ export const DishSchema = z.object({
   tag: z.string().min(1).trim(),
   ingredients: z
     .array(DishIngredientSchema)
-    .transform((arr) =>
-      arr.map((obj) => ({ ingredient: obj.id, quantity: obj.quantity }))
-    ),
+    .transform((arr) => {
+      const quantityById = new Map(arr.map((obj) => [obj.id, obj.quantity]));
+      return Array.from(quantityById, ([ingredient, quantity]) => ({
+        ingredient,
+        quantity,
+      }));
+    }),
   chef: EmployeeIdSchema.transform((obj) => obj.id), 
 });
 

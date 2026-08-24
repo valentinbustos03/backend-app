@@ -10,7 +10,10 @@ import {
 } from './order.schema.js';
 import { OrderService } from './order.service.js';
 import { ClientIdSchema } from '../client/client.schema.js';
-import { InsufficientStockError } from './order.error.js';
+import {
+  InsufficientStockError,
+  InvalidStatusTransitionError,
+} from './order.error.js';
 
 const orderService = new OrderService(orm.em);
 
@@ -96,6 +99,12 @@ async function update(req: Request, res: Response) {
       data: order,
     });
   } catch (error: any) {
+    if (error instanceof InvalidStatusTransitionError) {
+      return res.status(409).json({
+        message: error.message,
+        data: { from: error.from, to: error.to },
+      });
+    }
     return res.status(500).json({ error: error.message });
   }
 }

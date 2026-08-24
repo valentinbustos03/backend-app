@@ -7,7 +7,7 @@ import { OrderStatus } from '../shared/enum/order.statusEnum.js';
 
 export const OrderItemSchema = z.object({
   dish: DishIdSchema.transform((obj) => obj.id),
-  quantity: z.coerce.number().pipe(z.number().min(1)),
+  quantity: z.coerce.number().pipe(z.number().int().min(1)),
 });
 
 export const OrderItemIdSchema = z.object({

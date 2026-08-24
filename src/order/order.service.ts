@@ -14,7 +14,11 @@ import { Table } from '../table/table.entity.js';
 import { Waiter } from '../employee/type/waiter.entity.js';
 import { Promotion } from '../promotion/promotion.entity.js';
 import { Ingredient } from '../ingredient/ingredient.entity.js';
-import { InsufficientStockError, StockShortage } from './order.error.js';
+import {
+  InsufficientStockError,
+  InvalidStatusTransitionError,
+  StockShortage,
+} from './order.error.js';
 import { OrderStatus } from '../shared/enum/order.statusEnum.js';
 
 export class OrderService {
@@ -55,26 +59,28 @@ export class OrderService {
     );
     const dishById = new Map(dishes.map((dish) => [dish.id, dish]));
 
-    const consumption = this.computeConsumption(orderItemList, dishById);
+    if (!OrderService.RESTOCK_STATUSES.includes(data.status)) {
+      const consumption = this.computeConsumption(orderItemList, dishById);
 
-    const shortages: StockShortage[] = [];
-    for (const { ingredient, required } of consumption.values()) {
-      if (ingredient.stock < required) {
-        shortages.push({
-          id: ingredient.id,
-          name: ingredient.name,
-          stock: ingredient.stock,
-          required,
-        });
+      const shortages: StockShortage[] = [];
+      for (const { ingredient, required } of consumption.values()) {
+        if (ingredient.stock < required) {
+          shortages.push({
+            id: ingredient.id,
+            name: ingredient.name,
+            stock: ingredient.stock,
+            required,
+          });
+        }
       }
-    }
 
-    if (shortages.length > 0) {
-      throw new InsufficientStockError(shortages);
-    }
+      if (shortages.length > 0) {
+        throw new InsufficientStockError(shortages);
+      }
 
-    for (const { ingredient, required } of consumption.values()) {
-      ingredient.stock -= required;
+      for (const { ingredient, required } of consumption.values()) {
+        ingredient.stock -= required;
+      }
     }
 
     newOrder.subtotal = await this.computeSubtotal(
@@ -128,8 +134,9 @@ export class OrderService {
       return null;
     }
 
+    const previousStatus = updatedOrder.status;
     const wasRestocked = OrderService.RESTOCK_STATUSES.includes(
-      updatedOrder.status
+      previousStatus
     );
 
     this.em.assign(updatedOrder, data);
@@ -137,6 +144,13 @@ export class OrderService {
     const isRestocked = OrderService.RESTOCK_STATUSES.includes(
       updatedOrder.status
     );
+
+    if (wasRestocked && !isRestocked) {
+      throw new InvalidStatusTransitionError(
+        previousStatus,
+        updatedOrder.status
+      );
+    }
 
     if (!wasRestocked && isRestocked) {
       this.restoreStock(updatedOrder);
