@@ -12,6 +12,7 @@ import { ClientIdDto } from '../client/client.dto.js';
 import { Dish } from '../dish/dish.entity.js';
 import { Table } from '../table/table.entity.js';
 import { Waiter } from '../employee/type/waiter.entity.js';
+import { Promotion } from '../promotion/promotion.entity.js';
 
 export class OrderService {
   private readonly em: EntityManager;
@@ -38,7 +39,10 @@ export class OrderService {
       orderItem.quantity = item.quantity;
       return orderItem;
     });
-    newOrder.subtotal = await this.computeSubtotal(orderItemList);
+    newOrder.subtotal = await this.computeSubtotal(
+      orderItemList,
+      newOrder.startTime
+    );
 
     newOrder.orderItems = orderItemList;
 
@@ -105,19 +109,44 @@ export class OrderService {
     return orderList;
   }
 
-  private async computeSubtotal(orderItemList: OrderItem[]): Promise<number> {
-    let subtotal = 0;
-
+  private async computeSubtotal(
+    orderItemList: OrderItem[],
+    when: Date
+  ): Promise<number> {
     const dishPromises = orderItemList.map((item) =>
       this.em.findOne(Dish, item.dish)
     );
     const dishes = await Promise.all(dishPromises);
 
+    const activePromotions = await this.em.find(
+      Promotion,
+      {
+        active: true,
+        dateFrom: { $lte: when },
+        dateTo: { $gte: when },
+      },
+      { populate: ['dishes'] }
+    );
+
+    const bestDiscountByDish = new Map<string, number>();
+    for (const promotion of activePromotions) {
+      for (const dish of promotion.dishes) {
+        const currentDiscount = bestDiscountByDish.get(dish.id) ?? 0;
+        if (promotion.discountPercentage > currentDiscount) {
+          bestDiscountByDish.set(dish.id, promotion.discountPercentage);
+        }
+      }
+    }
+
+    let subtotal = 0;
     for (let i = 0; i < dishes.length; i++) {
       const dish = dishes[i];
       const item = orderItemList[i];
-      if (dish) subtotal += dish.price * item.quantity;
+      if (!dish) continue;
+      const discount = bestDiscountByDish.get(dish.id) ?? 0;
+      subtotal += Number(dish.price) * (1 - discount / 100) * item.quantity;
     }
-    return Math.round(subtotal * 100) / 100; // Redondear a 2 decimales
+
+    return Math.round(subtotal * 100) / 100;
   }
 }
