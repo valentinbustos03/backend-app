@@ -7,6 +7,7 @@ import {
 } from '@mikro-orm/core';
 import generateId from '../shared/db/generate-id.js';
 import { Order } from '../order/order.entity.js';
+import { Reservation } from '../reservation/reservation.entity.js';
 
 @Entity()
 export class Table {
@@ -32,4 +33,9 @@ export class Table {
     mappedBy: 'table',
   })
   order = new Collection<Order>(this);
+
+  @OneToMany(() => Reservation, (reservation) => reservation.table, {
+    mappedBy: 'table',
+  })
+  reservation = new Collection<Reservation>(this);
 }
