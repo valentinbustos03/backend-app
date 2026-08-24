@@ -7,7 +7,6 @@ import {
   Property,
 } from '@mikro-orm/core';
 import { Supplier } from '../supplier/supplier.entity.js';
-import { Dish } from '../dish/dish.entity.js';
 import generateId from '../shared/db/generate-id.js';
 
 @Entity()
@@ -36,14 +35,11 @@ export class Ingredient {
   @Property({ nullable: false })
   stockLimit!: number;
 
+  @Property({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  unitCost?: number;
+
   @ManyToMany(() => Supplier, (supplier) => supplier.ingredients, {
     cascade: [Cascade.ALL],
   })
   suppliers = new Collection<Supplier>(this);
-
-  @ManyToMany(() => Dish, undefined,{
-    mappedBy: 'ingredients',
-    owner: true,
-  })
-  dishes = new Collection<Dish>(this);
 }
