@@ -1,4 +1,3 @@
-import { partial } from 'zod/mini';
 import { UserRole } from '../shared/enum/user.roleEnum.js';
 
 export interface CreateUserDto {

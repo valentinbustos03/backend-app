@@ -11,7 +11,6 @@ import {
 import { Order } from '../order/order.entity.js';
 import generateId from '../shared/db/generate-id.js';
 import { User } from '../user/user.entity.js';
-import { profile } from 'console';
 
 @Entity()
 export class Client {
@@ -45,7 +44,6 @@ export class Client {
             id: this.user.id,
             email: this.user.email,
             fullName: this.user.fullName,
-            password: this.user.password,
             phoneNumber: this.user.phoneNumber,
             role: this.user.role,
             profilePicture: this.user.profilePicture,

@@ -1,4 +1,5 @@
-import { EntityManager, Loaded } from '@mikro-orm/core';
+import { Loaded } from '@mikro-orm/core';
+import { EntityManager } from '@mikro-orm/mysql';
 import { Ingredient } from './ingredient.entity.js';
 import {
   CreateIngredientDto,
@@ -40,6 +41,18 @@ export class IngredientService {
       }
     );
     return ingredient;
+  }
+
+  async findLowStockIngredients(): Promise<Ingredient[]> {
+    const lowStockList = await this.em
+      .createQueryBuilder(Ingredient, 'i')
+      .select('*')
+      .where('i.stock <= i.stock_limit')
+      .getResultList();
+
+    await this.em.populate(lowStockList, ['suppliers']);
+
+    return lowStockList;
   }
 
   async updateIngredient(

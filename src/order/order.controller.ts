@@ -2,12 +2,19 @@ import { Request, Response } from 'express';
 import { orm } from '../shared/db/orm.js';
 import {
   CreateOrderInput,
+  OrderFilterSchema,
   OrderIdSchema,
   OrderSchema,
   UpdateOrderInput,
+  UpdateOrderSchema,
 } from './order.schema.js';
 import { OrderService } from './order.service.js';
 import { ClientIdSchema } from '../client/client.schema.js';
+import {
+  InsufficientStockError,
+  InvalidStatusTransitionError,
+  MissingReferenceError,
+} from './order.error.js';
 
 const orderService = new OrderService(orm.em);
 
@@ -23,6 +30,16 @@ async function add(req: Request, res: Response) {
     const order = await orderService.createOrder(orderInput);
     return res.status(201).json({ message: 'Order created', data: order });
   } catch (error: any) {
+    if (error instanceof MissingReferenceError) {
+      return res
+        .status(400)
+        .json({ message: error.message, data: error.missing });
+    }
+    if (error instanceof InsufficientStockError) {
+      return res
+        .status(409)
+        .json({ message: error.message, data: error.shortages });
+    }
     return res
       .status(500)
       .json({ message: 'Error creating order', error: error.message });
@@ -30,8 +47,14 @@ async function add(req: Request, res: Response) {
 }
 
 async function findAll(req: Request, res: Response) {
+  const filterInput = await OrderFilterSchema.safeParseAsync(req.query);
+  if (!filterInput.success) {
+    return res
+      .status(400)
+      .json({ message: 'Validation error', error: filterInput.error });
+  }
   try {
-    const orderList = await orderService.findAllOrders();
+    const orderList = await orderService.findAllOrders(filterInput.data);
     const msg =
       (orderList?.length ?? 0) === 0 ? 'No orders found' : 'Orders found';
     return res.status(200).json({ message: msg, data: orderList });
@@ -66,7 +89,7 @@ async function update(req: Request, res: Response) {
     });
   }
 
-  const orderBody = await OrderSchema.safeParseAsync(req.body);
+  const orderBody = await UpdateOrderSchema.safeParseAsync(req.body);
   if (!orderBody.success) {
     return res.status(400).json({
       message: 'Validation error',
@@ -82,6 +105,12 @@ async function update(req: Request, res: Response) {
       data: order,
     });
   } catch (error: any) {
+    if (error instanceof InvalidStatusTransitionError) {
+      return res.status(409).json({
+        message: error.message,
+        data: { from: error.from, to: error.to },
+      });
+    }
     return res.status(500).json({ error: error.message });
   }
 }

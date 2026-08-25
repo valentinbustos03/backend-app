@@ -1,3 +1,8 @@
+export interface DishIngredientDto {
+  ingredient: string;
+  quantity: number;
+}
+
 export interface CreateDishDto {
   cod: string;
   name: string;
@@ -6,7 +11,7 @@ export interface CreateDishDto {
   price: number;
   calification: number;
   tag: string;
-  ingredients: string[]; 
+  ingredients: DishIngredientDto[]; 
   chef: string;
 }
 

@@ -59,8 +59,6 @@ export class User {
 
       fullName: this.fullName,
 
-      password: this.password,
-
       phoneNumber: this.phoneNumber,
 
       role: this.role,

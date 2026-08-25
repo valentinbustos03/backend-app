@@ -1,6 +1,9 @@
 import { EntityManager } from '@mikro-orm/core';
+import bcrypt from 'bcryptjs';
 import { CreateUserDto, UpdateUserDto, UserIdDto } from './user.dto.js';
 import { User } from './user.entity.js';
+
+const SALT_ROUNDS = 10;
 
 export class UserService {
   private readonly em: EntityManager;
@@ -10,7 +13,10 @@ export class UserService {
   }
 
   async createUser(data: CreateUserDto): Promise<User> {
-    const newUser = this.em.create(User, data);
+    const newUser = this.em.create(User, {
+      ...data,
+      password: await bcrypt.hash(data.password, SALT_ROUNDS),
+    });
     await this.em.persistAndFlush(newUser);
     return newUser;
   }
@@ -28,7 +34,13 @@ export class UserService {
   async updateUser(id: UserIdDto, data: UpdateUserDto): Promise<User | null> {
     const updatedUser = await this.em.findOne(User, id);
     if (updatedUser) {
-      this.em.assign(updatedUser, data);
+      // El password se asigna aparte para no pisar el hash existente con
+      // undefined cuando el body no lo trae.
+      const { password, ...rest } = data;
+      this.em.assign(updatedUser, rest);
+      if (password) {
+        updatedUser.password = await bcrypt.hash(password, SALT_ROUNDS);
+      }
       await this.em.flush();
       return updatedUser;
     } else {

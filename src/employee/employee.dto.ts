@@ -26,6 +26,12 @@ export interface EmployeeIdDto {
   id: string;
 }
 
+export interface EmployeeFilterDto {
+  shift?: string;
+  role?: EmployeeRole;
+  minCalification?: number;
+}
+
 // export type UpdateEmployeeDto = Partial<CreateChefDto> | Partial<CreateEmployeeDto> & {
 //   workedHours: number;
 //   priceHour: number;

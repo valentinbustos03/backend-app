@@ -2,12 +2,12 @@ import { z } from 'zod';
 import { ClientIdSchema } from '../client/client.schema.js';
 import { DishIdSchema } from '../dish/dish.schema.js';
 import { TableIdSchema } from '../table/table.schema.js';
-import { OrderStatus } from '../shared/enum/order.statusEnum.js';
 import { EmployeeIdSchema } from '../employee/employee.schema.js';
+import { OrderStatus } from '../shared/enum/order.statusEnum.js';
 
 export const OrderItemSchema = z.object({
   dish: DishIdSchema.transform((obj) => obj.id),
-  quantity: z.coerce.number().pipe(z.number().min(1)),
+  quantity: z.coerce.number().pipe(z.number().int().min(1)),
 });
 
 export const OrderItemIdSchema = z.object({
@@ -44,7 +44,14 @@ export const OrderSchema = z.object({
 
 export type CreateOrderInput = z.infer<typeof OrderSchema>;
 
-export type UpdateOrderInput = Partial<CreateOrderInput>;
+// Un pedido no se actualiza entero, solo cambia de estado.
+// Si hay que cambiar los platos se cancela y se crea otro.
+export const UpdateOrderSchema = z.object({
+  status: z.enum(OrderStatus),
+  description: z.string().optional(),
+});
+
+export type UpdateOrderInput = z.infer<typeof UpdateOrderSchema>;
 
 export const OrderIdSchema = z.object({
   orderId: z
@@ -52,3 +59,13 @@ export const OrderIdSchema = z.object({
     .min(1, 'ID is required')
     .regex(/^\d+$/, 'ID must be a valid snowflake ID'),
 });
+
+export const OrderFilterSchema = z.object({
+  status: z.enum(OrderStatus).optional(),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format')
+    .optional(),
+});
+
+export type OrderFilterInput = z.infer<typeof OrderFilterSchema>;

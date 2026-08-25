@@ -29,7 +29,7 @@ export abstract class Employee {
   @Property({ nullable: false, type: 'decimal', precision: 10, scale: 2 })
   priceHour!: number;
 
-  @Property({ type: 'decimal', precision: 10, scale: 2 })
+  @Property({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   salary?: number;
 
   @OneToOne(() => User, (user) => user.employee, {
@@ -54,7 +54,6 @@ export abstract class Employee {
             id: this.user.id,
             email: this.user.email,
             fullName: this.user.fullName,
-            password: this.user.password,
             phoneNumber: this.user.phoneNumber,
             role: this.user.role,
             profilePicture: this.user.profilePicture,

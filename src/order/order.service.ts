@@ -1,5 +1,10 @@
 import { EntityManager } from '@mikro-orm/mysql';
-import { CreateOrderDto, OrderIdDto, UpdateOrderDto } from './order.dto.js';
+import {
+  CreateOrderDto,
+  OrderFilterDto,
+  OrderIdDto,
+  UpdateOrderDto,
+} from './order.dto.js';
 import { Order } from './order.entity.js';
 import { Client } from '../client/client.entity.js';
 import { OrderItem } from './orderItem.entity.js';
@@ -7,8 +12,23 @@ import { ClientIdDto } from '../client/client.dto.js';
 import { Dish } from '../dish/dish.entity.js';
 import { Table } from '../table/table.entity.js';
 import { Waiter } from '../employee/type/waiter.entity.js';
+import { Promotion } from '../promotion/promotion.entity.js';
+import { Ingredient } from '../ingredient/ingredient.entity.js';
+import {
+  InsufficientStockError,
+  InvalidStatusTransitionError,
+  MissingReference,
+  MissingReferenceError,
+  StockShortage,
+} from './order.error.js';
+import { OrderStatus } from '../shared/enum/order.statusEnum.js';
 
 export class OrderService {
+  private static readonly NON_CONSUMING_STATUSES: OrderStatus[] = [
+    OrderStatus.CANCELADO,
+    OrderStatus.RECHAZADO,
+  ];
+
   private readonly em: EntityManager;
 
   constructor(em: EntityManager) {
@@ -33,17 +53,74 @@ export class OrderService {
       orderItem.quantity = item.quantity;
       return orderItem;
     });
-    newOrder.subtotal = await this.computeSubtotal(orderItemList);
+
+    const dishes = await this.em.find(
+      Dish,
+      { id: { $in: data.orderItems.map((item) => item.dish) } },
+      { populate: ['ingredients.ingredient'] }
+    );
+    const dishById = new Map(dishes.map((dish) => [dish.id, dish]));
+
+    const missing = await this.findMissingReferences(data, dishById);
+    if (missing.length > 0) {
+      throw new MissingReferenceError(missing);
+    }
+
+    if (!OrderService.NON_CONSUMING_STATUSES.includes(data.status)) {
+      const consumption = this.computeConsumption(orderItemList, dishById);
+
+      const shortages: StockShortage[] = [];
+      for (const { ingredient, required } of consumption.values()) {
+        if (ingredient.stock < required) {
+          shortages.push({
+            id: ingredient.id,
+            name: ingredient.name,
+            stock: ingredient.stock,
+            required,
+          });
+        }
+      }
+
+      if (shortages.length > 0) {
+        throw new InsufficientStockError(shortages);
+      }
+
+      for (const { ingredient, required } of consumption.values()) {
+        ingredient.stock -= required;
+      }
+    }
+
+    newOrder.subtotal = await this.computeSubtotal(
+      orderItemList,
+      dishById,
+      newOrder.startTime
+    );
 
     newOrder.orderItems = orderItemList;
 
-    this.em.persist(newOrder).flush();
+    await this.em.persist(newOrder).flush();
 
     return newOrder;
   }
 
-  async findAllOrders(): Promise<Order[] | null> {
-    const orderList = this.em.findAll(Order);
+  async findAllOrders(filter?: OrderFilterDto): Promise<Order[] | null> {
+    const where: Record<string, unknown> = {};
+
+    if (filter?.status) {
+      where.status = filter.status;
+    }
+
+    if (filter?.date) {
+      const start = new Date(`${filter.date}T00:00:00.000`);
+      const end = new Date(start);
+      end.setDate(end.getDate() + 1);
+      where.startTime = { $gte: start, $lt: end };
+    }
+
+    const orderList =
+      Object.keys(where).length > 0
+        ? await this.em.find(Order, where)
+        : await this.em.findAll(Order);
     return orderList;
   }
 
@@ -57,13 +134,27 @@ export class OrderService {
     data: UpdateOrderDto
   ): Promise<Order | null> {
     const updatedOrder = await this.em.findOne(Order, id);
-    if (updatedOrder) {
-      this.em.assign(updatedOrder, data);
-      await this.em.flush();
-      return updatedOrder;
-    } else {
+
+    if (!updatedOrder) {
       return null;
     }
+
+    const previousStatus = updatedOrder.status;
+
+    this.em.assign(updatedOrder, data);
+
+    if (
+      OrderService.NON_CONSUMING_STATUSES.includes(previousStatus) &&
+      !OrderService.NON_CONSUMING_STATUSES.includes(updatedOrder.status)
+    ) {
+      throw new InvalidStatusTransitionError(
+        previousStatus,
+        updatedOrder.status
+      );
+    }
+
+    await this.em.flush();
+    return updatedOrder;
   }
 
   async deleteOrder(id: OrderIdDto): Promise<boolean> {
@@ -84,19 +175,91 @@ export class OrderService {
     return orderList;
   }
 
-  private async computeSubtotal(orderItemList: OrderItem[]): Promise<number> {
-    let subtotal = 0;
-
-    const dishPromises = orderItemList.map((item) =>
-      this.em.findOne(Dish, item.dish)
+  private async computeSubtotal(
+    orderItemList: OrderItem[],
+    dishById: Map<string, Dish>,
+    when: Date
+  ): Promise<number> {
+    const activePromotions = await this.em.find(
+      Promotion,
+      {
+        active: true,
+        dateFrom: { $lte: when },
+        dateTo: { $gte: when },
+      },
+      { populate: ['dishes'] }
     );
-    const dishes = await Promise.all(dishPromises);
 
-    for (let i = 0; i < dishes.length; i++) {
-      const dish = dishes[i];
-      const item = orderItemList[i];
-      if (dish) subtotal += dish.price * item.quantity;
+    const bestDiscountByDish = new Map<string, number>();
+    for (const promotion of activePromotions) {
+      for (const dish of promotion.dishes) {
+        const currentDiscount = bestDiscountByDish.get(dish.id) ?? 0;
+        if (promotion.discountPercentage > currentDiscount) {
+          bestDiscountByDish.set(dish.id, promotion.discountPercentage);
+        }
+      }
     }
-    return Math.round(subtotal * 100) / 100; // Redondear a 2 decimales
+
+    let subtotal = 0;
+    for (const item of orderItemList) {
+      const dish = dishById.get(item.dish.id);
+      if (!dish) continue;
+      const discount = bestDiscountByDish.get(dish.id) ?? 0;
+      subtotal += Number(dish.price) * (1 - discount / 100) * item.quantity;
+    }
+
+    return Math.round(subtotal * 100) / 100;
+  }
+
+  private async findMissingReferences(
+    data: CreateOrderDto,
+    dishById: Map<string, Dish>
+  ): Promise<MissingReference[]> {
+    const missing: MissingReference[] = [];
+
+    for (const item of data.orderItems) {
+      if (!dishById.has(item.dish)) {
+        missing.push({ tipo: 'dish', id: item.dish });
+      }
+    }
+
+    if (!(await this.em.findOne(Client, data.client))) {
+      missing.push({ tipo: 'client', id: data.client });
+    }
+    if (!(await this.em.findOne(Table, data.table))) {
+      missing.push({ tipo: 'table', id: data.table });
+    }
+    if (!(await this.em.findOne(Waiter, data.waiter))) {
+      missing.push({ tipo: 'waiter', id: data.waiter });
+    }
+
+    return missing;
+  }
+
+  private computeConsumption(
+    orderItemList: OrderItem[],
+    dishById: Map<string, Dish>
+  ): Map<string, { ingredient: Ingredient; required: number }> {
+    const consumption = new Map<
+      string,
+      { ingredient: Ingredient; required: number }
+    >();
+
+    for (const item of orderItemList) {
+      const dish = dishById.get(item.dish.id);
+      if (!dish) continue;
+
+      for (const recipeItem of dish.ingredients) {
+        const ingredient = recipeItem.ingredient;
+        const entry = consumption.get(ingredient.id) ?? {
+          ingredient,
+          required: 0,
+        };
+        entry.required += recipeItem.quantity * item.quantity;
+        consumption.set(ingredient.id, entry);
+      }
+    }
+
+    return consumption;
   }
 }
