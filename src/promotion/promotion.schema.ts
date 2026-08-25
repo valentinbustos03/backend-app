@@ -6,7 +6,8 @@ const DateTimeSchema = z
   .refine((val) => !isNaN(Date.parse(val)), {
     message: 'Invalid date format',
   })
-  .transform((val) => new Date(val));
+  .transform((val) => new Date(val))
+  .meta({ format: 'date-time' });
 
 export const PromotionSchema = z
   .object({

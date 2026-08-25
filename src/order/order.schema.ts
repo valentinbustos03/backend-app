@@ -27,13 +27,15 @@ export const OrderSchema = z.object({
     .refine((val) => !isNaN(Date.parse(val)), {
       message: 'Invalid date format',
     })
-    .transform((val) => new Date(val)),
+    .transform((val) => new Date(val))
+    .meta({ format: 'date-time' }),
   endTime: z
     .string()
     .refine((val) => !isNaN(Date.parse(val)), {
       message: 'Invalid date format',
     })
-    .transform((val) => new Date(val)),
+    .transform((val) => new Date(val))
+    .meta({ format: 'date-time' }),
   orderItems: z
     .array(OrderItemSchema)
     .min(1, 'At least one order item is required'),

@@ -47,6 +47,9 @@ app.use('/table', tableRouter);
 app.use('/user', userRouter);
 
 //Configura Swagger UI
+app.get('/api-docs.json', (_, res) => {
+  res.json(swaggerSpec);
+});
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use((_, res) => {
