@@ -28,3 +28,18 @@ export class InvalidStatusTransitionError extends Error {
     this.to = to;
   }
 }
+
+export interface MissingReference {
+  tipo: 'client' | 'table' | 'waiter' | 'dish';
+  id: string;
+}
+
+export class MissingReferenceError extends Error {
+  readonly missing: MissingReference[];
+
+  constructor(missing: MissingReference[]) {
+    super('Referencias inexistentes');
+    this.name = 'MissingReferenceError';
+    this.missing = missing;
+  }
+}

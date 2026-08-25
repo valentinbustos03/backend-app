@@ -17,6 +17,8 @@ import { Ingredient } from '../ingredient/ingredient.entity.js';
 import {
   InsufficientStockError,
   InvalidStatusTransitionError,
+  MissingReference,
+  MissingReferenceError,
   StockShortage,
 } from './order.error.js';
 import { OrderStatus } from '../shared/enum/order.statusEnum.js';
@@ -58,6 +60,11 @@ export class OrderService {
       { populate: ['ingredients.ingredient'] }
     );
     const dishById = new Map(dishes.map((dish) => [dish.id, dish]));
+
+    const missing = await this.findMissingReferences(data, dishById);
+    if (missing.length > 0) {
+      throw new MissingReferenceError(missing);
+    }
 
     if (!OrderService.NON_CONSUMING_STATUSES.includes(data.status)) {
       const consumption = this.computeConsumption(orderItemList, dishById);
@@ -202,6 +209,31 @@ export class OrderService {
     }
 
     return Math.round(subtotal * 100) / 100;
+  }
+
+  private async findMissingReferences(
+    data: CreateOrderDto,
+    dishById: Map<string, Dish>
+  ): Promise<MissingReference[]> {
+    const missing: MissingReference[] = [];
+
+    for (const item of data.orderItems) {
+      if (!dishById.has(item.dish)) {
+        missing.push({ tipo: 'dish', id: item.dish });
+      }
+    }
+
+    if (!(await this.em.findOne(Client, data.client))) {
+      missing.push({ tipo: 'client', id: data.client });
+    }
+    if (!(await this.em.findOne(Table, data.table))) {
+      missing.push({ tipo: 'table', id: data.table });
+    }
+    if (!(await this.em.findOne(Waiter, data.waiter))) {
+      missing.push({ tipo: 'waiter', id: data.waiter });
+    }
+
+    return missing;
   }
 
   private computeConsumption(

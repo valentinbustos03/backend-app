@@ -13,6 +13,7 @@ import { ClientIdSchema } from '../client/client.schema.js';
 import {
   InsufficientStockError,
   InvalidStatusTransitionError,
+  MissingReferenceError,
 } from './order.error.js';
 
 const orderService = new OrderService(orm.em);
@@ -29,6 +30,11 @@ async function add(req: Request, res: Response) {
     const order = await orderService.createOrder(orderInput);
     return res.status(201).json({ message: 'Order created', data: order });
   } catch (error: any) {
+    if (error instanceof MissingReferenceError) {
+      return res
+        .status(400)
+        .json({ message: error.message, data: error.missing });
+    }
     if (error instanceof InsufficientStockError) {
       return res
         .status(409)
