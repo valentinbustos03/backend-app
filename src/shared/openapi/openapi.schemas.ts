@@ -2,6 +2,9 @@ import { z } from 'zod';
 import { registerResponse } from './openapi.builder.js';
 import { EmployeeRole } from '../enum/employee.roleEnum.js';
 import { OrderStatus } from '../enum/order.statusEnum.js';
+import { PaymentMethod } from '../enum/payment.methodEnum.js';
+import { PaymentProvider } from '../enum/payment.providerEnum.js';
+import { PaymentStatus } from '../enum/payment.statusEnum.js';
 import { ReservationStatus } from '../enum/reservation.statusEnum.js';
 import { UserRole } from '../enum/user.roleEnum.js';
 
@@ -219,8 +222,65 @@ export const BillSchema = registerResponse(
   z.object({
     billId: SnowflakeId,
     createdAt: DateTime,
-    paymentMethod: z.string(),
+    paymentMethod: z.enum(PaymentMethod),
     order: SnowflakeId.describe('ID del pedido facturado'),
+  })
+);
+
+export const PaymentSchema = registerResponse(
+  'Payment',
+  z.object({
+    paymentId: SnowflakeId,
+    order: SnowflakeId.describe(
+      'ID del pedido: la relacion no se puebla, se serializa la clave primaria'
+    ),
+    provider: z
+      .enum(PaymentProvider)
+      .describe('mercadopago si paso por la pasarela, interno si se cargo a mano'),
+    method: z.enum(PaymentMethod),
+    amount: Decimal.describe(
+      'Monto del intento. Se congela con Order.subtotal al iniciarlo y se pisa con lo que informa Mercado Pago al conciliar'
+    ),
+    status: z
+      .enum(PaymentStatus)
+      .describe('Espejo del estado que devuelve Mercado Pago'),
+    externalId: z
+      .string()
+      .nullable()
+      .optional()
+      .describe('payment_id de Mercado Pago; unico, sostiene la idempotencia del webhook'),
+    preferenceId: z.string().nullable().optional(),
+    createdAt: DateTime,
+    updatedAt: DateTime,
+  })
+);
+
+export const CheckoutResultSchema = registerResponse(
+  'CheckoutResult',
+  z.object({
+    paymentId: SnowflakeId,
+    preferenceId: z.string(),
+    initPoint: z
+      .string()
+      .describe('URL del Checkout Pro a la que el frontend tiene que redirigir'),
+    amount: Decimal,
+    status: z.enum(PaymentStatus),
+  })
+);
+
+export const InternalPaymentResultSchema = registerResponse(
+  'InternalPaymentResult',
+  z.object({
+    payment: PaymentSchema,
+    bill: BillSchema,
+  })
+);
+
+export const SyncResultSchema = registerResponse(
+  'SyncResult',
+  z.object({
+    payment: PaymentSchema,
+    bill: BillSchema.nullable(),
   })
 );
 

@@ -14,6 +14,7 @@ import { employeePaths } from './employee/employee.docs.js';
 import { ingredientPaths } from './ingredient/ingredient.docs.js';
 import { orderPaths } from './order/order.docs.js';
 import { billPaths } from './order/bill/bill.docs.js';
+import { paymentPaths } from './payment/payment.docs.js';
 import { promotionPaths } from './promotion/promotion.docs.js';
 import { reportPaths } from './report/report.docs.js';
 import { reservationPaths } from './reservation/reservation.docs.js';
@@ -43,6 +44,7 @@ const paths: PathsObject = {
   ...ingredientPaths,
   ...orderPaths,
   ...billPaths,
+  ...paymentPaths,
   ...promotionPaths,
   ...reportPaths,
   ...reservationPaths,
@@ -70,7 +72,7 @@ export const swaggerSpec = {
   openapi: '3.1.0',
   info: {
     title: 'API del sistema de restaurante',
-    version: '2.17.0',
+    version: '2.18.0',
     description: DESCRIPTION,
     license: { name: 'ISC', identifier: 'ISC' },
   },
@@ -87,6 +89,10 @@ export const swaggerSpec = {
     { name: 'ingredient', description: 'Ingredientes y control de stock' },
     { name: 'order', description: 'Pedidos' },
     { name: 'bill', description: 'Facturacion de los pedidos' },
+    {
+      name: 'payment',
+      description: 'Pagos: Mercado Pago Checkout Pro y registro interno',
+    },
     { name: 'promotion', description: 'Promociones y descuentos' },
     { name: 'report', description: 'Informes de ventas y rentabilidad' },
     { name: 'reservation', description: 'Reservas de mesa' },
