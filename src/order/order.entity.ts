@@ -1,5 +1,6 @@
 import {
   Cascade,
+  Collection,
   Entity,
   Enum,
   ManyToOne,
@@ -16,6 +17,7 @@ import { Table } from '../table/table.entity.js';
 import { Bill } from './bill/bill.entity.js';
 import { OrderStatus } from '../shared/enum/order.statusEnum.js';
 import { Waiter } from '../employee/type/waiter.entity.js';
+import { Payment } from '../payment/payment.entity.js';
 
 @Entity()
 export class Order {
@@ -55,6 +57,9 @@ export class Order {
 
   @ManyToOne(() => Waiter, { eager: true })
   waiter!: Rel<Waiter>;
+
+  @OneToMany(() => Payment, (payment) => payment.order)
+  payments = new Collection<Payment>(this);
 
   @OneToOne(() => Bill, {
     mappedBy: 'order',

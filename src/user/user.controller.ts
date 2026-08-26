@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import {
   CreateUserInput,
   UpdateUserInput,
+  UpdateUserSchema,
   UserIdSchema,
   UserSchema,
 } from './user.schema.js';
@@ -67,7 +68,7 @@ async function update(req: Request, res: Response) {
     });
   }
 
-  const userBody = await UserSchema.safeParseAsync(req.body);
+  const userBody = await UpdateUserSchema.safeParseAsync(req.body);
   if (!userBody.success) {
     return res.status(400).json({
       message: 'Validation error',

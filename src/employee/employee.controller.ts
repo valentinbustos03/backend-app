@@ -135,4 +135,15 @@ async function remove(req: Request, res: Response) {
   }
 }
 
-export { findAll, findOneById, findOneByTaxId, add, update, remove };
+async function findWaiters(req: Request, res: Response) {
+  try {
+    const waiterList = await employeeService.findWaiterSummaries();
+    const msg = waiterList.length === 0 ? 'No waiters found' : 'Waiters found';
+    return res.status(200).json({ message: msg, data: waiterList });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+export {
+  findWaiters, findAll, findOneById, findOneByTaxId, add, update, remove };

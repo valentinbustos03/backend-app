@@ -44,3 +44,8 @@ export type UpdateEmployeeDto = (
   workedHours: number;
   priceHour: number;
 };
+export interface WaiterSummaryDto {
+  id: string;
+  fullName: string | null;
+  profilePicture: string | null;
+}

@@ -8,7 +8,8 @@ const DateTimeSchema = z
   .refine((val) => !isNaN(Date.parse(val)), {
     message: 'Invalid date format',
   })
-  .transform((val) => new Date(val));
+  .transform((val) => new Date(val))
+  .meta({ format: 'date-time' });
 
 const reservationFields = {
   numberOfPeople: z.coerce.number().pipe(z.number().min(1)),
@@ -21,7 +22,7 @@ export const ReservationSchema = z.object({
   // Solo al crear: una reserva nueva no puede quedar en el pasado.
   dateTime: DateTimeSchema.refine((date) => date.getTime() >= Date.now(), {
     message: 'dateTime cannot be in the past',
-  }),
+  }).meta({ format: 'date-time' }),
   ...reservationFields,
 });
 

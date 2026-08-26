@@ -8,6 +8,7 @@ import {
 } from '../employee/employee.dto.js';
 import { EmployeeRole } from '../shared/enum/employee.roleEnum.js';
 import { Chef } from './type/chef.entity.js';
+import { WaiterSummaryDto } from './employee.dto.js';
 import { Waiter } from './type/waiter.entity.js';
 
 export class EmployeeService {
@@ -25,6 +26,15 @@ export class EmployeeService {
     newEmployee.salary = this.computeSalary(data.workedHours, data.priceHour);
     await this.em.persistAndFlush(newEmployee);
     return newEmployee;
+  }
+
+  async findWaiterSummaries(): Promise<WaiterSummaryDto[]> {
+    const waiterList = await this.em.find(Waiter, {});
+    return waiterList.map((waiter) => ({
+      id: waiter.id,
+      fullName: waiter.user?.fullName ?? null,
+      profilePicture: waiter.user?.profilePicture ?? null,
+    }));
   }
 
   async findAllEmployee(filter?: EmployeeFilterDto): Promise<Employee[] | null> {

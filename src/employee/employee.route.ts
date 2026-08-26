@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   findAll,
+  findWaiters,
   findOneById,
   findOneByTaxId,
   add,
@@ -12,6 +13,7 @@ export const employeeRouter = Router();
 
 employeeRouter.post('/add', add);
 employeeRouter.get('/findAll', findAll);
+employeeRouter.get('/waiters', findWaiters);
 
 employeeRouter.get('/taxId/:taxId', findOneByTaxId);
 employeeRouter.get('/id/:id', findOneById);
