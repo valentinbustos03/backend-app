@@ -8,6 +8,7 @@ import {
 } from './shared/openapi/openapi.builder.js';
 import './shared/openapi/openapi.schemas.js';
 
+import { authPaths } from './auth/auth.docs.js';
 import { clientPaths } from './client/client.docs.js';
 import { dishPaths } from './dish/dish.docs.js';
 import { employeePaths } from './employee/employee.docs.js';
@@ -35,9 +36,16 @@ const DESCRIPTION = `API del sistema de gestion de restaurante (TP Desarrollo de
 
 **Autenticacion**
 
-Todavia no hay: por ahora todos los endpoints son publicos. Queda dentro del alcance adicional voluntario del TP.`;
+El login devuelve un JWT que viaja en la cookie httpOnly \`token\`. Para probar desde esta pagina o desde Postman, el mismo token se acepta en el header \`Authorization: Bearer <token>\`.
+
+**Todos los endpoints exigen sesion salvo los marcados como publicos**: \`/auth/login\`, \`/auth/register\`, \`/auth/logout\`, \`/payment/webhook\` y esta documentacion. La politica es *deny by default*: un endpoint que no este contemplado en la tabla de reglas queda restringido a administradores, no abierto.
+
+Hay tres roles, y **no se guardan**: se derivan del \`role\` del usuario y de sus relaciones con Client y Employee, con precedencia \`admin\` -> \`empleado\` -> \`cliente\`. Un usuario sin ninguna de las dos relaciones no puede iniciar sesion.
+
+Un rol insuficiente responde **403**; la falta de sesion, **401**.`;
 
 const paths: PathsObject = {
+  ...authPaths,
   ...clientPaths,
   ...dishPaths,
   ...employeePaths,
@@ -72,7 +80,7 @@ export const swaggerSpec = {
   openapi: '3.1.0',
   info: {
     title: 'API del sistema de restaurante',
-    version: '2.18.0',
+    version: '2.19.0',
     description: DESCRIPTION,
     license: { name: 'ISC', identifier: 'ISC' },
   },
@@ -83,6 +91,7 @@ export const swaggerSpec = {
     },
   ],
   tags: [
+    { name: 'auth', description: 'Sesion, registro y perfil propio' },
     { name: 'client', description: 'Clientes del restaurante' },
     { name: 'dish', description: 'Platos de la carta y su receta' },
     { name: 'employee', description: 'Empleados: chefs y mozos' },
@@ -101,8 +110,23 @@ export const swaggerSpec = {
     { name: 'user', description: 'Usuarios del sistema' },
   ],
   paths,
+  security: [{ cookieAuth: [] }, { bearerAuth: [] }],
   components: {
     schemas: buildSchemaComponents(),
     responses,
+    securitySchemes: {
+      cookieAuth: {
+        type: 'apiKey',
+        in: 'cookie',
+        name: 'token',
+        description: 'La cookie httpOnly que setea /auth/login',
+      },
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'El mismo token, para Swagger y Postman',
+      },
+    },
   },
 };

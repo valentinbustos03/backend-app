@@ -22,6 +22,20 @@ registerRequest('OrderStatusInput', UpdateOrderSchema);
 const orderIdParam = idPathParam('orderId', 'ID del pedido');
 
 export const orderPaths: PathsObject = {
+  '/order/mine': {
+    get: {
+      tags: ['order'],
+      operationId: 'findMyOrders',
+      summary: 'Los pedidos del cliente que tiene la sesion',
+      description:
+        'Saca el cliente del token, asi que no recibe ningun id y no hay forma de pedir los pedidos de otro. Reemplaza a `/order/findAllClientOrders/{id}` para el uso del cliente; ese endpoint sigue existiendo para admin y empleado. Un usuario logueado que no sea cliente recibe 200 con lista vacia.',
+      responses: {
+        200: dataResponse('Listado de pedidos propios', arrayOf('Order')),
+        401: messageResponse('Se requiere iniciar sesion'),
+        500: refResponse('ServerError'),
+      },
+    },
+  },
   '/order/add': {
     post: {
       tags: ['order'],

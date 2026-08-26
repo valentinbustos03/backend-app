@@ -1,10 +1,12 @@
 import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { orm, syncSchema } from './shared/db/orm.js';
 import { RequestContext } from '@mikro-orm/core';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swagger.config.js';
+import { authGuard } from './auth/auth.middleware.js';
 
 // Routers
 import { clientRouter } from './client/client.route.js';
@@ -16,6 +18,7 @@ import { dishRouter } from './dish/dish.route.js';
 import { orderRouter } from './order/order.router.js';
 import { billRouter } from './order/bill/bill.router.js';
 import { userRouter } from './user/user.routes.js';
+import { authRouter } from './auth/auth.route.js';
 import { paymentRouter } from './payment/payment.route.js';
 import { promotionRouter } from './promotion/promotion.route.js';
 import { reportRouter } from './report/report.route.js';
@@ -31,11 +34,15 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   RequestContext.create(orm.em, next);
 });
 
+app.use(authGuard);
+
+app.use('/auth', authRouter);
 app.use('/client', clientRouter);
 app.use('/dish', dishRouter);
 app.use('/employee', employeeRouter);

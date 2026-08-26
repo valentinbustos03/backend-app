@@ -20,6 +20,19 @@ registerRequest('EmployeeInput', EmployeeSchema);
 const idParam = idPathParam('id', 'ID del empleado');
 
 export const employeePaths: PathsObject = {
+  '/employee/waiters': {
+    get: {
+      tags: ['employee'],
+      operationId: 'findWaiters',
+      summary: 'Lista los mozos, en version reducida',
+      description:
+        'Devuelve solo id, nombre y foto. Es el unico endpoint de empleados que alcanza un cliente, y existe para que el menu pueda ofrecer el mozo sin exponer sueldos ni CUIT, que es lo que devuelve `/employee/findAll`.',
+      responses: {
+        200: dataResponse('Listado de mozos', arrayOf('WaiterSummary')),
+        500: refResponse('ServerError'),
+      },
+    },
+  },
   '/employee/add': {
     post: {
       tags: ['employee'],

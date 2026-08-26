@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { orm } from '../shared/db/orm.js';
+import { currentUserId } from '../auth/auth.middleware.js';
 import {
   CreateOrderInput,
   OrderFilterSchema,
@@ -155,4 +156,15 @@ async function findAllOrdersByClientId(req: Request, res: Response) {
   }
 }
 
-export { add, findAll, findOne, update, remove, findAllOrdersByClientId };
+async function findMyOrders(req: Request, res: Response) {
+  try {
+    const orderList = await orderService.findOrdersByUserId(currentUserId(req));
+    const msg = orderList.length === 0 ? 'No orders found' : 'Orders found';
+    return res.status(200).json({ message: msg, data: orderList });
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+export {
+  findMyOrders, add, findAll, findOne, update, remove, findAllOrdersByClientId };

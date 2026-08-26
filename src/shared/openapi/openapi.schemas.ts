@@ -7,6 +7,7 @@ import { PaymentProvider } from '../enum/payment.providerEnum.js';
 import { PaymentStatus } from '../enum/payment.statusEnum.js';
 import { ReservationStatus } from '../enum/reservation.statusEnum.js';
 import { UserRole } from '../enum/user.roleEnum.js';
+import { AccessRole } from '../enum/access.roleEnum.js';
 
 const SnowflakeId = z
   .string()
@@ -282,6 +283,38 @@ export const SyncResultSchema = registerResponse(
     payment: PaymentSchema,
     bill: BillSchema.nullable(),
   })
+);
+
+export const SessionSchema = registerResponse(
+  'Session',
+  z
+    .object({
+      id: SnowflakeId,
+      email: Email,
+      fullName: z.string(),
+      phoneNumber: z.string(),
+      role: z.enum(UserRole),
+      profilePicture: z.string().nullable().optional(),
+      accessRole: z
+        .enum(AccessRole)
+        .describe(
+          'Rol normalizado que consume el frontend. No se guarda: se deriva del role del usuario y de sus relaciones con Client y Employee, con precedencia admin -> empleado -> cliente'
+        ),
+    })
+    .describe('Lo que devuelven /auth/login, /auth/register y /auth/me')
+);
+
+export const WaiterSummarySchema = registerResponse(
+  'WaiterSummary',
+  z
+    .object({
+      id: SnowflakeId,
+      fullName: z.string().nullable(),
+      profilePicture: z.string().nullable(),
+    })
+    .describe(
+      'Vista reducida del mozo para el menu. No incluye sueldo ni CUIT: es el unico endpoint de empleados que alcanza un cliente'
+    )
 );
 
 export const OrderSchema = registerResponse(

@@ -22,6 +22,7 @@ import {
   StockShortage,
 } from './order.error.js';
 import { OrderStatus } from '../shared/enum/order.statusEnum.js';
+import { User } from '../user/user.entity.js';
 
 export class OrderService {
   private static readonly NON_CONSUMING_STATUSES: OrderStatus[] = [
@@ -168,6 +169,14 @@ export class OrderService {
       return true;
     }
     return false;
+  }
+
+  async findOrdersByUserId(userId: string): Promise<Order[]> {
+    const user = await this.em.findOne(User, { id: userId });
+    if (!user?.client) {
+      return [];
+    }
+    return this.em.find(Order, { client: user.client.id });
   }
 
   async findOrdersByClientId(clientId: ClientIdDto): Promise<Order[] | null> {

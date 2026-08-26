@@ -3,7 +3,7 @@ import { UserRole } from '../shared/enum/user.roleEnum.js';
 import { ClientIdSchema } from '../client/client.schema.js';
 import { EmployeeIdSchema } from '../employee/employee.schema.js';
 
-export const UserSchema = z.object({
+const BaseUserSchema = z.object({
   email: z.email(),
   fullName: z.string().min(1),
   password: z
@@ -20,9 +20,19 @@ export const UserSchema = z.object({
   employee: EmployeeIdSchema.transform((obj) => obj.id).optional(),
 });
 
+export const UserSchema = BaseUserSchema.refine(
+  (data) => data.client !== undefined || data.employee !== undefined,
+  {
+    message: 'El usuario tiene que estar asociado a un cliente o a un empleado',
+    path: ['client'],
+  }
+);
+
+export const UpdateUserSchema = BaseUserSchema.partial({ password: true });
+
 export type CreateUserInput = z.infer<typeof UserSchema>;
 
-export type UpdateUserInput = Partial<CreateUserInput>;
+export type UpdateUserInput = z.infer<typeof UpdateUserSchema>;
 
 export const UserIdSchema = z.object({
   id: z
