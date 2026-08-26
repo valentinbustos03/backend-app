@@ -15,6 +15,7 @@ import { ingredientPaths } from './ingredient/ingredient.docs.js';
 import { orderPaths } from './order/order.docs.js';
 import { billPaths } from './order/bill/bill.docs.js';
 import { promotionPaths } from './promotion/promotion.docs.js';
+import { reportPaths } from './report/report.docs.js';
 import { reservationPaths } from './reservation/reservation.docs.js';
 import { supplierPaths } from './supplier/supplier.docs.js';
 import { tablePaths } from './table/table.docs.js';
@@ -43,6 +44,7 @@ const paths: PathsObject = {
   ...orderPaths,
   ...billPaths,
   ...promotionPaths,
+  ...reportPaths,
   ...reservationPaths,
   ...supplierPaths,
   ...tablePaths,
@@ -68,7 +70,7 @@ export const swaggerSpec = {
   openapi: '3.1.0',
   info: {
     title: 'API del sistema de restaurante',
-    version: '2.15.0',
+    version: '2.17.0',
     description: DESCRIPTION,
     license: { name: 'ISC', identifier: 'ISC' },
   },
@@ -86,6 +88,7 @@ export const swaggerSpec = {
     { name: 'order', description: 'Pedidos' },
     { name: 'bill', description: 'Facturacion de los pedidos' },
     { name: 'promotion', description: 'Promociones y descuentos' },
+    { name: 'report', description: 'Informes de ventas y rentabilidad' },
     { name: 'reservation', description: 'Reservas de mesa' },
     { name: 'supplier', description: 'Proveedores de ingredientes' },
     { name: 'table', description: 'Mesas del salon' },
