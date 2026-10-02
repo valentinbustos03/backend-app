@@ -10,7 +10,7 @@ import {
 } from '@mikro-orm/core';
 import { Order } from '../order/order.entity.js';
 import generateId from '../shared/db/generate-id.js';
-import { User } from '../user/user.entity.js';
+import type { User } from '../user/user.entity.js';
 
 @Entity()
 export class Client {
@@ -29,9 +29,7 @@ export class Client {
   })
   orderHistory = new Collection<Order>(this);
 
-  @OneToOne(() => User, (user) => user.client, {
-    eager: true,
-  })
+  @OneToOne('User', (user: User) => user.client, { eager: true })
   user?: Rel<User>;
 
   toJSON() {
