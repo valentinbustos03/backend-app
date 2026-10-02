@@ -9,8 +9,7 @@ import {
 import generateId from '../shared/db/generate-id.js';
 import { EmployeeRole } from '../shared/enum/employee.roleEnum.js';
 import { User } from '../user/user.entity.js';
-import { Waiter } from './type/waiter.entity.js';
-import { Chef } from './type/chef.entity.js';
+
 
 @Entity({ discriminatorColumn: 'role', abstract: true })
 export abstract class Employee {
