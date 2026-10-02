@@ -8,8 +8,7 @@ import {
 } from '@mikro-orm/core';
 import generateId from '../shared/db/generate-id.js';
 import { EmployeeRole } from '../shared/enum/employee.roleEnum.js';
-import { User } from '../user/user.entity.js';
-
+import type { User } from '../user/user.entity.js';
 
 @Entity({ discriminatorColumn: 'role', abstract: true })
 export abstract class Employee {
@@ -31,9 +30,7 @@ export abstract class Employee {
   @Property({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   salary?: number;
 
-  @OneToOne(() => User, (user) => user.employee, {
-    eager: true,
-  })
+   @OneToOne('User', (user: User) => user.employee, { eager: true })
   user?: Rel<User>;
 
   @Enum(() => EmployeeRole)
