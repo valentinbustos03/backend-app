@@ -9,8 +9,8 @@ import {
 } from '@mikro-orm/core';
 import generateId from '../shared/db/generate-id.js';
 import { UserRole } from '../shared/enum/user.roleEnum.js';
-import { Client } from '../client/client.entity.js';
-import { Employee } from '../employee/employee.entity.js';
+import type { Client } from '../client/client.entity.js';
+import type { Employee } from '../employee/employee.entity.js';
 
 @Entity()
 export class User {
@@ -35,7 +35,7 @@ export class User {
   @Property({ nullable: true })
   profilePicture?: string;
 
-  @OneToOne(() => Client, (client) => client.user, {
+   @OneToOne('Client', (client: Client) => client.user, {
     owner: true,
     eager: true,
     nullable: true,
@@ -43,7 +43,7 @@ export class User {
   })
   client?: Rel<Client>;
 
-  @OneToOne(() => Employee, (employee) => employee.user, {
+  @OneToOne('Employee', (employee: Employee) => employee.user, {
     owner: true,
     eager: true,
     nullable: true,
